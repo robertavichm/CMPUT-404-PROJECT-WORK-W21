@@ -77,11 +77,11 @@ WSGI_APPLICATION = 'SocialDistribution.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'myproject',
-        'USER': 'myprojectuser',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
-        'PORT': '',
+        'NAME': database_setup.NAME,
+        'USER': database_setup.USER,
+        'PASSWORD': database_setup.PASSWORD,
+        'HOST': database_setup.HOST,
+        'PORT': database_setup.PORT,
     }
 }
 
