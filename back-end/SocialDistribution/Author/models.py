@@ -32,3 +32,11 @@ class Post(models.Model):
     published = models.BooleanField()
     visibility = models.TextField()
     unlisted = models.BooleanField()
+
+
+class Like(models.Model):
+    like_id = models.AutoField(primary_key=True)
+    author_id = models.ForeignKey(Author, on_delete=models.CASCADE)
+    object_id = models.TextField()
+    recipient_id = models.ForeignKey(Author, on_delete=models.CASCADE) 
+
