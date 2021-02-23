@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils import timezone
 # Create your models here.
 
 
@@ -18,6 +18,7 @@ class Author(models.Model):
 
 class Post(models.Model):
     post_id = models.AutoField(primary_key=True)
+    author_id = models.
     title = models.TextField()
     Type = models.TextField()
     description = models.TextField()
@@ -40,9 +41,18 @@ class Post(models.Model):
 
  
 
-class Like(models.Model):
-    like_id = models.AutoField(primary_key=True)
-    author_id = models.ForeignKey(Author, on_delete=models.CASCADE)
-    object_id = models.TextField()
-    recipient_id = models.ForeignKey(Author, on_delete=models.CASCADE) 
+# class Like(models.Model):
+#     like_id = models.AutoField(primary_key=True)
+#     author_id = models.ForeignKey(Author, on_delete=models.CASCADE)
+#     object_id = models.TextField()
+#     recipient_id = models.ForeignKey(Author, on_delete=models.CASCADE) 
 
+
+class Comments(models.Model):
+    comment_id = models.AutoField(primary_key=True)
+    post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
+    author_id = models.ForeignKey(Author, on_delete=models.CASCADE)
+    contentType = models.TextField()
+    published = models.DateTimeField(default=timezone.now, editable=False)
+    comment = models.TextField()
+    commentType = 'comment'
