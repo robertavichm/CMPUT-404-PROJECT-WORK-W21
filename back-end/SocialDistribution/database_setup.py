@@ -1,4 +1,4 @@
-NAME = "myprojecet"
+NAME = "myproject"
 USER = 'myprojectuser'
 PASSWORD = 'password'
 HOST = 'localhost'
