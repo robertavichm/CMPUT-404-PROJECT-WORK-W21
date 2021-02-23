@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import database_setup
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -77,12 +78,12 @@ WSGI_APPLICATION = 'SocialDistribution.wsgi.application'
 
 DATABASES = {
     'default': {
-    'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    'NAME': 'cmput_404',
-    'USER': 'postgres',
-    'PASSWORD': 'password',
-    'HOST': '127.0.0.1',
-    'PORT': '5432',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': database_setup.NAME,
+        'USER': database_setup.USER,
+        'PASSWORD': database_setup.PASSWORD,
+        'HOST': database_setup.HOST,
+        'PORT': database_setup.PORT,
     }
 }
 
