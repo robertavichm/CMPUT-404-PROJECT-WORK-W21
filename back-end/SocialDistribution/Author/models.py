@@ -18,7 +18,7 @@ class Author(models.Model):
 
 class Post(models.Model):
     post_id = models.AutoField(primary_key=True)
-    author_id = models.
+    #author_id = models.ForeignKey(Author, on_delete=models.CASCADE)
     title = models.TextField()
     Type = models.TextField()
     description = models.TextField()
