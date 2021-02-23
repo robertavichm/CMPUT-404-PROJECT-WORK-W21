@@ -170,3 +170,6 @@ bower_components
 psd
 thumb
 sketch
+
+# Django database setup files
+./back-end/SocialDistribution/SocialDistribution/database_setup.py
