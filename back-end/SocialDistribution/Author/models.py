@@ -39,3 +39,10 @@ class Post(models.Model):
 #     author_friend = models.ForeignKey(Author, on_delete=models.CASCADE)
 
  
+
+class Like(models.Model):
+    like_id = models.AutoField(primary_key=True)
+    author_id = models.ForeignKey(Author, on_delete=models.CASCADE)
+    object_id = models.TextField()
+    recipient_id = models.ForeignKey(Author, on_delete=models.CASCADE) 
+
