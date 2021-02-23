@@ -8,8 +8,8 @@ from django.db import models
 
 class Author(models.Model):
 
-    author_id = models.AutoField(primary_key=True)
-    display_name = models.TextField()
+    id = models.AutoField(primary_key=True)
+    displayName = models.TextField()
     host = models.TextField()
     url = models.TextField()
     Type = models.TextField()
@@ -32,3 +32,10 @@ class Post(models.Model):
     published = models.BooleanField()
     visibility = models.TextField()
     unlisted = models.BooleanField()
+
+# class FriendShip(models.Model):
+#     FriendShipId = models.AutoField(primary_key=True)
+#     author_primary = models.ForeignKey(Author, on_delete=models.CASCADE)
+#     author_friend = models.ForeignKey(Author, on_delete=models.CASCADE)
+
+ 
