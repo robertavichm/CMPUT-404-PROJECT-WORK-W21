@@ -13,6 +13,7 @@ class Author(models.Model):
     host = models.TextField()
     url = models.TextField()
     Type = models.TextField()
+    github = models.TextField(null=True)
 
 
 
