@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import AbstractUser
 # Create your models here.
 
 
@@ -19,7 +20,7 @@ class Author(models.Model):
 
 class Post(models.Model):
     post_id = models.AutoField(primary_key=True)
-    #author_id = models.ForeignKey(Author, on_delete=models.CASCADE)
+    author_id = models.ForeignKey(Author, on_delete=models.CASCADE, null=True)
     title = models.TextField()
     Type = models.TextField()
     description = models.TextField()
@@ -31,22 +32,22 @@ class Post(models.Model):
     commentLink = models.TextField()
     commentCount = models.IntegerField()
     pageSize = models.IntegerField()
-    published = models.BooleanField()
+    published = models.DateTimeField(default=timezone.now, editable=False)
     visibility = models.TextField()
     unlisted = models.BooleanField()
 
-# class FriendShip(models.Model):
-#     FriendShipId = models.AutoField(primary_key=True)
-#     author_primary = models.ForeignKey(Author, on_delete=models.CASCADE)
-#     author_friend = models.ForeignKey(Author, on_delete=models.CASCADE)
+class FriendShip(models.Model):
+    FriendShipId = models.AutoField(primary_key=True)
+    author_primary = models.ForeignKey(Author, on_delete=models.CASCADE,related_name="primary")
+    author_friend = models.ForeignKey(Author, on_delete=models.CASCADE,related_name="friend")
 
  
 
-# class Like(models.Model):
-#     like_id = models.AutoField(primary_key=True)
-#     author_id = models.ForeignKey(Author, on_delete=models.CASCADE)
-#     object_id = models.TextField()
-#     recipient_id = models.ForeignKey(Author, on_delete=models.CASCADE) 
+class Like(models.Model):
+    like_id = models.AutoField(primary_key=True)
+    author_id = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="likee")
+    object_id = models.TextField()
+    recipient_id = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="liker") 
 
 
 class Comments(models.Model):

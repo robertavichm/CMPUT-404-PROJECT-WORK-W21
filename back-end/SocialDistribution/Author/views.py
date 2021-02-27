@@ -54,21 +54,11 @@ def get_followers(request,author_id):
 def handle_follow(request,author_id,follow_id):
     return HttpResponse("TODO follower operation path")
 
-@api_view(["GET","POST"])
-def general_post(request,author_id):
-    return HttpResponse("TODO General post return")
 
-@api_view(["GET","POST","PUT","DELETE"])
-def post_operation(request,author_id,post_id):
-    return HttpResponse("TODO general post operation")
 
-@api_view(["GET","POST"])
-def general_comments(request,author_id,post_id):
-    return HttpResponse("TODO General comment return")
 
-@api_view(["GET","POST","PUT","DELETE"])
-def specific_comments(request,author_id,post_id,comment_id):
-    return HttpResponse("TODO specific comment operation")
+
+
 
 @api_view(["GET","POST"])
 def handle_inbox(request,author_id):
@@ -78,11 +68,6 @@ def handle_inbox(request,author_id):
 def get_likes(request,author_id):
     return HttpResponse("TODO get author likes")
 
-@api_view(["GET"])
-def get_post_likes(request,author_id,post_id):
-    return HttpResponse("TODO get post likes")
 
-@api_view(["GET"])
-def get_comment_likes(request,author_id,post_id):
-    return HttpResponse("TODO get post comment likes")
+
 
