@@ -50,16 +50,17 @@ class Like(models.Model):
     author_id = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="likee")
     object_id = models.TextField()
     recipient_id = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="liker") 
+    type = "likes"
 
 
-class Comments(models.Model):
+class Comment(models.Model):
     comment_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
     author_id = models.ForeignKey(Author, on_delete=models.CASCADE)
     contentType = models.TextField()
     published = models.DateTimeField(default=timezone.now, editable=False)
     comment = models.TextField()
-    commentType = 'comment'
+    type = 'comment'
 
 
 #general inbox check
@@ -71,5 +72,5 @@ class Notification(models.Model):
     #isntances of what is sent
     request_id = models.ForeignKey(FriendShip, on_delete=models.CASCADE, null=True)
     like_id = models.ForeignKey(Like, on_delete=models.CASCADE, null=True)
-    comment_id = models.ForeignKey(Comments, on_delete=models.CASCADE, null=True)
+    comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
