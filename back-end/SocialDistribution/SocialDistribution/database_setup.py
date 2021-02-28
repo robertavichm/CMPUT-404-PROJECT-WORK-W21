@@ -1,4 +1,4 @@
-NAME = "cmput_404"
+NAME = "v2"
 USER = 'postgres'
 PASSWORD = 'password'
 HOST = 'localhost'

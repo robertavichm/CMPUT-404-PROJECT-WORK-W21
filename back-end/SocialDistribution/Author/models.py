@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
+import uuid
 # Create your models here.
 
 
@@ -8,7 +9,6 @@ from django.contrib.auth.models import AbstractUser
 
 
 class Author(models.Model):
-
     id = models.AutoField(primary_key=True)
     displayName = models.TextField()
     host = models.TextField()
@@ -40,7 +40,7 @@ class FriendShip(models.Model):
     FriendShipId = models.AutoField(primary_key=True)
     author_primary = models.ForeignKey(Author, on_delete=models.CASCADE,related_name="primary")
     author_friend = models.ForeignKey(Author, on_delete=models.CASCADE,related_name="friend")
-
+    accepted = models.BooleanField(default=False)
  
 
 class Like(models.Model):
@@ -58,3 +58,12 @@ class Comments(models.Model):
     published = models.DateTimeField(default=timezone.now, editable=False)
     comment = models.TextField()
     commentType = 'comment'
+
+#general inbox check
+class Notification(models.Model):
+    notification_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    author_id = models.ForeignKey(Author, on_delete=models.CASCADE, null=False)
+    request_id = models.ForeignKey(FriendShip, on_delete=models.CASCADE, null=True)
+    like_id = models.ForeignKey(Like, on_delete=models.CASCADE, null=True)
+    comment_id = models.ForeignKey(Comments, on_delete=models.CASCADE, null=True)
+    post_id = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
