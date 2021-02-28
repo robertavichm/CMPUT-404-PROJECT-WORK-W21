@@ -4,7 +4,7 @@ from . import views
 
 
 urlpatterns = [
-    path("", views.open_path),
+    path("author/", views.open_path),
     path('author/<pk>/', views.author_operation),
     path('author/<author_id>/followers/', views.get_followers),
     path('author/<author_id>/followers/<follow_id>/', views.handle_follow),

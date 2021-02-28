@@ -4,22 +4,24 @@ from django.http import HttpResponseBadRequest,HttpResponse
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework import status
+from .author_serializer import AuthorSerializer
 from .models import Author,Post
 import json
 
 # Create your views here.
-@api_view(["POST","GET"])
+@api_view(["POST"])
 def open_path(request):
     if(request.method == "POST"):
         json_data = request.data
         new_author = Author()
         for k, v in json_data.items():
+            #Author(k=v)
             setattr(new_author, k, v)
+        url = new_author.host+"/author/"+str(new_author.id)
+        new_author.url = url
         new_author.save()
-        return HttpResponse(status=status.HTTP_200_OK)
-    if(request.method == "GET"):
-        return HttpResponse("path test")
-
+        return HttpResponse(str(new_author.id),status=status.HTTP_200_OK)
+    
 
 @api_view(["GET","POST"])
 def author_operation(request,pk):
@@ -27,23 +29,21 @@ def author_operation(request,pk):
         handles paths authors/{author_id}
     """
     if request.method == "GET":
-        data = get_object_or_404(Author, pk=pk)
-        response = {}
-        response["id"] = data.id
-        response["host"] = data.host
-        response["displayName"] = data.displayName
-        response["url"] = data.url
+        instance = get_object_or_404(Author, pk=pk)
+        ser = AuthorSerializer(instance, many=False)
         #response["github"] = data.github
         
-        return JsonResponse(response,safe=False)
+        return JsonResponse(ser.data,safe=False)
     if(request.method == "POST"):
-        json = request.data
-        author = Author.objects.filter(author_id=pk)
-        if(author.count == 1):
-            for k, v in json_data.items():
-                setattr(author, k, v)
-            author.save()
-            return HttpResponse(status=status.HTTP_200_OK)  
+        json_data = request.data
+        author = get_object_or_404(Author,pk=pk)
+        author(displayName=json_data["displayName"])
+        return HttpResponse(json_data["displayName"])
+        #useless
+        for k, v in json_data.items():
+            setattr(author, k, v)
+        author.save()
+        return HttpResponse(status=status.HTTP_200_OK)  
     return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(["GET"])
