@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import AbstractUser
+from django.contrib.postgres.fields import ArrayField
 import uuid
 # Create your models here.
 
@@ -23,15 +24,15 @@ class Post(models.Model):
     post_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author_id = models.ForeignKey(Author, on_delete=models.CASCADE, null=True)
     title = models.TextField()
-    Type = models.TextField()
+    Type = models.TextField(default="post")
     description = models.TextField()
     source = models.TextField()
     origin = models.TextField()
     contentType = models.TextField(choices=ContentTypeChoice.choices)
     content = models.TextField()
-    categories = models.TextField()
+    categories = ArrayField(models.CharField(max_length=20),default=list)
     commentLink = models.TextField()
-    commentCount = models.IntegerField()
+    commentCount = models.IntegerField(default=0)
     pageSize = models.IntegerField()
     published = models.DateTimeField(default=timezone.now, editable=False)
     visibility = models.TextField()
@@ -45,12 +46,7 @@ class FriendShip(models.Model):
     accepted = models.BooleanField(default=False)
  
 
-class Like(models.Model):
-    like_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    author_id = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="likee")
-    object_id = models.TextField()
-    recipient_id = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="liker") 
-    type = "likes"
+
 
 
 class Comment(models.Model):
@@ -60,8 +56,17 @@ class Comment(models.Model):
     contentType = models.TextField()
     published = models.DateTimeField(default=timezone.now, editable=False)
     comment = models.TextField()
-    type = 'comment'
+    type = models.TextField(default="comment")
 
+class Like(models.Model):
+    like_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    author_id = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="likee")
+    object_id = models.TextField()
+    liker_id = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="liker")
+    
+    comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
+    post_id = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
+    #type = "likes"
 
 #general inbox check
 class Notification(models.Model):
@@ -70,6 +75,7 @@ class Notification(models.Model):
     #author its sent to
     author_id = models.ForeignKey(Author, on_delete=models.CASCADE, null=False)
     #isntances of what is sent
+    #request_id = models.ForeignKey(Author, on_delete=models.CASCADE, null=True,related_name="requester")
     request_id = models.ForeignKey(FriendShip, on_delete=models.CASCADE, null=True)
     like_id = models.ForeignKey(Like, on_delete=models.CASCADE, null=True)
     comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)

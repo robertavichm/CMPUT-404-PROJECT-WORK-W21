@@ -5,12 +5,12 @@ from . import models
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Author
-        fields = ["id", "displayName", "host", "url", "type"]
+        fields = ["id", "displayName", "host", "url", "type", "github"]
     
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Post
-        fields = ["post_id", "author_id","title", "type", "description", 
+        fields = ["post_id", "author_id","title", "Type", "description", 
                   "source", "origin", "contentType", "content", "categories",
                   "commentLink", "commentCount", "pageSize", "published",
                   "visibility", "unlisted"]
@@ -23,7 +23,7 @@ class FriendshipSerializer(serializers.ModelSerializer):
 class LikeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Like
-        fields = ["like_id", "author_id", "object_id", "recipient_id", "type"]
+        fields = ["like_id", "author_id", "object_id", "liker_id"]
 
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,5 +34,5 @@ class CommentSerializer(serializers.ModelSerializer):
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Notification
-        fields = ["notification_id", "author_id", "request_id", "liked_id", 
+        fields = ["notification_id", "author_id", "request_id", "like_id", 
                   "comment_id", "post_id"]

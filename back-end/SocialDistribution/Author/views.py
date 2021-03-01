@@ -4,8 +4,8 @@ from django.http import HttpResponseBadRequest,HttpResponse
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework import status
-from .author_serializer import AuthorSerializer
-from .models import Author,Post
+from .author_serializer import AuthorSerializer, LikeSerializer
+from .models import Author, Post, Like
 import json
 
 # Create your views here.
@@ -46,9 +46,11 @@ def author_operation(request,pk):
         return HttpResponse(status=status.HTTP_200_OK)  
     return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+
 @api_view(["GET"])
 def get_followers(request,author_id):
     return HttpResponse("TODO follower path")
+
 
 @api_view(["GET","PUT","DELETE"])
 def handle_follow(request,author_id,follow_id):
@@ -57,16 +59,11 @@ def handle_follow(request,author_id,follow_id):
 
 
 
-
-
-
-@api_view(["GET","POST"])
-def handle_inbox(request,author_id):
-    return HttpResponse("TODO General inbox operation")
-
-@api_view(["GET","POST"])
+@api_view(["GET"])
 def get_likes(request,author_id):
-    return HttpResponse("TODO get author likes")
+    liked = Like.objects.filter(liker_id=author_id)
+    ser = LikeSerializer(liked, many=True)
+    return JsonResponse(ser.data, safe=False)
 
 
 
