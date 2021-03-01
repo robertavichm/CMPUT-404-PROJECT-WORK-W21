@@ -1,59 +1,82 @@
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import AbstractUser
+from django.contrib.postgres.fields import ArrayField
+import uuid
 # Create your models here.
 
 
-
-
-
 class Author(models.Model):
-
-    id = models.AutoField(primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     displayName = models.TextField()
     host = models.TextField()
     url = models.TextField()
-    Type = models.TextField()
+    type = models.TextField()
     github = models.TextField(null=True)
 
 
-
 class Post(models.Model):
-    post_id = models.AutoField(primary_key=True)
-    #author_id = models.ForeignKey(Author, on_delete=models.CASCADE)
+
+    class ContentTypeChoice(models.TextChoices):
+        choice1 = "text/plain"
+        choice2 = "text/markdown"
+
+    post_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    author_id = models.ForeignKey(Author, on_delete=models.CASCADE, null=True)
     title = models.TextField()
-    Type = models.TextField()
+    Type = models.TextField(default="post")
     description = models.TextField()
     source = models.TextField()
     origin = models.TextField()
-    contentType = models.TextField()
+    contentType = models.TextField(choices=ContentTypeChoice.choices)
     content = models.TextField()
-    categories = models.TextField()
+    categories = ArrayField(models.CharField(max_length=20),default=list)
     commentLink = models.TextField()
-    commentCount = models.IntegerField()
+    commentCount = models.IntegerField(default=0)
     pageSize = models.IntegerField()
-    published = models.BooleanField()
+    published = models.DateTimeField(default=timezone.now, editable=False)
     visibility = models.TextField()
     unlisted = models.BooleanField()
 
-# class FriendShip(models.Model):
-#     FriendShipId = models.AutoField(primary_key=True)
-#     author_primary = models.ForeignKey(Author, on_delete=models.CASCADE)
-#     author_friend = models.ForeignKey(Author, on_delete=models.CASCADE)
 
+class FriendShip(models.Model):
+    FriendShipId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    author_primary = models.ForeignKey(Author, on_delete=models.CASCADE,related_name="primary")
+    author_friend = models.ForeignKey(Author, on_delete=models.CASCADE,related_name="friend")
+    accepted = models.BooleanField(default=False)
  
 
-# class Like(models.Model):
-#     like_id = models.AutoField(primary_key=True)
-#     author_id = models.ForeignKey(Author, on_delete=models.CASCADE)
-#     object_id = models.TextField()
-#     recipient_id = models.ForeignKey(Author, on_delete=models.CASCADE) 
 
 
-class Comments(models.Model):
-    comment_id = models.AutoField(primary_key=True)
+
+class Comment(models.Model):
+    comment_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
     author_id = models.ForeignKey(Author, on_delete=models.CASCADE)
     contentType = models.TextField()
     published = models.DateTimeField(default=timezone.now, editable=False)
     comment = models.TextField()
-    commentType = 'comment'
+    type = models.TextField(default="comment")
+
+class Like(models.Model):
+    like_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    author_id = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="likee")
+    object_id = models.TextField()
+    liker_id = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="liker")
+    
+    comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
+    post_id = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
+    #type = "likes"
+
+#general inbox check
+class Notification(models.Model):
+    #unique id
+    notification_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    #author its sent to
+    author_id = models.ForeignKey(Author, on_delete=models.CASCADE, null=False)
+    #isntances of what is sent
+    #request_id = models.ForeignKey(Author, on_delete=models.CASCADE, null=True,related_name="requester")
+    request_id = models.ForeignKey(FriendShip, on_delete=models.CASCADE, null=True)
+    like_id = models.ForeignKey(Like, on_delete=models.CASCADE, null=True)
+    comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
+    post_id = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
