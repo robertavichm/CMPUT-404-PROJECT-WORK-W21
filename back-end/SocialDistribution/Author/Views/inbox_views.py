@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework import status
 from ..author_serializer import AuthorSerializer,PostSerializer,CommentSerializer,LikeSerializer,NotificationSerializer
-from ..models import Author, Post, Comment, Like, Notification
+from ..models import Author, Post, Comment, Like, Notification, FriendShip
 import json
 
 

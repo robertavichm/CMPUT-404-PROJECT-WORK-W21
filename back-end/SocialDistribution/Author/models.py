@@ -20,6 +20,9 @@ class Post(models.Model):
     class ContentTypeChoice(models.TextChoices):
         choice1 = "text/plain"
         choice2 = "text/markdown"
+        choice3 = "application/base64"
+        choice4 = "image/png;base64"
+        choice5 = "image/jpeg;base64"
 
     post_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author_id = models.ForeignKey(Author, on_delete=models.CASCADE, null=True)
