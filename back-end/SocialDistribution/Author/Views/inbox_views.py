@@ -6,10 +6,11 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from ..author_serializer import AuthorSerializer,PostSerializer,CommentSerializer,LikeSerializer,NotificationSerializer
 from ..models import Author, Post, Comment, Like, Notification, FriendShip
+from ..formatters import format_notif
 import json
 
 
-@api_view(["GET","POST"])
+@api_view(["GET","POST","DELETE"])
 def handle_inbox(request,author_id):
     author = get_object_or_404(Author,pk=author_id)
     if request.method == "POST":
@@ -18,11 +19,24 @@ def handle_inbox(request,author_id):
         return handle_type(post_type,json_data,author)
     if request.method == "GET":
         all_notif = Notification.objects.filter(author_id=author)
-        ser = NotificationSerializer(all_notif, many=True)
-        return JsonResponse(ser.data,safe=False)
-
-
-
+        response = {}
+        response["type"] = "inbox"
+        response["author"] = author_id
+        response["items"] = []
+        for i in range(0,len(all_notif)):
+            formated, code = format_notif(all_notif[i])
+            if(code == 500):
+                return HttpResponse(formated,status=500)
+            if(code == 404):
+                #delete notification?
+                pass
+            else:
+                response["items"].append(formated)
+        #ser = NotificationSerializer(all_notif, many=True)
+        return JsonResponse(response, safe=False)
+    if request.method == "DELETE":
+        Notification.objects.filter(author_id=author_id).delete()
+        return HttpResponse("inbox cleared")
 
 def handle_type(post_type,data,author):
     new_notification = Notification(author_id=author) 
@@ -31,6 +45,7 @@ def handle_type(post_type,data,author):
             id = data["post_id"]
             obj = Post.objects.get(post_id=id)
             new_notification.post_id = obj
+            new_notification.save()
             return HttpResponse("post notification sent")
     if post_type=="follow":
         if("author_id" in data):
@@ -59,3 +74,7 @@ def handle_type(post_type,data,author):
             new_notification.save()
             return HttpResponse("like notification sent")
     return HttpResponse("invalid post body type")
+
+
+
+    

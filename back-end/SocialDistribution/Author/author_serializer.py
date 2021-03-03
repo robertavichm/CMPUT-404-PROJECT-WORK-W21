@@ -10,7 +10,7 @@ class AuthorSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Post
-        fields = ["post_id", "author_id","title", "Type", "description", 
+        fields = ["type","post_id","title", "description",
                   "source", "origin", "contentType", "content", "categories",
                   "commentLink", "commentCount", "pageSize", "published",
                   "visibility", "unlisted"]
@@ -28,7 +28,7 @@ class LikeSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Comment
-        fields = ["comment_id", "post_id", "author_id", "contentType", "published",
+        fields = ["comment_id", "post_id", "contentType", "published",
                   "comment", "type"]
 
 class NotificationSerializer(serializers.ModelSerializer):

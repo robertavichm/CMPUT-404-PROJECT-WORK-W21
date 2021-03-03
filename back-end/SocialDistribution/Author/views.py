@@ -6,6 +6,7 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from .author_serializer import AuthorSerializer, LikeSerializer, FriendshipSerializer
 from .models import Author, Post, Like, FriendShip
+from .formatters import like_formatter
 import json
 
 # this path is mostly for the sake of developing
@@ -93,9 +94,14 @@ def handle_follow(request,author_id,follow_id):
 
 @api_view(["GET"])
 def get_likes(request,author_id):
+    response = {}
+    response["type"] = "liked"
+    response["items"] = []
     liked = Like.objects.filter(liker_id=author_id)
-    ser = LikeSerializer(liked, many=True)
-    return JsonResponse(ser.data, safe=False)
+    for i in range(0,len(liked)):
+        new_like = like_formatter(liked[i],True)
+        response["items"].append(new_like)
+    return JsonResponse(response, safe=False)
 
 
 

@@ -27,7 +27,7 @@ class Post(models.Model):
     post_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     author_id = models.ForeignKey(Author, on_delete=models.CASCADE, null=True)
     title = models.TextField()
-    Type = models.TextField(default="post")
+    type = models.TextField(default="post")
     description = models.TextField()
     source = models.TextField()
     origin = models.TextField()
@@ -48,9 +48,6 @@ class FriendShip(models.Model):
     author_friend = models.ForeignKey(Author, on_delete=models.CASCADE,related_name="friend")
     accepted = models.BooleanField(default=False)
  
-
-
-
 
 class Comment(models.Model):
     comment_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -79,7 +76,7 @@ class Notification(models.Model):
     author_id = models.ForeignKey(Author, on_delete=models.CASCADE, null=False)
     #isntances of what is sent
     #request_id = models.ForeignKey(Author, on_delete=models.CASCADE, null=True,related_name="requester")
-    request_id = models.ForeignKey(FriendShip, on_delete=models.CASCADE, null=True)
-    like_id = models.ForeignKey(Like, on_delete=models.CASCADE, null=True)
+    request_id = models.ForeignKey(FriendShip, on_delete=models.SET_NULL, null=True)
+    like_id = models.ForeignKey(Like, on_delete=models.SET_NULL, null=True)
     comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
-    post_id = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
+    post_id = models.ForeignKey(Post, on_delete=models.SET_NULL, null=True)
