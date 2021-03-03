@@ -6,6 +6,7 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from ..author_serializer import AuthorSerializer,PostSerializer,CommentSerializer,LikeSerializer
 from ..models import Author, Post, Comment, Like
+from ..formatters import post_formater, comment_formatter, like_formatter
 import json
 
 
@@ -25,11 +26,15 @@ def general_post(request,author_id):
         notify_friends(author_id)
         return HttpResponse(str(new_post.post_id),status=status.HTTP_200_OK)
     if request.method == "GET":
+        response = {}
+        response["type"] = "posts"
+        response["items"] = []
         posts = Post.objects.filter(author_id=author_id)
-        returned = {}
-        ser = PostSerializer(posts,many=True)
+        for i in range(0,len(posts)):
+            new_formatted = post_formater(posts[i],True)
+            response["items"].append(new_formatted)
 
-        return JsonResponse(ser.data, safe=False)
+        return JsonResponse(response, safe=False)
         
     
 
@@ -38,8 +43,8 @@ def general_post(request,author_id):
 def post_operation(request,author_id,post_id):
     if(request.method == "GET"):
         data = get_object_or_404(Post,pk=post_id)
-        ser = PostSerializer(data,many=False)
-        return JsonResponse(ser.data, safe=False)
+        formatted = post_formater(data,True)
+        return JsonResponse(formatted, safe=False)
 
     if(request.method == "POST"):
         post = get_object_or_404(Post,pk=post_id)
@@ -60,9 +65,14 @@ def post_operation(request,author_id,post_id):
 
 @api_view(["GET"])
 def get_post_likes(request, author_id, post_id):
-    likes = Like.objects.filter(author_id=author_id,post_id=post_id)
-    ser = LikeSerializer(likes,many=True)
-    return JsonResponse(ser.data, safe=False)
+    response = {}
+    response["type"] = "liked"
+    response["items"] = []
+    likes = Like.objects.filter(author_id=author_id,post_id=post_id,comment_id=None)
+    for i in range(0,len(likes)):
+        new_like = like_formatter(likes[i],True)
+        response["items"].append(new_like)
+    return JsonResponse(response, safe=False)
 
 
 @api_view(["GET", "POST"])
@@ -89,22 +99,43 @@ def general_comments(request, author_id, post_id):
         for k,v in json_data.items():
             setattr(new_comment, k, v)
         new_comment.save()
+        post.commentCount +=1
+        post.save()
         return HttpResponse(new_comment.comment_id)    
     return HttpResponse("TODO General comment return")
 
 
 @api_view(["GET"])
 def get_comment_likes(request, author_id, post_id, comment_id):
+    response = {}
+    response["type"] = "liked"
+    response["items"] = []
     likes = Like.objects.filter(author_id=author_id,post_id=post_id,comment_id=comment_id)
-    ser = LikeSerializer(likes,many=True)
-    return JsonResponse(ser.data, safe=False)
+    for i in range(0,len(likes)):
+        new_like = like_formatter(likes[i],True)
+        response["items"].append(new_like)
+    return JsonResponse(response, safe=False)
 
 
 #not sure if this path is even necessary
-@api_view(["GET","POST","PUT","DELETE"])
+@api_view(["GET","POST","DELETE"])
 def specific_comments(request, author_id, post_id, comment_id):
-    return HttpResponse("TODO specific comment operation")
+    if(request.method == "GET"):
+        data = get_object_or_404(Comment,pk=comment_id)
+        response = comment_formatter(data)
+        return JsonResponse(response, safe=False)
+    if(request.method == "POST"):
+        json_data = request.data
+        data = get_object_or_404(Comment,pk=comment_id)
+        for k,v in json_data.items():
+            setattr(data,k,v)
+        data.save()
+        return HttpResponse("comment updated")        
 
+    if(request.method == "DELETE"):
+        data = get_object_or_404(Comment,pk=comment_id)
+        data.delete()
+        return HttpResponse("comment deleted")
 
 #later need to tie this all in with inbox
 def notify_friends(author_id):
