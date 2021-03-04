@@ -3,11 +3,21 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponseBadRequest,HttpResponse
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
-from rest_framework import status
+
+# XXX: viewsets for later refactoring???
+from rest_framework import status, viewsets, permissions
+from rest_framework.exceptions import PermissionDenied
+
 from .author_serializer import AuthorSerializer, LikeSerializer, FriendshipSerializer
 from .models import Author, Post, Like, FriendShip
 from .formatters import like_formatter
 import json
+
+# Authentication, Registration 
+# https://medium.com/swlh/jwt-auth-with-djangorest-api-9fb32b99b33c
+class IsOwner(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        return obj.owner == request.user
 
 # this path is mostly for the sake of developing
 @api_view(["POST","GET"])

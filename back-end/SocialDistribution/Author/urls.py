@@ -1,6 +1,11 @@
 from django.urls import path
+from rest_framework.routers import SimpleRouter
 from .Views import post_views, inbox_views
 from . import views
+
+# router = SimpleRouter()
+# router.register('author', AuthorViewSet, basename="author")
+# urlpatterns = router.urls
 
 
 urlpatterns = [
