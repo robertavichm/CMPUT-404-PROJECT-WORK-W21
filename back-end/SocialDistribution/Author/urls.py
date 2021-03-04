@@ -1,9 +1,10 @@
 from django.urls import path
-from .Views import post_views, inbox_views
+from .Views import post_views,inbox_views
 from . import views
 
 
 urlpatterns = [
+    path("posts/",post_views.get_all),
     path("author/", views.open_path),
     path('author/<pk>/', views.author_operation),
     path('author/<author_id>/followers/', views.get_followers),
