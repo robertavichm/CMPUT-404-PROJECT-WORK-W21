@@ -34,3 +34,47 @@ class PostGetTest(TestCase):
     def test_get_post_unsuccessful(self):
         response = self.client.get(f'/author/{invalid_uuid}/posts/{invalid_uuid}/')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+"""
+Testing update with POST on /author/{author_ID}/posts/{post_ID}/
+"""
+class PostUpdateTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+        self.test_author_fields = get_author_fields()
+        self.test_author = Author.objects.create(**self.test_author_fields)
+
+        self.test_post_fields = get_post_fields()
+        self.test_post = Post.objects.create(**self.test_post_fields, author_id=self.test_author)
+
+        self.body = {
+            "visibility": "FRIENDS",
+            "unlisted": True
+        }
+
+    """ Test successful Post update and POST'ing on a Post by id """
+    def test_post_update_successful(self):
+        response = self.client.post(
+            f'/author/{self.test_author.id}/posts/{self.test_post.post_id}/',
+            data=json.dumps(self.body),
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # TODO: Think about change in serializer rather than needing post_formatter?
+        serializer = post_formater(Post.objects.get(post_id=self.test_post.post_id), True)
+        print(f"NANI= {serializer}")
+        print("\n")
+        print(f"WHAT={response.json()}")
+        self.assertEqual(response.json(), serializer)
+    
+    """ Test unsuccessful POST on non-existing /author/authorID/posts/{post_ID}/"""
+    def test_post_update_unsuccessful(self):
+        response = self.client.post(
+            f'/author/{invalid_uuid}/posts/{invalid_uuid}/',
+            data=json.dumps(self.body),
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
