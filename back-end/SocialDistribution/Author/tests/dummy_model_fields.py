@@ -2,10 +2,10 @@ import datetime
 
 def get_author_fields():
     return {
-        "displayName": "dummyName",
-        "host": "dummyUrl/dummyID",
+        "displayName": "Phil Dunphy",
+        "host": "dummyHostUrl",
         "url": "dummyUrl",
-        "github": "dummyGitHubUrl",
+        "github": "https://Github.com/phildunphy",
         "type": "Author",
     }
 
