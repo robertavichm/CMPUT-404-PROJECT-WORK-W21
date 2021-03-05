@@ -25,4 +25,8 @@ def get_post_fields():
         "visibility": "PUBLIC",
         "unlisted": False,
     }
-    
+
+def get_like_fields():
+    return {
+        "object_id": "link to post that was liked"
+    }

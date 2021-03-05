@@ -18,7 +18,14 @@ class AuthorModelsTestCase(TestCase):
         self.friendship = FriendShip.objects.create(author_primary=self.author, 
                                                     author_friend=self.author_friend,
                                                     accepted=True)
-        
+
+        self.test_like_fields = get_like_fields()
+        self.like = Like.objects.create(**self.test_like_fields,
+                                        author_id=self.author,
+                                        liker_id=self.author_friend,
+                                        comment_id=self.comment,
+                                        post_id=self.post)
+
     def test_create_author(self):
         self.assertTrue(self.author.id)
         self.assertEqual(self.author.displayName, self.test_author_fields["displayName"])
