@@ -64,10 +64,9 @@ class PostUpdateTest(TestCase):
 
         # TODO: Think about change in serializer rather than needing post_formatter?
         serializer = post_formater(Post.objects.get(post_id=self.test_post.post_id), True)
-        print(f"NANI= {serializer}")
-        print("\n")
-        print(f"WHAT={response.json()}")
-        self.assertEqual(response.json(), serializer)
+        
+        for key in self.body:
+            self.assertEqual(self.body[key], serializer[key])
     
     """ Test unsuccessful POST on non-existing /author/authorID/posts/{post_ID}/"""
     def test_post_update_unsuccessful(self):
