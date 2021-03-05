@@ -23,21 +23,30 @@ def general_post(request,author_id):
         for k,v in json_data.items():
             setattr(new_post, k, v)
         new_post.save()
+        formatted = post_formater(new_post,False)
         notify_friends(author_id)
-        return HttpResponse(str(new_post.post_id),status=status.HTTP_200_OK)
+        return JsonResponse(formatted)
     if request.method == "GET":
         response = {}
         response["type"] = "posts"
         response["items"] = []
-        posts = Post.objects.filter(author_id=author_id)
+        posts = Post.objects.filter(author_id=author_id, visibility="PUBLIC")
         for i in range(0,len(posts)):
             new_formatted = post_formater(posts[i],True)
             response["items"].append(new_formatted)
 
         return JsonResponse(response, safe=False)
         
-    
-
+@api_view(["GET"])
+def get_all(request):
+    response = {}
+    response["type"] = "posts"
+    response["items"] = []
+    posts = Post.objects.filter(visibility="PUBLIC")
+    for i in range(0, len(posts)):
+        formatted = post_formater(posts[i],True)
+        response["items"].append(formatted)
+    return JsonResponse(response, safe =False)
 
 @api_view(["GET","POST","PUT","DELETE"])
 def post_operation(request,author_id,post_id):
