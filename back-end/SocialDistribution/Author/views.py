@@ -43,8 +43,11 @@ def author_operation(request,pk):
     if(request.method == "POST"):
         json_data = request.data
         author = get_object_or_404(Author,pk=pk)
-        author(displayName=json_data["displayName"])
-        return HttpResponse(json_data["displayName"])
+
+        # XXX: Commented this out, unsure if useful?
+        # author(displayName=json_data["displayName"])
+        # return HttpResponse(json_data["displayName"])
+
         #useless
         for k, v in json_data.items():
             setattr(author, k, v)
