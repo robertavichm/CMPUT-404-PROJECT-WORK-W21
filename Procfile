@@ -1,1 +1,1 @@
-web: gunicorn cmput-404-group17.wsgi --log-file -
+web: gunicorn SocialDistribution.wsgi --log-file -
