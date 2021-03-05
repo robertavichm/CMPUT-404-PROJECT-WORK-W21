@@ -6,7 +6,7 @@ from Author.author_serializer import AuthorSerializer
 from Author.tests.dummy_model_fields import get_author_fields
 
 """
-Testing Creation of an Author 
+Testing Creation of an Author on /author/{authorID}
 """
 class AuthorCreationTest(TestCase):
     def setUp(self):
@@ -29,7 +29,7 @@ class AuthorCreationTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 """ 
-Testing Author Updates
+Testing Author Updates on /author/{authorID}
 """
 class AuthorUpdateTest(TestCase):
     def setUp(self):
