@@ -77,3 +77,47 @@ class PostUpdateTest(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+"""
+TODO - XXX
+Testing Post Creation with PUT on /author/{author_ID}/posts/{post_ID}/
+"""
+class PostPutTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+        self.test_author_fields = get_author_fields()
+        self.test_author = Author.objects.create(**self.test_author_fields)
+
+        self.test_post_fields = get_post_fields()
+        self.test_post = Post.objects.create(**self.test_post_fields, author_id=self.test_author)
+
+    """ Test successful Post update and POST'ing on a Post by id """
+    def test_post_put_successful(self):
+        pass
+    
+    """ Test unsuccessful POST on non-existing /author/authorID/posts/{post_ID}/"""
+    def test_post_put_unsuccessful(self):
+        pass
+
+"""
+Testing Post Deletion with DELETE on /author/{author_ID}/posts/{post_ID}/
+"""
+class PostDeleteTest(TestCase):
+    def setUp(self):
+        self.client = Client()
+
+        self.test_author_fields = get_author_fields()
+        self.test_author = Author.objects.create(**self.test_author_fields)
+
+        self.test_post_fields = get_post_fields()
+        self.test_post = Post.objects.create(**self.test_post_fields, author_id=self.test_author)
+
+    """ Test successful Post update and POST'ing on a Post by id """
+    def test_post_delete_successful(self):
+        response = self.client.delete(f'/author/{self.test_author.id}/posts/{self.test_post.post_id}/')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    
+    """ Test unsuccessful POST on non-existing /author/authorID/posts/{post_ID}/"""
+    def test_post_delete_unsuccessful(self):
+        response = self.client.delete(f'/author/{invalid_uuid}/posts/{invalid_uuid}/')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
