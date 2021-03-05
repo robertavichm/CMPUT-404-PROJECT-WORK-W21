@@ -58,13 +58,15 @@ def post_operation(request,author_id,post_id):
     if(request.method == "POST"):
         post = get_object_or_404(Post,pk=post_id)
         json_data = request.data
-
+        
         for k,v in json_data.items():
-            setattr(post,k,v)
+            setattr(post, k, v)
         post.save()
-        return HttpResponse("post altered")
+        return HttpResponse(status=status.HTTP_200_OK)
+
     if(request.method == "PUT"):
         pass
+
     if(request.method == "DELETE"):
         data = get_object_or_404(Post,pk=post_id)
         data.delete()
