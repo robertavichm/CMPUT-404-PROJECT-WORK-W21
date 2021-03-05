@@ -25,6 +25,7 @@ class AuthorModelsTestCase(TestCase):
                                                post_id=self.post, 
                                                author_id=self.author)
 
+        # Create and initialize like model
         self.test_like_fields = get_like_fields()
         self.like = Like.objects.create(**self.test_like_fields,
                                         author_id=self.author,
@@ -32,6 +33,12 @@ class AuthorModelsTestCase(TestCase):
                                         comment_id=self.comment,
                                         post_id=self.post)
 
+        # Create and initialize notification model
+        self.notification = Notification.objects.create(author_id=self.author,
+                                                        like_id=self.like,
+                                                        comment_id=self.comment,
+                                                        post_id=self.post,
+                                                        request_id=self.friendship)
         
     def test_create_author(self):
         self.assertTrue(self.author.id)
@@ -82,4 +89,9 @@ class AuthorModelsTestCase(TestCase):
         self.assertEqual(self.like.object_id, self.test_like_fields["object_id"])
 
     def test_create_notification(self):
-        pass
+        self.assertTrue(self.notification.notification_id)
+        self.assertTrue(self.notification.author_id)
+        self.assertTrue(self.notification.request_id)
+        self.assertTrue(self.notification.like_id)
+        self.assertTrue(self.notification.comment_id)
+        self.assertTrue(self.notification.post_id)
