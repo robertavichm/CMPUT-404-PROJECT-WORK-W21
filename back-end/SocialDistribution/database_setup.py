@@ -1,4 +1,4 @@
-NAME = "myproject"
+NAME = "myprojectuser"
 USER = 'postgres'
 PASSWORD = 'password'
 HOST = 'localhost'
