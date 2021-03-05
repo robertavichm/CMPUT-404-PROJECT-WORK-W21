@@ -1,0 +1,1 @@
+web: gunicorn cmput-404-group17.wsgi --log-file -
