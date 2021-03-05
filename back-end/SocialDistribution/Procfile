@@ -1,2 +1,0 @@
-release: python manage.py runserver 0.0.0.0:$PORT
-web: gunicorn SocialDistribution.wsgi:application --log-file -
