@@ -12,7 +12,6 @@ def get_author_fields():
 def get_post_fields():
     return {
         "title": "dummy title",
-        # "type": "post",
         "description": "hello dummy description",
         "source": "source from somewhere",
         "origin": "origial post location",
@@ -24,6 +23,12 @@ def get_post_fields():
         "pageSize": 10,
         "visibility": "PUBLIC",
         "unlisted": False,
+    }
+
+def get_comment_fields():
+    return {
+        "contentType": "text/plain",
+        "comment": "hello I am comment"
     }
 
 def get_like_fields():
