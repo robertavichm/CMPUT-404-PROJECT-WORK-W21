@@ -1,4 +1,4 @@
-NAME = "v3"
+NAME = "404project"
 USER = 'postgres'
 PASSWORD = 'password'
 HOST = 'localhost'

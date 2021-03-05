@@ -1,0 +1,372 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet"  href="{%  static  'assets/frame.css'  %}">
+    <link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" /><link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" />
+    <title>Home</title>
+    <style>
+        .content{
+            display:flex;
+            justify-content:center;
+        }
+        .content-aligner{
+            width:100%;
+            max-width:900px;
+        }
+        .friend-request-wrap{
+            max-height:250px;
+            width:100%;
+            margin-bottom:30px;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
+        }
+        .friends-wrap{
+            max-height:calc(100% - 350px);
+            width:100%;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
+        }
+        .open{
+            height:250px;
+        }
+        .open-f{
+            max-height:calc(100% - 350px);
+            overflow-y:auto;
+        }
+       
+        .friend-r-inner{
+            width:100%;
+            max-height:250px;
+            position:relative;
+            margin-top:50px;     
+        }
+        .f-head{
+            height:40px;
+            line-height:40px;
+            text-align:left;
+            position:sticky;
+            top:0;
+            background-color:white;
+            border-bottom:1px solid rgba(0,0,0,0.05);
+        }
+        .f-head p{
+            margin-top:0;
+            margin-left:20px;
+            float:left;
+            font-weight:800;
+            font-size:18px;
+            color:rgba(0,0,0,0.75)
+        }
+        .friend-r-body{
+            height:calc(100% - 60px);
+            width:100%;
+            overflow-y:auto;
+            display:none;
+           
+        }
+        .friends-w-body{
+            height:calc(100% - 60px);
+            width:100%;
+            overflow-y:auto;
+            display:none;
+        }
+
+        .arrow-down{
+            width:30px;
+            height:30px;
+            margin-top:5px;
+            float:left;
+            margin-left:5px;
+            display:flex;
+            cursor:pointer;
+            justify-content:center;
+            align-items:center;
+        }
+        table {
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        td{
+            padding:5px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        table {
+            width:calc(100% - 40px);
+            margin-left:20px;
+            border-collapse: collapse;
+        }
+        td:first-child{
+            padding-left:20px;
+        }
+        td:nth-child(2),td:nth-child(3){
+            width:100px;
+        }
+        .accept_btn{
+            width:80px;
+            height:35px;
+            margin-left:10px;
+            line-height:35px;
+            text-align:center;
+            color:white;
+            cursor:pointer;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
+            background-color:cornflowerblue;
+        }
+        .decline_btn{
+            width:80px;
+            height:35px;
+            margin-left:10px;
+            line-height:35px;
+            text-align:center;
+            color:white;
+            cursor:pointer;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
+            background-color:rgba(0,0,0,0.25);
+        }
+        .remove_btn{
+            width:80px;
+            height:35px;
+            margin-left:10px;
+            line-height:35px;
+            text-align:center;
+            color:white;
+            cursor:pointer;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
+            background-color:crimson;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <div class="logo">
+            <p>Social Distribution</p>
+        </div>
+        <div class="options">
+            <div class="profile">
+
+            </div>
+        </div>
+
+    </div>
+    <div class="main-body">
+        <div class="vertical-nav">
+            <div class="server-main">
+                <div class="menu-list-wrap">
+                    <div class="menu-list-profile"><p>John Doe</p></div>
+                    <div class="menu-list-cell">
+                        <div class="menu-l-img"><i class="material-icons" style="color:cadetblue">stream</i></div>
+                        <div class="menu-l-text"><p>Stream</p></div>
+                    </div>
+                    <div class="menu-list-cell">
+                        <div class="menu-l-img"><i class="material-icons" style="color:cornflowerblue">face</i></div>
+                        <div class="menu-l-text"><p>Profile</p></div>
+                    </div>
+                    <div class="menu-list-cell">
+                        <div class="menu-l-img"><i class="material-icons" style="color:coral">people</i></div>
+                        <div class="menu-l-text"><p>Friends</p></div>
+                    </div>
+                    
+                    
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <div class="content-aligner">
+                <div class="friend-request-wrap">
+                    <div class="friend-r-inner">
+                        <div class="f-head">
+                            <p>Friend requests</p>
+                            <div class="arrow-down" id="request-arrow">        
+                                <i class="material-icons" style="color:rgba(0,0,0,0.50)">arrow_downward</i>
+                            </div>
+                        </div>
+                        <div class="friend-r-body">
+                            <table id="friend-request-table">
+                                <tbody>
+                                    <tr>
+                                        <td>hey</td>
+                                        <td><div class="accept_btn">Accept</div></td>
+                                        <td><div class="decline_btn">Decline</div></td>
+                                    </tr>
+                                    <tr>
+                                        <td>hey</td>
+                                        <td><div class="accept_btn">Accept</div></td>
+                                        <td><div class="decline_btn">Decline</div></td>
+                                    </tr>
+                                    <tr>
+                                        <td>hey</td>
+                                        <td><div class="accept_btn">Accept</div></td>
+                                        <td><div class="decline_btn">Decline</div></td>
+                                    </tr>
+                                    <tr>
+                                        <td>hey</td>
+                                        <td><div class="accept_btn">Accept</div></td>
+                                        <td><div class="decline_btn">Decline</div></td>
+                                    </tr>
+                                    <tr>
+                                        <td>hey</td>
+                                        <td><div class="accept_btn">Accept</div></td>
+                                        <td><div class="decline_btn">Decline</div></td>
+                                    </tr>
+                                    <tr>
+                                        <td>hey</td>
+                                        <td><div class="accept_btn">Accept</div></td>
+                                        <td><div class="decline_btn">Decline</div></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="friends-wrap">
+                    
+                        <div class="f-head">
+                            <p>Friends</p>
+                            <div class="arrow-down" id="friends-arrow">         
+                                <i class="material-icons" style="color:rgba(0,0,0,0.50)">arrow_downward</i>
+                            </div>
+                        </div>
+                        <div class="friends-w-body">
+                            
+                                <table id="friends-table">
+                                    <tbody>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        
+                                        
+                                    </tbody>
+                                </table>
+    
+                            
+                        </div>
+                    
+                    
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script>
+        var toggle_f_r = 0;
+        $('#request-arrow').click(function() {
+            if(toggle_f_r == 0){
+                document.getElementsByClassName('friend-r-body')[0].style.display = "inline-block";
+                document.getElementsByClassName('friend-request-wrap')[0].classList.add("open");
+                document.getElementsByClassName('friend-r-inner')[0].classList.add("open");
+                toggle_f_r = 1;
+            }else{
+                document.getElementsByClassName('friend-r-body')[0].style.display = "none";
+                document.getElementsByClassName('friend-request-wrap')[0].classList.remove("open");
+                document.getElementsByClassName('friend-r-inner')[0].classList.remove("open");
+                toggle_f_r = 0;
+            }
+            
+        });
+        var toggle_f = 0;
+        $('#friends-arrow').click(function() {
+            if(toggle_f == 0){
+                document.getElementsByClassName('friends-w-body')[0].style.display = "inline-block";
+                document.getElementsByClassName('friends-wrap')[0].classList.add("open-f");
+                toggle_f = 1;
+            }else{
+                document.getElementsByClassName('friends-w-body')[0].style.display = "none";
+                document.getElementsByClassName('friends-wrap')[0].classList.remove("open-f");
+                toggle_f = 0;
+            }
+            
+        });
+
+        $('#friends-table').on('click',".remove_btn",function(){  
+            var currrentRow = $(this).closest('tr');
+            currrentRow.remove();
+            var isTableEmpty = document.getElementById("friends-table").rows.length;
+            if (isTableEmpty == 0){
+                document.getElementsByClassName('friends-w-body')[0].style.display = "none";
+                document.getElementsByClassName('friends-wrap')[0].classList.remove("open-f");
+            }
+        });
+  
+       
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
