@@ -6,170 +6,43 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet"  href="{%  static  'assets/frame.css'  %}">
+    <link rel="stylesheet"  href="{%  static  'css/frame.css'  %}">
+    <link rel="stylesheet"  href="{%  static  'css/friends.css'  %}">
     <link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" /><link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" />
-    <title>Home</title>
-    <style>
-        .content{
-            display:flex;
-            justify-content:center;
-        }
-        .content-aligner{
-            width:100%;
-            max-width:900px;
-        }
-        .friend-request-wrap{
-            max-height:250px;
-            width:100%;
-            margin-bottom:30px;
-            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
-        }
-        .friends-wrap{
-            max-height:calc(100% - 350px);
-            width:100%;
-            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
-        }
-        .open{
-            height:250px;
-        }
-        .open-f{
-            max-height:calc(100% - 350px);
-            overflow-y:auto;
-        }
-       
-        .friend-r-inner{
-            width:100%;
-            max-height:250px;
-            position:relative;
-            margin-top:50px;     
-        }
-        .f-head{
-            height:40px;
-            line-height:40px;
-            text-align:left;
-            position:sticky;
-            top:0;
-            background-color:white;
-            border-bottom:1px solid rgba(0,0,0,0.05);
-        }
-        .f-head p{
-            margin-top:0;
-            margin-left:20px;
-            float:left;
-            font-weight:800;
-            font-size:18px;
-            color:rgba(0,0,0,0.75)
-        }
-        .friend-r-body{
-            height:calc(100% - 60px);
-            width:100%;
-            overflow-y:auto;
-            display:none;
-           
-        }
-        .friends-w-body{
-            height:calc(100% - 60px);
-            width:100%;
-            overflow-y:auto;
-            display:none;
-        }
+    <title>Friends</title>
 
-        .arrow-down{
-            width:30px;
-            height:30px;
-            margin-top:5px;
-            float:left;
-            margin-left:5px;
-            display:flex;
-            cursor:pointer;
-            justify-content:center;
-            align-items:center;
-        }
-        table {
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-        td{
-            padding:5px;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
-        table {
-            width:calc(100% - 40px);
-            margin-left:20px;
-            border-collapse: collapse;
-        }
-        td:first-child{
-            padding-left:20px;
-        }
-        td:nth-child(2),td:nth-child(3){
-            width:100px;
-        }
-        .accept_btn{
-            width:80px;
-            height:35px;
-            margin-left:10px;
-            line-height:35px;
-            text-align:center;
-            color:white;
-            cursor:pointer;
-            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
-            background-color:cornflowerblue;
-        }
-        .decline_btn{
-            width:80px;
-            height:35px;
-            margin-left:10px;
-            line-height:35px;
-            text-align:center;
-            color:white;
-            cursor:pointer;
-            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
-            background-color:rgba(0,0,0,0.25);
-        }
-        .remove_btn{
-            width:80px;
-            height:35px;
-            margin-left:10px;
-            line-height:35px;
-            text-align:center;
-            color:white;
-            cursor:pointer;
-            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
-            background-color:crimson;
-        }
-
-    </style>
 </head>
 <body>
+  <div class="nav-w">
     <div class="nav-bar">
-        <div class="logo">
-            <p>Social Distribution</p>
-        </div>
-        <div class="options">
-            <div class="profile">
-
-            </div>
-        </div>
-
+      <div class="logo">
+        <p>Social Distribution</p>
+      </div>
+      <div class="options">
+        <div class="profile"></div>
+        <div class="username"><p></p></div>
+      </div>
     </div>
+  </div>
     <div class="main-body">
         <div class="vertical-nav">
             <div class="server-main">
                 <div class="menu-list-wrap">
-                    <div class="menu-list-profile"><p>John Doe</p></div>
-                    <div class="menu-list-cell">
-                        <div class="menu-l-img"><i class="material-icons" style="color:cadetblue">stream</i></div>
-                        <div class="menu-l-text"><p>Stream</p></div>
-                    </div>
-                    <div class="menu-list-cell">
-                        <div class="menu-l-img"><i class="material-icons" style="color:cornflowerblue">face</i></div>
-                        <div class="menu-l-text"><p>Profile</p></div>
-                    </div>
-                    <div class="menu-list-cell">
-                        <div class="menu-l-img"><i class="material-icons" style="color:coral">people</i></div>
-                        <div class="menu-l-text"><p>Friends</p></div>
-                    </div>
-                    
-                    
+                  <div class="menu-list-profile"><p>John Doe</p></div>
+                  <div class="menu-list-cell">
+                      <div class="menu-l-img"><i class="material-icons" style="color:cadetblue"><a href="#"></a>stream</i></div>
+                      <div class="menu-l-text"><p><a href="{% url 'home' %}" style="text-decoration:none;color:black">Stream</a></p></div>
+                  </div>
+                  <div class="menu-list-cell">
+                      <div class="menu-l-img"><i class="material-icons" style="color:cornflowerblue">face</i></div>
+                      <div class="menu-l-text"><p><a href="{% url 'profile' %}" style="text-decoration:none;color:black">Profile</a></p></div>
+                  </div>
+                  <div class="menu-list-cell">
+                      <div class="menu-l-img"><i class="material-icons" style="color:coral">people</i></div>
+                      <div class="menu-l-text"><p><a href="{% url 'friends' %}" style="text-decoration:none;color:black">Friends</a></p></div>
+                  </div>
+
+
                 </div>
             </div>
         </div>
@@ -179,13 +52,13 @@
                     <div class="friend-r-inner">
                         <div class="f-head">
                             <p>Friend requests</p>
-                            <div class="arrow-down" id="request-arrow">        
+                            <div class="arrow-down" id="request-arrow">
                                 <i class="material-icons" style="color:rgba(0,0,0,0.50)">arrow_downward</i>
                             </div>
                         </div>
                         <div class="friend-r-body">
                             <table id="friend-request-table">
-                                <tbody>
+                                <tbody class="f-req-body">
                                     <tr>
                                         <td>hey</td>
                                         <td><div class="accept_btn">Accept</div></td>
@@ -222,15 +95,15 @@
                     </div>
                 </div>
                 <div class="friends-wrap">
-                    
+
                         <div class="f-head">
                             <p>Friends</p>
-                            <div class="arrow-down" id="friends-arrow">         
+                            <div class="arrow-down" id="friends-arrow">
                                 <i class="material-icons" style="color:rgba(0,0,0,0.50)">arrow_downward</i>
                             </div>
                         </div>
                         <div class="friends-w-body">
-                            
+
                                 <table id="friends-table">
                                     <tbody>
                                         <tr>
@@ -257,62 +130,53 @@
                                             <td>hey</td>
                                             <td><div class="remove_btn">Remove</div></td>
                                         </tr>
-                                        <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        
-                                        
                                     </tbody>
                                 </table>
-    
-                            
                         </div>
-                    
-                    
+                </div>
+
+                <div class="friends-wrap">
+
+                        <div class="f-head">
+                            <p>Followers</p>
+                            <div class="arrow-down  foll-w" id="friends-arrow">
+                                <i class="material-icons" style="color:rgba(0,0,0,0.50)">arrow_downward</i>
+                            </div>
+                        </div>
+                        <div class="friends-w-body">
+
+                                <table id="friends-table">
+                                    <tbody class="followers-body">
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                        <tr>
+                                            <td>hey</td>
+                                            <td><div class="remove_btn">Remove</div></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                        </div>
                 </div>
             </div>
-            
+
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
@@ -330,7 +194,7 @@
                 document.getElementsByClassName('friend-r-inner')[0].classList.remove("open");
                 toggle_f_r = 0;
             }
-            
+
         });
         var toggle_f = 0;
         $('#friends-arrow').click(function() {
@@ -343,30 +207,109 @@
                 document.getElementsByClassName('friends-wrap')[0].classList.remove("open-f");
                 toggle_f = 0;
             }
-            
         });
 
-        $('#friends-table').on('click',".remove_btn",function(){  
-            var currrentRow = $(this).closest('tr');
-            currrentRow.remove();
-            var isTableEmpty = document.getElementById("friends-table").rows.length;
-            if (isTableEmpty == 0){
-                document.getElementsByClassName('friends-w-body')[0].style.display = "none";
-                document.getElementsByClassName('friends-wrap')[0].classList.remove("open-f");
+        var toggle_ff = 0;
+        $('.foll-w').click(function() {
+            if(toggle_ff == 0){
+                document.getElementsByClassName('friends-w-body')[1].style.display = "inline-block";
+                document.getElementsByClassName('friends-wrap')[1].classList.add("open-f");
+                toggle_ff = 1;
+            }else{
+                document.getElementsByClassName('friends-w-body')[1].style.display = "none";
+                document.getElementsByClassName('friends-wrap')[1].classList.remove("open-f");
+                toggle_ff = 0;
             }
         });
-  
-       
+
+        // $('#friends-table').on('click',".remove_btn",function(){
+        //     var currrentRow = $(this).closest('tr');
+        //     currrentRow.remove();
+        //     var isTableEmpty = document.getElementById("friends-table").rows.length;
+        //     if (isTableEmpty == 0){
+        //         document.getElementsByClassName('friends-w-body')[0].style.display = "none";
+        //         document.getElementsByClassName('friends-wrap')[0].classList.remove("open-f");
+        //     }
+        // });
+
+        // GET Friend requests
+        $.ajax({
+          type: 'GET',
+          url: 'http://localhost:8000/author/'+ localStorage.getItem('uuid') +'/inbox/', // TODO: should point to current user
+          dataType: 'json',
+        })
+          .done(function(data){
+            const fr_req = []; // IDs and dname of requesters
+
+            for(el in data['items']){
+              if(data['items'].type == "Follow"){
+                var d = {
+                  'id': data['items'][el].id,
+                  'displayName': data['items'][el].displayName,
+                }
+                fr_re.push(d);
+              }
+            }
+
+            formatAndAppendFriendRequests(fr_req);
+
+            console.log('done');
+
+          });
+
+          function formatAndAppendFriendRequests(fr_req){
+            console.log(fr_req);
+
+            for(fr in fr_req){
+              $('.f-req-body').append(`
+                <tr>
+                    <td>${fr.displayName}</td>
+                    <td><div class="accept_btn">Accept</div></td>
+                    <td><div class="decline_btn">Decline</div></td>
+                </tr>
+                `);
+            }
+          }
+
+          // GET Followers
+          $.ajax({
+            type: 'GET',
+            url: 'http://localhost:8000/author/'+ localStorage.getItem('uuid') +'/followers/', // TODO: should point to current user
+            dataType: 'json',
+          })
+            .done(function(data){
+              const followers = []; // IDs and dname of followers
+
+              for(el in data['items']){
+                var d = {
+                  'id': data['items'][el].id,
+                  'displayName': data['items'][el].displayName,
+                }
+                  followers.push(d);
+              }
+            }
+
+            formatAndAppendFollowers(followers);
+
+            console.log('done');
+
+          });
+
+            function formatAndAppendFollowers(followers){
+              console.log(followers);
+
+              for(f in followers){
+                $('.followers-body').append(`
+                  <tr>
+                      <td>${f.displayName}</td>
+                  </tr>
+                  `);
+              }
+            }
+
+
+
+
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-

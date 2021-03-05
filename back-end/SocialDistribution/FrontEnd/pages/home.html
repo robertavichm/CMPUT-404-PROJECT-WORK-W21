@@ -6,926 +6,43 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-   
-   
+    <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
     <link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" /><link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" />
     <title>Home</title>
-    <style>
-        body,html{
-            width:100%;
-            height:100%;
-            margin:0;
-            font-family: Arial, Helvetica, sans-serif;
-        }
-        
-        .nav-bar{
-            height:49px;
-            width:100%;
-            border-bottom:1px solid rgba(0, 0, 0, 0.10);
-        }
-        .logo{
-            float:left;
-            width:150px;
-            height:100%;
-            line-height:50px;
-            margin-left:20px;
-        }
-        .logo p{
-            margin:0;
-            font-weight:800;
-        }
-        .options{
-            float:right;
-            width:160px;
-            height:100%;
-        }
-        .profile{
-            width:40px;
-            height:40px;
-            margin-top:5px;
-            margin-right:5px;
-            float:right;
-            border-radius:20px;
-            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
-            background-color: aqua;
-        }
-        .create-post{
-            width:100px;
-            height:40px;
-            margin-top:5px;
-            margin-right:5px;
-            float:left;
-            text-align:center;
-            line-height:40px;
-            cursor:pointer;
-            border-radius:5px;
-            background-color: aqua;
-        }
-        .main-body{
-            height:calc(100% - 50px);
-            width:100%;
-            background-color:white;
-        }
-        .vertical-nav{
-            height:100%;
-            width:300px;
-            float:left;
-            background-color:coral;
-        }
-        .server-main{
-            width:calc(100%);
-            height:100%;
-            float:right;
-            background-color:#f4f5f9;
-        }
-        
-        .content{
-            height:calc(100% - 5px);
-            width:calc(100% - 300px);
-            float:right;
-        }
-        .menu-list-wrap{
-            width:calc(100% - 20px);
-            margin-left:10px;
-            margin-top:20px;
-            background-color:white;
-            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
-        }
-        .menu-list-profile{
-            height:40px;
-            width:100%;
-            line-height:40px;
-            font-size:18px;
-            font-weight:600;
-            background-color:rgba(0, 0, 0, 0.05);
-        }
-        .menu-list-profile p{
-            margin:0;
-            margin-left:20px;
-            color:rgba(0,0,0,0.75);
-        }
-        .menu-list-cell{
-            height:40px;
-            width:100%;
-            border-bottom:1px solid rgba(0, 0, 0, 0.05);
-        }
-        .menu-list-cell:hover{
-            cursor:pointer;
-            background-color:rgba(0, 0, 0, 0.02);
-        }
-        .menu-list-cell:last-child{
-            border-bottom:none;
-        }
-        .menu-l-img{
-            margin-left:10px;
-            width:40px;
-            height:100%;
-            float:left;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-        }
-        .menu-l-text{
-            width:calc(100% - 60px);
-            height:100%;
-            float:right;
-            line-height:40px;
-            text-align:left;
-        }
-        .menu-l-text p{
-           margin:0;
-           color:rgba(0,0,0,0.45);
-        }
-        .content-head{
-            width:100%;
-
-        }
-        .post-holder{
-            width:100%;
-            height:40px;
-            margin-top:20px;
-            text-align:center;
-        }
-        .post-wrap{
-            width:100%;
-            max-width:800px;
-            height:40px;
-            
-            display:inline-block;
-        }
-        .post-wrap input{
-            width:100%;
-            height:100%;
-            border-radius:25px;
-            outline:none;
-            padding-left:20px;
-            font-size:16px;
-            
-            border:1px solid rgba(0, 0, 0, 0.15);
-            box-sizing:border-box;
-            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
-        }
-
-        .img-overall{
-            width:100%;
-            height:40px;
-            position:absolute;
-            bottom:0;
-            text-align:center;
-        }
-        .img-holder{
-            width:100%;
-            max-width:800px;
-            height:40px;
-            border-top:1px solid rgba(0, 0, 0, 0.05);
-            display:inline-block;
-        }
-        .img-logo-wrap{
-            width:40px;
-            height:100%;
-            float:left;
-            display:flex;
-            cursor:pointer;
-            justify-content:center;
-            align-items:center;
-        }
-        .post-text{
-            margin:0;
-            line-height:40px;
-            float:left;
-        }
-
-        .ch-img{
-            width:20px;
-            height:100%;
-            float:right;
-            display:flex;
-            justify-content:center;
-            align-items:center;
-        }
-        .ch-text{
-            height:100%;
-            float:left;
-            line-height:40px;
-        }
-        .ch-text p{
-            margin:0;
-        }
-        .post-feed-w{
-            width:100%;
-            height:calc(100% - 80px);
-            display: flex;
-            margin-top:25px;
-            justify-content: center;
-        }
-        .post-feed{
-            width:100%;
-            max-width:800px;
-            height:100%;
-            overflow-y:auto;
-        }
-        .post-format{
-            width:100%;
-            max-width:800px;
-            height:300px;
-            position:absolute;
-            margin-top:-40px;
-            background-color:white;
-            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
-            display:none;
-        }
-        .p-f-h{
-            height:50px;
-            width:100%;
-            background-color:#F4F5F9;
-        }
-        .close{
-            width:50px;
-            height:100%;
-            float:right;
-            display:flex;
-            justify-content: center;
-            align-items: center;
-            cursor:pointer;
-            background-color: rgba(0, 0, 0, 0.10);
-        }
-        .tab-control{
-            float:left;
-            width:150px;
-            height:40px;
-            line-height:40px;
-            margin-top:10px;
-            margin-left:20px;
-        }
-        .tab-control p{
-            margin:0;
-        }
-        .post-raw{
-            width:50%;
-            height:100%;
-            float:left;
-            color:rgba(0, 0, 0, 0.45);
-            cursor:pointer;
-            background-color:white;
-        }
-        .post-preview{
-            width:50%;
-            height:100%;
-            float:right;
-            cursor:pointer;
-            
-            color:cornflowerblue;
-        }
-        .post-body{
-            width:100%;
-            height:calc(100% - 50px);
-            text-align:left;
-            word-break:break-all;
-            display:inline-block;
-        }
-        .initial-body{
-            width:100%;
-            height:100%;
-            background-color:white;
-        }
-        .preview-body{
-            width:calc(100% - 40px);
-            margin-left:20px;
-            height:100%;
-            display:none;
-            overflow-y:auto;
-        }
-        .preview-body h1{
-            margin-top:5px;
-            color:red;
-        }
-        .create-post{
-            width:80px;
-            height:30px;
-            float:right;
-            line-height:30px;
-            margin-left:20px;
-            border-radius:5px;
-            color:white;
-            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
-            background-color:cornflowerblue;
-        }
-        .create-post p{
-            margin:0;
-        }
-        .p-content-area{
-            width:100%;
-            height:calc(100% - 40px);
-            background-color:white;
-        }
-        .p-content-desc{
-            height:40px;
-            width:100%;
-            float:left;
-            /*background-color:violet;*/
-        }
-        .p-content-title{
-            height:40px;
-            width:100%;
-            float:left;
-        /* background-color:gold;*/
-        }
-        .post-b-text{
-            width:calc(100% - 200px);
-            float:left;
-            height:100%;
-        }
-        .p-content-title input,.post-b-text input{
-            width:calc(100% - 20px);
-            margin-left:20px;
-            height:30px;
-            border-radius:0;
-            margin-top:5px;
-            box-shadow:none;
-            border:1px solid rgba(0,0,0,0.05);
-            box-sizing:border-box;
-        }
-        .post-img-wrap{
-            width:calc(200px);
-            float:right;
-            height:100%;    
-        }
-        .post-img-h{
-            width:180px;
-            height:180px;
-            background-color:white;
-            border-radius:5px;
-            display:flex;
-            justify-content:center;
-            align-items: center;
-        }
-        .post-img-h img{
-            max-width:140px;
-            max-height:140px;
-        }
-        .post-b-text textarea{
-            width:calc(100% - 20px);
-            margin-left:20px;
-            height:100%;
-            resize:none;
-            font-size:16px;
-            padding:20px;
-            padding-top:10px;
-            outline:none;
-            line-height:1.2;
-            border:none;
-            height:calc(100% - 100px);
-            background-color:#F4F5F9;
-            /*border-right:1px solid rgba(0, 0, 0, 0.05);*/
-            box-sizing: border-box;
-        }
-
-        .post-images{
-            width:100px;
-            height:40px;
-            float:left;
-            cursor:pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        #img-input {
-            font-size: 100px;
-            border-radius:0;
-            position: absolute;
-            left: 0;
-            top: 0;
-            opacity: 0;
-            cursor:pointer;
-        }
-        .p-close-img{
-            width:30px;
-            height:30px;
-            border-radius:15px;
-            float:right;
-            position:absolute;
-            margin-top:10px;
-            margin-left:0px;
-            display:flex;
-            justify-content:center;
-            align-items: center;
-            display:none;
-            background-color:rgba(0, 0, 0, 0.15);
-        }
-        .p-align-img{
-            height:calc(100% - 20px);
-            display:flex;
-            justify-content:center;
-            align-items: center;
-        }
-        .p-close-wrap{
-            width:180px;
-            margin-left:10px;
-            height:10px; 
-        }
-        .p-close-img:hover{
-            cursor:pointer;
-            background-color:red;
-            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
-        }
-        .posted-wrap{
-            width:calc(100% - 10px);
-            margin-left:5px;
-            margin-bottom:30px;
-            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
-            background-color:white;
-        }
-        .posted-w-h{
-            height:50px;
-            width:100%;
-            background-color:#F4F5F9;
-        }
-        .p-w-h-details{
-            width:calc(100% - 120px);
-            height:100%;
-            float:left;
-        }
-        .p-profile-wrap{
-            width:50px;
-            height:100%;
-            display:flex;
-            justify-content: center;
-            align-items: center;
-            float:left;
-        }
-        .p-profile{
-            width:40px;
-            height:40px;
-            border-radius:20px;
-            background-color: khaki;
-        }
-        .p-user-wrap{
-            float:left;
-            line-height:50px;
-            height:100%;
-        }
-        .p-user-wrap p{
-            margin-top:0;
-            margin-left:10px;
-            font-weight:600;
-            color:#353a85;
-        }
-        .del-post,.edit-post{
-            width:50px;
-            height:50px;
-            float:right;
-            display:flex;
-            margin-left:2px;
-            justify-content: center;
-            align-items: center;
-            background-color:rgba(0, 0, 0, 0.05);
-        }
-
-        .del-post:hover,.edit-post:hover{
-            cursor:pointer;
-            background-color:rgba(0, 0, 0, 0.10);
-        }
-        .post-text{
-            width:100%;
-            display:flex;
-            justify-content:left;
-            align-items: center;
-            word-break:break-all;
-        }
-        .post-text p{
-            margin:0;
-            margin-left:10px;
-            line-height:1.5;
-            color:rgba(0, 0, 0, 0.75);
-        }
-        .posted-img-wrap{
-            width:100%;
-            height:180px;
-            display:flex;
-            padding-top:10px;
-            padding-bottom:10px;
-            justify-content:center;
-            align-items: center;
-        }
-        .posted-img-wrap img{
-            max-width:100%;
-            max-height:180px;
-        }
-        .social-controls{
-            height:50px;
-            width:100%;
-            text-align:center;
-            border-top:1px solid rgba(0, 0, 0, 0.05);
-            display:inline-block;
-        }
-        .like-w{
-            float:left;
-            width:80px;
-            height:100%;
-            padding-right:15px;
-            margin-left:10px;
-            cursor:pointer;
-        }
-
-        .comment-w{
-            display:inline-block;
-            width:120px;
-            padding-right:15px;
-            height:100%;
-            cursor:pointer;
-        }
-        .share-w{
-            float:right;
-            width:100px;
-            padding-right:15px;
-            height:100%;
-            margin-right:10px;
-            cursor:pointer;
-        }
-        .s-c-img{
-            width:50px;
-            height:100%;
-            float:left;
-            display:flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .like-count-w{
-            width:100%;
-            height:30px;
-            line-height:30px;
-        }
-        .like-count-w p{
-            margin:0;
-            font-size:18px;
-            margin-left:20px;
-        }
-        .o-comments{
-            width:100%;
-            margin-top:20px;
-            display:inline-block;
-            display:none;
-        }
-        .oc-profile{
-            width:40px;
-            height:40px;
-            border-radius:20px;
-            margin-left:20px;
-            float:left;
-            background-color:dodgerblue;
-        }
-        .o-type-comment{
-            width:calc(100% - 90px);
-            height:40px;
-            float:right;
-            margin-right:20px;
-            border-radius:25px;
-        }
-        .o-type-comment input{
-            outline:none;
-            width:100%;
-            height:100%;
-            padding-left:20px;
-            border-radius:25px;
-            border:1px solid rgba(0, 0, 0, 0.05);
-            box-sizing:border-box;
-        }
-        .o-c-cell{
-            width:100%;
-            display:block;
-            background-color:blue;
-        }
-        .o-c-cell p{
-            color:rgba(0, 0, 0, 0.75);
-        }
-        .o-r-cell{
-            width:100%; 
-            display:inline-block;
-            margin-top:10px;   
-            padding-bottom:15px;
-            margin-bottom:10px;
-            background-color:#F4F5F9; 
-            
-        }
-        .c-p-wrap{
-            height:20px;
-            width:100%;
-            margin-top:-5px;
-            line-height:20px;
-            text-align:left;
-        }
-        .o-r-details{
-            width:calc(100% - 40px);
-            margin-left:20px; 
-            
-        }
-
-        .c-p-wrap span{
-            color:#353a85;
-
-        }
-        
-        .check-visibility,.check-listed{
-            float:right;
-            width:80px;
-            height:100%;
-        }
-        .check-listed{
-            width:130px;
-            margin-right:20px;
-        }
-        .vis-dropdown,.checklist-dropdown{
-            width:200px;
-            height:120px;
-            margin-left:-120px;
-            display:none;
-            position:absolute;
-            background-color:white;
-            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
-        
-        }
-        .checklist-dropdown{
-            margin-left:-70px;
-            height:80px;
-        }
-        .vis-cell{
-            width:100%;
-            height:39px;
-            border-bottom:1px solid rgba(0,0,0,0.25);
-        }
-        .vis-cell input{
-            width:calc(100% - 10px);
-            margin-top:5px;
-            box-sizing:border-box;
-            height:30px;
-            padding-left:10px;
-            font-size:14px;
-            border:1px solid rgba(0,0,0,0.25);
-        }
-        .vis-l{
-            float:left;
-            width:50px;
-            height:100%;
-            display:flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .vis-r{
-            float:right;
-            height:100%;
-            width:calc(100% - 50px);
-            line-height:40px;
-        }
-        .vis-r p{
-            margin:0;
-            text-align:left;
-            font-size:16px;
-            margin-left:5px;
-        }
-        .vis-check{
-            width:20px;
-            height:20px;
-            cursor:pointer;
-            border:1px solid rgba(0,0,0,0.15);
-        }
-        .checked{
-            width:100%;
-            height:100%;
-            display:flex;
-            justify-content:center;
-            align-items: center;
-            display:none;
-            background-color:#F4F5F9;
-        }
-        .vis-authors{
-            background-color:white;
-            width:200px;
-            height:400px;
-            z-index:99;
-            display:none;
-            position:relative;
-            margin-top:-35px;
-
-        }
-        .vis-a-head{
-            height:39px;
-            width:100%;
-            line-height:40px;
-            border-bottom:1px solid rgba(0,0,0,0.25);
-        }
-        .vis-a-head p{
-            margin:0;
-            font-weight:700;
-            color:rgba(0,0,0,0.45);
-        }
-        .vis-a-body{
-            height:calc(100% - 40px);
-            width:100%;
-            background-color:orange;
-            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
-        }
-
-        .post-type-wrap{
-            width:120px;
-            height:100%;
-            background:gold;
-            line-height:40px;
-            text-align:center;
-            float:right;
-            position:absolute;
-            margin-left:100px;
-            border-right:1px solid rgba(0, 0, 0, 0.15);
-            margin-right:10px;
-        }
-        .post_type{
-            width:200px;
-            height:165px;
-            background:white;
-            margin-left:-80px;
-            margin-top:-40px;
-            display:none;
-            position:absolute;
-            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
-        }
-        .post_type p,.post-type-wrap p{
-            margin:0;
-            position:relative;
-            height:100%;
-            width:100%;
-            color:rgba(0,0,0,0.45);
-            background-color: antiquewhite;
-        }
-        .post-type-cell{
-            width:100%;
-            height:40px;
-            cursor: pointer;
-            background-color:white;
-            border-bottom:1px solid rgba(0,0,0,0.25);
-        }
-        .post-t-c-left{
-            width:40px;
-            height:40px;
-            float:left;
-            display:flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .post-t-c-right{
-            width:calc(100% - 40px);
-            height:40px;
-            float:right;
-            background-color:aqua;
-        }
-        .post-type-cell:last-child{
-            width:100%;
-            height:40px;
-            border-bottom:none;
-        }
-        .p-t-dot{
-            width:18px;
-            height:18px;
-            border:1px solid rgba(0, 0, 0, 0.15);
-            background-color:cornflowerblue;
-            border-radius:10px;
-            display:none;
-        }
-
-        .p-title-wrap p{
-            margin:0;
-            font-size:24px;
-            font-weight:700;
-            margin-left:10px;
-            padding-top:10px;
-            padding-bottom:10px;
-        }
-
-        .like-count-w p{
-            float:left;
-            font-size:14px;
-            color:rgba(0, 0, 0, 0.45);
-        }
-        .like-count-w p:hover{
-            text-decoration:underline;
-        }
-        .tab-switch{
-            height:40px;
-            position:sticky;
-            top:0;
-            background-color: white;
-            border-bottom:1px solid rgba(0, 0, 0, 0.05);
-        }
-        .tab-switch p{
-            margin:0;
-        }
-        .tab-public{
-            float:left;
-            height:35px;
-            width:100px;
-            margin-left:5px;
-            margin-right:5px;
-            cursor:pointer; 
-        }
-        .tab-inbox{
-            float:left;
-            height:35px;
-            width:90px;
-            cursor:pointer;
-        }
-        .current-tab{
-            background-color:darksalmon;
-            color:white;
-            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
-        }
-        .tab-icon{
-            width:35px;
-            height:35px;
-            float:left;
-            display:flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .tab-text{
-            width:calc(100% - 35px);
-            height:35px;
-            float:right;
-            display:flex;
-            align-items: center;
-            text-align: left;
-        }
-        .follow-user{
-            float: left;
-            margin-left:10px;
-            color:#353a85;
-            font-weight:800;
-            cursor:pointer;
-            text-decoration: underline;   
-        }
-        .follow-user:hover{
-            color:coral;   
-        }
-        #hideFollow{
-            display:none;
-        }
-        #showFollow{
-            
-        }
-            
-        .noposts{
-            width:100%;
-            height:300px;
-            margin-top:30px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        .noposts img{
-            max-width:180px;
-            max-height:180px;
-        }
-        .unhideDel,.unhideEdit{
-            
-        }
-        .hideDel,.hideEdit{
-            display:none;
-        }
-    </style>
 </head>
 <body>
     <body>
+      <div class="nav-w">
         <div class="nav-bar">
-            <div class="logo">
-                <p>Social Distribution</p>
-            </div>
-            <div class="options">
-                <!-- <div class="create-post">
-                    Create Post
-                </div> -->
-                <div class="profile">
-    
-                </div>
-            </div>
-    
+          <div class="logo">
+            <p>Social Distribution</p>
+          </div>
+          <div class="options">
+            <div class="profile"></div>
+            <div class="username"><p></p></div>
+          </div>
         </div>
+      </div>
+
         <div class="main-body">
             <div class="vertical-nav">
                 <div class="server-main">
                     <div class="menu-list-wrap">
                         <div class="menu-list-profile"><p>John Doe</p></div>
                         <div class="menu-list-cell">
-                            <div class="menu-l-img"><i class="material-icons" style="color:cadetblue">stream</i></div>
-                            <div class="menu-l-text"><p>Stream</p></div>
+                            <div class="menu-l-img"><i class="material-icons" style="color:cadetblue"><a href="#"></a>stream</i></div>
+                            <div class="menu-l-text"><p><a href="{% url 'home' %}" style="text-decoration:none;color:black">Stream</a></p></div>
                         </div>
                         <div class="menu-list-cell">
                             <div class="menu-l-img"><i class="material-icons" style="color:cornflowerblue">face</i></div>
-                            <div class="menu-l-text"><p>Profile</p></div>
+                            <div class="menu-l-text"><p><a href="{% url 'profile' %}" style="text-decoration:none;color:black">Profile</a></p></div>
                         </div>
                         <div class="menu-list-cell">
                             <div class="menu-l-img"><i class="material-icons" style="color:coral">people</i></div>
-                            <div class="menu-l-text"><p>Friends</p></div>
+                            <div class="menu-l-text"><p><a href="{% url 'friends' %}" style="text-decoration:none;color:black">Friends</a></p></div>
                         </div>
-                        
-                        
+
+
                     </div>
                 </div>
             </div>
@@ -961,7 +78,7 @@
                                                 <textarea id="p-r-text-input" cols="30" rows="10" placeholder="Start a conversation ..."></textarea>
                                             </div>
                                             <div class="post-img-wrap">
-                                                
+
                                                 <div class="p-close-wrap">
                                                     <div class="p-close-img">
                                                         <i class="material-icons" style="color:white">close</i>
@@ -974,10 +91,10 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="img-overall">
                                             <div class="img-holder">
-                                               
+
                                                 <div class="post-images">
                                                     <input type="file" id="img-input"/>
                                                     <div class="img-logo-wrap">
@@ -985,7 +102,7 @@
                                                     </div>
                                                     <p class="img-logo-text" style="margin:0;margin-top:12.5px;float:left">Photo</p>
                                                 </div>
-                                                
+
                                                 <div class="create-post">
                                                     <p>Share</p>
                                                 </div>
@@ -1004,7 +121,7 @@
                                                                     <p>Choose authors</p>
                                                                 </div>
                                                                 <div class="vis-a-body">
-                                                                    
+
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1028,7 +145,7 @@
                                                             </div>
                                                             <div class="vis-r"><p>friends</p></div>
                                                         </div>
-                                                        
+
                                                     </div>
                                                 </div>
                                                 <div class="check-listed">
@@ -1041,7 +158,7 @@
                                                             </div>
                                                         </div>
                                                         <div class="vis-r"><p>listed</p></div>
-                                                    </div>   
+                                                    </div>
                                                 </div>
                                                 <div class="post-type-wrap">
                                                     <p>Content-type</p>
@@ -1049,7 +166,7 @@
                                                         <div class="post-type-cell">
                                                             <div class="post-t-c-left">
                                                                 <div class="p-t-dot">
-    
+
                                                                 </div>
                                                             </div>
                                                             <div class="post-t-c-right"></div>
@@ -1057,7 +174,7 @@
                                                         <div class="post-type-cell">
                                                             <div class="post-t-c-left">
                                                                 <div class="p-t-dot">
-    
+
                                                                 </div>
                                                             </div>
                                                             <div class="post-t-c-right"></div>
@@ -1065,7 +182,7 @@
                                                         <div class="post-type-cell">
                                                             <div class="post-t-c-left">
                                                                 <div class="p-t-dot">
-    
+
                                                                 </div>
                                                             </div>
                                                             <div class="post-t-c-right"></div>
@@ -1073,7 +190,7 @@
                                                         <div class="post-type-cell">
                                                             <div class="post-t-c-left">
                                                                 <div class="p-t-dot">
-    
+
                                                                 </div>
                                                             </div>
                                                             <div class="post-t-c-right"></div>
@@ -1084,15 +201,15 @@
                                         </div>
                                     </div>
                                     <div class="preview-body">
-    
+
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
-                        
+
+
                     </div>
-                    
+
                 </div>
                 <div class="post-feed-w">
                     <div class="post-feed">
@@ -1107,29 +224,32 @@
                                 <div class="tab-text"><p>Inbox</p></div>
                             </div>
                         </div>
-                        
-                        
+
+
                     </div>
                 </div>
-            
-                
+
+
             </div>
         </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js" integrity="sha512-L03kznCrNOfVxOUovR6ESfCz9Gfny7gihUX/huVbQB9zjODtYpxaVtIaAkpetoiyV2eqWbvxMH9fiSv5enX7bw==" crossorigin="anonymous"></script>
         <script>
             followerArray = [];
+            const dname = localStorage.getItem('displayName');
+            $('.username p').append(dname);
+            // GET
             fetchFollowers();
             $('.check-visibility,.vis-dropdown').mouseenter(function(){
                 $('.vis-dropdown').show();
             });
-            
+
             $('.check-visibility,.vis-dropdown').mouseleave(function(){
                 $('.vis-dropdown').hide();
                 document.getElementsByClassName('vis-authors')[0].style.display = "none";
             });
-    
-    
+
+
             $('.post-type-wrap,.post_type').mouseenter(function(){
                 $('.post_type').show();
             });
@@ -1142,7 +262,7 @@
             })
             $('#vis-input').click(function() {
                 document.getElementsByClassName('vis-authors')[0].style.display = "block";
-                
+
             })
             document.getElementsByClassName('tab-public')[0].classList.add("current-tab");
             $('.tab-public').click(function() {
@@ -1157,7 +277,7 @@
                 document.getElementsByClassName('tab-inbox')[0].classList.add("current-tab");
                 fetchInboxMessages();
             })
-    
+
             $('.post-preview').click(function() {
                 document.getElementsByClassName("preview-body")[0].style.display = "inline-block";
                 document.getElementsByClassName("initial-body")[0].style.display = "none";
@@ -1175,7 +295,7 @@
                          ' - works in the server and in the browser';
                 var html = converter.makeHtml(text);
                 document.getElementsByClassName('preview-body')[0].innerHTML += html;
-                
+
             });
             $('.post-raw').click(function() {
                 $('.preview-body').empty();
@@ -1193,7 +313,7 @@
             $('.p-close-img').click(function() {
                 document.getElementsByClassName('p-close-img')[0].style.display = "none";
                 $('#proimage').attr('src',"preview.png");
-                
+
             });
             var c_is_opened = false;
             $('.comment-w').click(function() {
@@ -1203,9 +323,9 @@
                 }else{
                     document.getElementsByClassName('o-comments')[0].style.display = "none";
                     c_is_opened = false;
-                }  
+                }
             });
-           
+
             var is_checked_listed = false;
             $('#checklist_listed').click(function() {
                 if(!is_checked_listed){
@@ -1214,7 +334,7 @@
                 }else{
                     document.getElementById('ch-listed').style.display = "none";
                     is_checked_listed = false;
-                }  
+                }
             });
             var postVisibility;
             var is_checked_friend = false;
@@ -1226,7 +346,7 @@
                 }else{
                     document.getElementById('ch-friends').style.display = "none";
                     is_checked_friend = false;
-                }  
+                }
             });
 
             var is_checked_pub = false;
@@ -1238,7 +358,7 @@
                 }else{
                     document.getElementById('ch-pub').style.display = "none";
                     is_checked_pub = false;
-                }  
+                }
             });
             var base64;
             $('#img-input').change(function () {
@@ -1247,17 +367,17 @@
                 var imageType = /image.*/;
                 if (selectedFile.type.match(imageType)) {
                     var reader = new FileReader();
-                    reader.onload = function (e) {       
-                        console.log(e.target.result)   
+                    reader.onload = function (e) {
+                        console.log(e.target.result)
                         base64 = e.target.result;
                         $('#proimage').attr('src', e.target.result);
                         document.getElementsByClassName('p-close-img')[0].style.display = "flex";
                         $('form input').val("");
                 };
-                    reader.readAsDataURL(this.files[0]);            
-    
+                    reader.readAsDataURL(this.files[0]);
+
                 }
-            }); 
+            });
              // Creating new post
              $('.create-post').click(function() {
                  console.log("taooed")
@@ -1268,7 +388,7 @@
                     'text':text,
                     'image':base64
                 }
-                
+
                 const data = {
                     'type'          : "post",
                     'title'         : title,
@@ -1294,13 +414,13 @@
                 .done(function(data){
                     document.getElementsByClassName('post-format')[0].style.display = "none";
                     console.log(data); // UUID of post
-                    //insert post data to DOM     
+                    //insert post data to DOM
                     FillDOM(data);
                 });
 
 
             });
-            
+
             function fetchPublicPost(){
 
                 $.ajax({
@@ -1325,26 +445,26 @@
                             }
 
                             if(data.author.id == localStorage.getItem('uuid')){
-                                flag="hideFollow"; 
+                                flag="hideFollow";
                                 delFlag = "unhideDel";
                                 editFlag="unhideEdit";
                             }else{
                                 delFlag= "hideDel";
                                 editFlag="hideEdit";
                             }
-                            
-                            //insert post data to DOM 
+
+                            //insert post data to DOM
                             FillDOM(data,flag,delFlag,editFlag)
-            
-                        }      
+
+                        }
                     }else{
                         //no public data exist
-                        
-                    }  
+
+                    }
                 });
-    
+
             }
-            
+
             function fetchFollowers(){
                 //fetch followers of user and cross check with post in order to add "follow" feature to post
                 $.ajax({
@@ -1373,28 +493,28 @@
                     var privatePosts = data.items;
                     if(privatePosts.length == 0){
                         //no private posts exist
-                    
+
                         var nodata = `<div class="posted-wrap"><div class="noposts">
                                             <img src="{%  static  'assets/nopost.png'  %}">
                                             <p>You have no messages in your inbox</p>
                                       </div></div>`
                         $(".post-feed").append(nodata);
-                        
+
                     }else{
-                        
+
                         for(i=0;i<privatePosts.length;i++){
                             var data = privatePosts[i];
                             console.log(data);
                         }
-                    }   
-   
+                    }
+
                 });
             }
             function FillDOM(data,flag,deleteFlag,editFlag){
                 const postHTML =  `<div class="posted-wrap">
                     <div class="posted-w-h">
                         <div class="p-w-h-details">
-                            
+
                             <div class="p-profile-wrap">
                                 <div class="p-profile">
 
@@ -1426,7 +546,7 @@
                         <p id="like-count">10 likes</p id="comment-count"><p>${data.commentCount} comments</p id="share-count"><p>10 shares</p>
                     </div>
                     <div class="social-controls">
-                        
+
                         <div class="like-w">
                             <div class="s-c-img">
                                 <i class="material-icons">thumb_up</i>
@@ -1463,13 +583,13 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>`;
                 $(".post-feed").append(postHTML);
             }
-            
-            
+
+
             function followUser(curTag){
                 console.log("tapped follower tag")
                 var arr = (curTag.className).split(' ');
@@ -1478,7 +598,7 @@
                 followRequest(fid)
 
             }
-            
+
             function followRequest(fid){
                 data = {
                     "type":"follow",
@@ -1490,20 +610,10 @@
                     url: 'http://localhost:8000/author/'+localStorage.getItem('uuid')+'/inbox/'
                 })
                 .done(function(data){
-                    //MANIPULATE DOM 
+                    //MANIPULATE DOM
                     console.log(data);
                 });
             }
         </script>
     </body>
 </html>
-
-
-
-
-
-
-
-
-
-

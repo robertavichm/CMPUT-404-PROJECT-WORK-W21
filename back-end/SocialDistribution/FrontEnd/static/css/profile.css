@@ -33,7 +33,7 @@ body,html{
     margin-right:5px;
     float:right;
     border-radius:20px;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
     background-color: aqua;
 }
 .create-post{
@@ -95,7 +95,7 @@ body,html{
     font-size:16px;
     border:1px solid rgba(0, 0, 0, 0.15);
     box-sizing:border-box;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
 }
 
 .img-overall{
@@ -163,7 +163,7 @@ body,html{
     position:absolute;
     margin-top:-40px;
     background-color:white;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
     display:none;
 }
 .p-f-h{
@@ -205,7 +205,7 @@ body,html{
     height:100%;
     float:right;
     cursor:pointer;
-    
+
     color:cornflowerblue;
 }
 .post-body{
@@ -239,7 +239,7 @@ body,html{
     margin-left:20px;
     border-radius:5px;
     color:white;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
     background-color:cornflowerblue;
 }
 .create-post p{
@@ -280,7 +280,7 @@ body,html{
 .post-img-wrap{
     width:calc(200px);
     float:right;
-    height:100%;    
+    height:100%;
 }
 .post-img-h{
     width:180px;
@@ -353,18 +353,18 @@ body,html{
 .p-close-wrap{
     width:180px;
     margin-left:10px;
-    height:10px; 
+    height:10px;
 }
 .p-close-img:hover{
     cursor:pointer;
     background-color:red;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
 }
 .posted-wrap{
     width:calc(100% - 10px);
     margin-left:5px;
     margin-bottom:30px;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
     background-color:white;
 }
 .posted-w-h{
@@ -531,13 +531,13 @@ body,html{
     color:rgba(0, 0, 0, 0.75);
 }
 .o-r-cell{
-    width:100%; 
+    width:100%;
     display:inline-block;
-    margin-top:10px;   
+    margin-top:10px;
     padding-bottom:15px;
     margin-bottom:10px;
-    background-color:#F4F5F9; 
-    
+    background-color:#F4F5F9;
+
 }
 .c-p-wrap{
     height:20px;
@@ -548,15 +548,15 @@ body,html{
 }
 .o-r-details{
     width:calc(100% - 40px);
-    margin-left:20px; 
-    
+    margin-left:20px;
+
 }
 
 .c-p-wrap span{
     color:#353a85;
 
 }
- 
+
 .check-visibility,.check-listed{
     float:right;
     width:80px;
@@ -573,8 +573,8 @@ body,html{
     display:none;
     position:absolute;
     background-color:white;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
- 
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
+
 }
 .checklist-dropdown{
     margin-left:-70px;
@@ -654,7 +654,7 @@ body,html{
     height:calc(100% - 40px);
     width:100%;
     background-color:orange;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
 }
 
 .post-type-wrap{
@@ -677,7 +677,7 @@ body,html{
     margin-top:-40px;
     display:none;
     position:absolute;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
 }
 .post_type p,.post-type-wrap p{
     margin:0;

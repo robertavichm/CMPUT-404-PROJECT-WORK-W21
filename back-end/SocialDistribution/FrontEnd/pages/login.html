@@ -5,29 +5,47 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet"  href="{%  static  'assets/login.css'  %}">
+    <link rel="stylesheet"  href="{%  static  'css/login.css'  %}">
     <title>Login</title>
- 
+
   </head>
   <body>
     <div class="container">
       <div class="wrap-login">
-        <form class="login-form" action="index.html" method="post">
+        <form class="login-form" action="login.html" method="post">
           <span class="login-form-title">Login</span>
           <span class="login-l">Username</span>
           <div class="wrap-input">
-            <input type="text" name="" value="">
+            <input type="text" name="username" value="" placeholder="uuid for now">
           </div>
           <span class="login-l">Password</span>
           <div class="wrap-input">
-            <input type="text" name="" value="">
+            <input type="text" name="password" value="" disabled>
           </div>
           <div class="wrap-button">
-            <button type="button" name="button">Login</button>
+            <button type="submit" name="button">Login</button>
           </div>
         </form>
       </div>
     <div>
+
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+      <script type="text/javascript">
+      $('.login-form').submit(function(e) {
+        $.ajax({
+          url: 'http://localhost:8000/author/'+ $('input[name=username]').val() +'/',
+        })
+          .done(function(data){
+            console.log(data); // UUID of post
+            localStorage.setItem("uuid", data.id);
+            localStorage.setItem("displayName", data.displayName);
+            window.location.href = 'http://localhost:8000/home';
+          });
+
+          e.preventDefault();
+      });
+
+      </script>
   </body>
-  
+
 </html>

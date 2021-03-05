@@ -14,3 +14,6 @@ def home(request):
 
 def friends(request):
     return render(request,'friends.html')
+
+def profile(request):
+    return render(request,'profile.html')
