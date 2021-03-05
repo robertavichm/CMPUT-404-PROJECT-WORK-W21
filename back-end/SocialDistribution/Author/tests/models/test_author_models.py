@@ -8,7 +8,7 @@ class AuthorModelsTestCase(TestCase):
         self.test_author_fields = get_author_fields()
         self.author = Author.objects.create(**self.test_author_fields)
 
-        # Create and initialize test post
+        # Create and initialize test post model
         self.test_post_fields = get_post_fields()
         self.post = Post.objects.create(**self.test_post_fields, author_id=self.author)
 
@@ -18,6 +18,12 @@ class AuthorModelsTestCase(TestCase):
         self.friendship = FriendShip.objects.create(author_primary=self.author, 
                                                     author_friend=self.author_friend,
                                                     accepted=True)
+        
+        # Create and initialize test comment model
+        self.test_comment_fields = get_comment_fields()
+        self.comment = Comment.objects.create(**self.test_comment_fields,
+                                               post_id=self.post, 
+                                               author_id=self.author)
         
     def test_create_author(self):
         self.assertTrue(self.author.id)
@@ -44,7 +50,6 @@ class AuthorModelsTestCase(TestCase):
         self.assertEqual(self.post.visibility, self.test_post_fields["visibility"])
         self.assertFalse(self.post.unlisted)
 
-
     def test_create_friendship_true(self):
         self.assertTrue(self.friendship.FriendShipId)
         self.assertTrue(self.friendship.author_primary)
@@ -52,7 +57,13 @@ class AuthorModelsTestCase(TestCase):
         self.assertTrue(self.friendship.accepted)
         
     def test_create_comment(self):
-        pass
+        self.assertTrue(self.comment.comment_id)
+        self.assertTrue(self.comment.post_id)
+        self.assertTrue(self.comment.author_id)
+        self.assertEqual(self.comment.contentType, self.test_comment_fields["contentType"])
+        self.assertTrue(self.comment.published)
+        self.assertEqual(self.comment.comment, self.test_comment_fields["comment"])
+        self.assertEqual(self.comment.type, "comment")
 
     def test_create_like(self):
         pass
