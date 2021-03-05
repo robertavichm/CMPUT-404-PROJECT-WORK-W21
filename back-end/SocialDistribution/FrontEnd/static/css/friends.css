@@ -1,0 +1,110 @@
+.content{
+    display:flex;
+    justify-content:center;
+}
+.content-aligner{
+    width:100%;
+    max-width:900px;
+}
+.friend-request-wrap{
+    width:100%;
+    margin-bottom:30px;
+}
+.friends-wrap{
+    width:100%;
+    margin-bottom: 30px;
+}
+
+.friend-r-inner{
+    width:100%;
+    margin-top:50px;
+}
+.f-head{
+    height:40px;
+    line-height:40px;
+    text-align:left;
+    position:sticky;
+    top:0;
+    background-color:white;
+    border-bottom:1px solid rgba(0,0,0,0.05);
+}
+.f-head p{
+    margin-top:0;
+    margin-left:20px;
+    float:left;
+    font-weight:800;
+    font-size:18px;
+    color:rgba(0,0,0,0.75)
+}
+.friend-r-body{
+    height:calc(100% - 60px);
+    width:100%;
+    display: none;
+}
+.friends-w-body{
+    width:100%;
+    display: none;
+}
+
+.arrow-down{
+    width:30px;
+    height:30px;
+    margin-top:5px;
+    float:left;
+    margin-left:5px;
+    display:flex;
+    cursor:pointer;
+    justify-content:center;
+    align-items:center;
+}
+table {
+    border: 1px solid rgba(0,0,0,0.05);
+}
+td{
+    padding:5px;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+table {
+    width:calc(100% - 40px);
+    margin-left:20px;
+    border-collapse: collapse;
+}
+td:first-child{
+    padding-left:20px;
+}
+td:nth-child(2),td:nth-child(3){
+    width:100px;
+}
+.accept_btn{
+    width:80px;
+    height:35px;
+    margin-left:10px;
+    line-height:35px;
+    text-align:center;
+    color:white;
+    cursor:pointer;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
+    background-color:cornflowerblue;
+}
+.decline_btn{
+    width:80px;
+    height:35px;
+    margin-left:10px;
+    line-height:35px;
+    text-align:center;
+    color:white;
+    cursor:pointer;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
+    background-color:rgba(0,0,0,0.25);
+}
+.remove_btn{
+    width:80px;
+    height:35px;
+    margin-left:10px;
+    line-height:35px;
+    text-align:center;
+    color:white;
+    cursor:pointer;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
+    background-color:crimson;
+}
