@@ -1,7 +1,7 @@
 # CMPUT-404-PROJECT-WORK-W21
-A repository for CMPUT 404 project work. \
+A repository for CMPUT 404 project work. 
 
-Live at https://cmput-404-group17.herokuapp.com/ \ 
+Live at https://cmput-404-group17.herokuapp.com/
 
 CMPUT404-project-socialdistribution
 ===================================
