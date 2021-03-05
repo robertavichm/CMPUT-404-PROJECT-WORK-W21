@@ -104,98 +104,22 @@
                                                 </div>
 
                                                 <div class="create-post">
-                                                    <p>Share</p>
+                                                    <p>Post</p>
                                                 </div>
-                                                <div class="check-visibility">
-                                                    <div class="ch-text">
-                                                        <p>visibility</p>
-                                                    </div>
-                                                    <div class="ch-img">
-                                                        <i class="material-icons">keyboard_arrow_down</i>
-                                                    </div>
-                                                    <div class="vis-dropdown">
-                                                        <div class="vis-cell">
-                                                            <input type="text" placeholder="specific authors" id="vis-input">
-                                                            <div class="vis-authors">
-                                                                <div class="vis-a-head">
-                                                                    <p>Choose authors</p>
-                                                                </div>
-                                                                <div class="vis-a-body">
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="vis-cell">
-                                                            <div class="vis-l">
-                                                                <div class="vis-check" id="vis-pub">
-                                                                    <div class="checked" id="ch-pub">
-                                                                        <i class="material-icons">done</i>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="vis-r"><p>public</p></div>
-                                                        </div>
-                                                        <div class="vis-cell">
-                                                            <div class="vis-l">
-                                                                <div class="vis-check" id="vis-friends">
-                                                                    <div class="checked" id="ch-friends">
-                                                                        <i class="material-icons">done</i>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="vis-r"><p>friends</p></div>
-                                                        </div>
-
-                                                    </div>
+                                                <div style="display:inline-block"><input type="checkbox" id="l-ul" style="width:40px" value="listed" checked><span> Listed</span></div>
+                                                <div class="sel">
+                                                  <select  id="content_type">
+                                                     <option value="plain_text">Plain text</option>
+                                                     <option value="image/png">Image</option>
+                                                     <option value="image/jpeg">Text+image</option>
+                                                     <option value="markdown">Markdown</option>
+                                                   </select>
                                                 </div>
-                                                <div class="check-listed">
-                                                    <div class="vis-cell" style="border-bottom:none;">
-                                                        <div class="vis-l">
-                                                            <div class="vis-check" id="checklist_listed">
-                                                                <div class="checked" id="ch-listed">
-                                                                    <i class="material-icons">done</i>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="vis-r"><p>listed</p></div>
-                                                    </div>
-                                                </div>
-                                                <div class="post-type-wrap">
-                                                    <p>Content-type</p>
-                                                    <div class="post_type">
-                                                        <div class="post-type-cell">
-                                                            <div class="post-t-c-left">
-                                                                <div class="p-t-dot">
-
-                                                                </div>
-                                                            </div>
-                                                            <div class="post-t-c-right"></div>
-                                                        </div>
-                                                        <div class="post-type-cell">
-                                                            <div class="post-t-c-left">
-                                                                <div class="p-t-dot">
-
-                                                                </div>
-                                                            </div>
-                                                            <div class="post-t-c-right"></div>
-                                                        </div>
-                                                        <div class="post-type-cell">
-                                                            <div class="post-t-c-left">
-                                                                <div class="p-t-dot">
-
-                                                                </div>
-                                                            </div>
-                                                            <div class="post-t-c-right"></div>
-                                                        </div>
-                                                        <div class="post-type-cell">
-                                                            <div class="post-t-c-left">
-                                                                <div class="p-t-dot">
-
-                                                                </div>
-                                                            </div>
-                                                            <div class="post-t-c-right"></div>
-                                                        </div>
-                                                    </div>
+                                                <div class="sel">
+                                                  <select id="visibility_choice">
+                                                    <option value="PUBLIC">Public</option>
+                                                    <option value="FRIENDS">Friends</option>
+                                                   </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -406,14 +330,12 @@
             });
              // Creating new post
              $('.create-post').click(function() {
-                 console.log("taooed")
                 var title = document.getElementById("p-title").value;
                 var description = document.getElementById("p-description").value;
                 var text = document.getElementById("p-r-text-input").value;
-                var content = {
-                    'text':text,
-                    'image':base64
-                }
+                var checked = document.getElementById("l-ul").checked ? "False" : "True";
+                // var cttn = base64 ? text : base64 ;
+                var cttn = text;
 
                 const data = {
                     'type'          : "post",
@@ -421,15 +343,15 @@
                     'description'   : description,
                     'source'        : "change this",
                     'origin'        : "change this",
-                    'contentType'   : "text/plain",
-                    'content'       : content,
+                    'contentType'   : $('#content_type').val(),
+                    'content'       : cttn,
                     'pageSize'      : 1,
                     'categories'    : ["change", "this"],
                     'count'         : 1,
                     'size'          : 1,
                     'commentLink'   : "change this",
-                    'visibility'    : postVisibility,
-                    'unlisted'      : "False",
+                    'visibility'    : $('#visibility_choice').val(),
+                    'unlisted'      : checked ,
                     };
 
                 $.ajax({
@@ -443,8 +365,6 @@
                     //insert post data to DOM
                     FillDOM(data);
                 });
-
-
             });
 
             function fetchPublicPost(){

@@ -975,55 +975,12 @@ body,html{
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
     display:none;
 }
-.p-f-h{
-    height:50px;
-    width:100%;
-    background-color:#F4F5F9;
-}
-.close{
-    width:50px;
-    height:100%;
-    float:right;
-    display:flex;
-    justify-content: center;
-    align-items: center;
-    cursor:pointer;
-    background-color: rgba(0, 0, 0, 0.10);
-}
-.tab-control{
-    float:left;
-    width:150px;
-    height:40px;
-    line-height:40px;
-    margin-top:10px;
-    margin-left:20px;
-}
+
 .tab-control p{
     margin:0;
 }
-.post-raw{
-    width:50%;
-    height:100%;
-    float:left;
-    color:rgba(0, 0, 0, 0.45);
-    cursor:pointer;
-    background-color:white;
-}
-.post-preview{
-    width:50%;
-    height:100%;
-    float:right;
-    cursor:pointer;
 
-    color:cornflowerblue;
-}
-.post-body{
-    width:100%;
-    height:calc(100% - 50px);
-    text-align:left;
-    word-break:break-all;
-    display:inline-block;
-}
+
 .initial-body{
     width:100%;
     height:100%;
@@ -1465,6 +1422,23 @@ body,html{
     background-color:orange;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
 }
+.sel {
+    float: left;
+    margin-top:5px;
+    margin-left: 20px;
+}
+
+.sel select {
+    appearance: none;
+    background: white;
+    border: 1px solid rgb(185, 183, 240);
+    line-height:30px;
+    float:left;
+    width: 100px;
+    text-align:center;
+    cursor: pointer;
+}
+
 
 .post-type-wrap{
     width:120px;

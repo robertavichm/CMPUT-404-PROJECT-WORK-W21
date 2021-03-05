@@ -60,32 +60,7 @@
                             <table id="friend-request-table">
                                 <tbody class="f-req-body">
                                     <tr>
-                                        <td>hey</td>
-                                        <td><div class="accept_btn">Accept</div></td>
-                                        <td><div class="decline_btn">Decline</div></td>
-                                    </tr>
-                                    <tr>
-                                        <td>hey</td>
-                                        <td><div class="accept_btn">Accept</div></td>
-                                        <td><div class="decline_btn">Decline</div></td>
-                                    </tr>
-                                    <tr>
-                                        <td>hey</td>
-                                        <td><div class="accept_btn">Accept</div></td>
-                                        <td><div class="decline_btn">Decline</div></td>
-                                    </tr>
-                                    <tr>
-                                        <td>hey</td>
-                                        <td><div class="accept_btn">Accept</div></td>
-                                        <td><div class="decline_btn">Decline</div></td>
-                                    </tr>
-                                    <tr>
-                                        <td>hey</td>
-                                        <td><div class="accept_btn">Accept</div></td>
-                                        <td><div class="decline_btn">Decline</div></td>
-                                    </tr>
-                                    <tr>
-                                        <td>hey</td>
+                                        <td>sample friend request</td>
                                         <td><div class="accept_btn">Accept</div></td>
                                         <td><div class="decline_btn">Decline</div></td>
                                     </tr>
@@ -107,27 +82,7 @@
                                 <table id="friends-table">
                                     <tbody>
                                         <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>hey</td>
+                                            <td>sample friend</td>
                                             <td><div class="remove_btn">Remove</div></td>
                                         </tr>
                                     </tbody>
@@ -148,27 +103,7 @@
                                 <table id="friends-table">
                                     <tbody class="followers-body">
                                         <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>hey</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
-                                        <tr>
-                                            <td>hey</td>
+                                            <td>sample follower</td>
                                             <td><div class="remove_btn">Remove</div></td>
                                         </tr>
                                     </tbody>
@@ -239,31 +174,28 @@
           dataType: 'json',
         })
           .done(function(data){
-            const fr_req = []; // IDs and dname of requesters
+            console.log(data);
+            var fr_req = []; // IDs and dname of requesters
 
             for(el in data['items']){
-              if(data['items'].type == "Follow"){
+              if(data['items'][el].type === "Follow"){
                 var d = {
-                  'id': data['items'][el].id,
-                  'displayName': data['items'][el].displayName,
+                  'id': data['items'][el].requester.id,
+                  'displayName': data['items'][el].requester.displayName,
                 }
-                fr_re.push(d);
+                fr_req.push(d);
               }
             }
 
             formatAndAppendFriendRequests(fr_req);
 
-            console.log('done');
-
           });
 
           function formatAndAppendFriendRequests(fr_req){
-            console.log(fr_req);
-
             for(fr in fr_req){
               $('.f-req-body').append(`
                 <tr>
-                    <td>${fr.displayName}</td>
+                    <td>${fr_req[fr].displayName}</td>
                     <td><div class="accept_btn">Accept</div></td>
                     <td><div class="decline_btn">Decline</div></td>
                 </tr>
@@ -287,13 +219,11 @@
                 }
                   followers.push(d);
               }
-            }
 
-            formatAndAppendFollowers(followers);
+              formatAndAppendFollowers(followers);
 
-            console.log('done');
-
-          });
+              console.log('done');
+            });
 
             function formatAndAppendFollowers(followers){
               console.log(followers);
