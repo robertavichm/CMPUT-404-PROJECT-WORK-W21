@@ -4,28 +4,28 @@ from Author.tests.dummy_model_fields import *
 
 class AuthorModelsTestCase(TestCase):
     def setUp(self):
-        # Create and initialize test author model
+        # Create and initialize test Author model
         self.test_author_fields = get_author_fields()
         self.author = Author.objects.create(**self.test_author_fields)
 
-        # Create and initialize test post model
+        # Create and initialize test Post model
         self.test_post_fields = get_post_fields()
         self.post = Post.objects.create(**self.test_post_fields, author_id=self.author)
 
-        # Create and initialize test friend (author) and friendship model
+        # Create and initialize test friend (Author) and FriendShip model
         self.test_author_friend_fields = get_author_fields()
         self.author_friend = Author.objects.create(**self.test_author_friend_fields)
         self.friendship = FriendShip.objects.create(author_primary=self.author, 
                                                     author_friend=self.author_friend,
                                                     accepted=True)
         
-        # Create and initialize test comment model
+        # Create and initialize test Comment model
         self.test_comment_fields = get_comment_fields()
         self.comment = Comment.objects.create(**self.test_comment_fields,
                                                post_id=self.post, 
                                                author_id=self.author)
 
-        # Create and initialize like model
+        # Create and initialize Like model
         self.test_like_fields = get_like_fields()
         self.like = Like.objects.create(**self.test_like_fields,
                                         author_id=self.author,
@@ -33,7 +33,7 @@ class AuthorModelsTestCase(TestCase):
                                         comment_id=self.comment,
                                         post_id=self.post)
 
-        # Create and initialize notification model
+        # Create and initialize Notification model
         self.notification = Notification.objects.create(author_id=self.author,
                                                         like_id=self.like,
                                                         comment_id=self.comment,
