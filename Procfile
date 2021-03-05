@@ -1,1 +1,1 @@
-web: gunicorn back-end.SocialDistribution.SocialDistribution.wsgi
+web: sh -c 'cd backend/SocialDistribution' && gunicorn SocialDistribution.wsgi:application
