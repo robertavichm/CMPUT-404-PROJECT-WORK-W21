@@ -1,3 +1,3 @@
 #!/bin/sh
 
-web: sh -c 'cd back-end/SocialDistribution' && gunicorn SocialDistribution.wsgi
+web: gunicorn --chdir back-end/SocialDistribution SocialDistribution.wsgi
