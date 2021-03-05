@@ -889,6 +889,77 @@
         .hideDel,.hideEdit{
             display:none;
         }
+        .inbox-wrap{
+            width:100%;
+            height:calc(100% - 50px);
+            display:none;
+        }
+        .table-head{
+            width:100%;
+            height:40px;
+            line-height:40px;
+            background-color: cornflowerblue;
+            color:white;
+        }
+        .table-head p{
+            font-size:18px;
+            font-weight:800;
+            margin:0;
+            text-align:left;
+            margin-left:20px;  
+        }
+        .table-body{
+            width:100%;
+            max-height:calc(100% - 40px);
+            overflow-y: auto;
+        }
+        table {
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+        td{
+            padding:10px;
+            padding-left:20px;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        table {
+            width:calc(100%);
+            height:100%;
+            border-collapse: collapse;
+            overflow-y: auto;
+        }
+        .inbox-cell{
+            height:50px;
+            width:100%;
+            background-color: #353a85;
+            margin-top:10px;
+            margin-bottom:10px;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px; 
+        }
+        .inbox-cell-Del{
+            height:50px;
+            width:50px;
+            float:right;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            background-color:aqua;
+        }
+        .inbox-cell-text{
+            height:50px;
+            width:calc(100% - 50px);
+            float:left;
+            line-height:50px;
+            background-color:antiquewhite;
+        }
+
+        .inbox-cell-text p{
+           margin:0;
+           margin-left:20px;
+        }
+        
+       
+        
+        
     </style>
 </head>
 <body>
@@ -1107,6 +1178,20 @@
                                 <div class="tab-text"><p>Inbox</p></div>
                             </div>
                         </div>
+                        <div class="inbox-wrap">
+                            <div class="table-head">
+                                <p>Summary</p>
+                            </div>
+                            <div class="table-body">
+                                
+                                <table id="summary-table">
+                                    <tbody id="sum-body">
+                    
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                        </div>
                         
                         
                     </div>
@@ -1118,6 +1203,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js" integrity="sha512-L03kznCrNOfVxOUovR6ESfCz9Gfny7gihUX/huVbQB9zjODtYpxaVtIaAkpetoiyV2eqWbvxMH9fiSv5enX7bw==" crossorigin="anonymous"></script>
         <script>
+            
             followerArray = [];
             fetchFollowers();
             $('.check-visibility,.vis-dropdown').mouseenter(function(){
@@ -1147,6 +1233,7 @@
             document.getElementsByClassName('tab-public')[0].classList.add("current-tab");
             $('.tab-public').click(function() {
                 $('.posted-wrap').remove();
+                document.getElementsByClassName('inbox-wrap')[0].style.display = "none";
                 document.getElementsByClassName('tab-public')[0].classList.add("current-tab");
                 document.getElementsByClassName('tab-inbox')[0].classList.remove("current-tab");
                 fetchPublicPost()
@@ -1205,6 +1292,16 @@
                     c_is_opened = false;
                 }  
             });
+            var c_is_opened = false;
+            function toggleComments(){
+                if(!c_is_opened){
+                    document.getElementsByClassName('o-comments')[0].style.display = "inline-block";
+                    c_is_opened = true;
+                }else{
+                    document.getElementsByClassName('o-comments')[0].style.display = "none";
+                    c_is_opened = false;
+                } 
+            }
            
             var is_checked_listed = false;
             $('#checklist_listed').click(function() {
@@ -1361,19 +1458,36 @@
                 });
 
             }
-            function fetchInboxMessages(){
+            var arrayOfRequests = [];
+            function checkFollowrequest(){
                 $.ajax({
                     type: 'GET',
                     url: 'http://localhost:8000/author/'+localStorage.getItem('uuid')+'/inbox/'
                 })
                 .done(function(data){
                     console.log(data)
+                    console.log("IN check follow request");
+                    var requests = data.items;
+                    for(i=0;i < requests.length; i++){
+                        arrayOfRequests.push(requests[0].id)
+                    }
+
+                    
+                });
+            }
+            function fetchInboxMessages(){
+                $('#sum-body').empty();
+                $.ajax({
+                    type: 'GET',
+                    url: 'http://localhost:8000/author/'+localStorage.getItem('uuid')+'/inbox/'
+                })
+                .done(function(data){
+                    
                     console.log("IN PRIVATE AJAX CALL");
-                    console.log(data.items); // UUID of post
+                    console.log(data.items); 
                     var privatePosts = data.items;
                     if(privatePosts.length == 0){
                         //no private posts exist
-                    
                         var nodata = `<div class="posted-wrap"><div class="noposts">
                                             <img src="{%  static  'assets/nopost.png'  %}">
                                             <p>You have no messages in your inbox</p>
@@ -1381,18 +1495,25 @@
                         $(".post-feed").append(nodata);
                         
                     }else{
-                        
+                        document.getElementsByClassName('inbox-wrap')[0].style.display = "block";
                         for(i=0;i<privatePosts.length;i++){
                             var data = privatePosts[i];
-                            console.log(data);
+                            
+                            $('#summary-table').find('tbody').append([
+                                '<tr>',
+                                    '<td>'+data.summary[0]+'</td>',
+                                '</tr>'
+                            ].join(''));
                         }
                     }   
    
                 });
             }
+           
+           
             function FillDOM(data,flag,deleteFlag,editFlag){
                 const postHTML =  `<div class="posted-wrap">
-                    <div class="posted-w-h">
+                    <div class="posted-w-h" >
                         <div class="p-w-h-details">
                             
                             <div class="p-profile-wrap">
@@ -1406,7 +1527,7 @@
                             </div>
                             <p class="follow-user ${data.author.id}" id="${flag}" onclick="followUser(this)">Follow</p>
                         </div>
-                        <div class="del-post ${deleteFlag}"  id="${data.post_id}">
+                        <div class="del-post ${deleteFlag}"  id="${data.post_id}" onclick="deletePost(this)">
                             <i class="material-icons" style="color:rgba(0,0,0,0.45)">delete_outline</i>
                         </div>
                         <div class="edit-post ${editFlag}">
@@ -1423,7 +1544,7 @@
                         <img src="{%  static  'assets/preview.png'  %}" id="proimage">
                     </div>
                     <div class="like-count-w">
-                        <p id="like-count">10 likes</p id="comment-count"><p>${data.commentCount} comments</p id="share-count"><p>10 shares</p>
+                        <p id="like-count">0 likes</p id="comment-count"><p>${data.commentCount} comments</p id="share-count"><p>0 shares</p>
                     </div>
                     <div class="social-controls">
                         
@@ -1475,24 +1596,41 @@
                 var arr = (curTag.className).split(' ');
                 fid = arr[1];
                 console.log(fid);
-                followRequest(fid)
+                followRequest(fid,curTag)
 
             }
             
-            function followRequest(fid){
+            function followRequest(fid,curTag){
                 data = {
                     "type":"follow",
-                    "author_id":fid
+                    "author_id":localStorage.getItem('uuid')
                 }
                 $.ajax({
                     type:"POST",
                     data:data,
-                    url: 'http://localhost:8000/author/'+localStorage.getItem('uuid')+'/inbox/'
+                    url: 'http://localhost:8000/author/'+fid+'/inbox/'
                 })
                 .done(function(data){
                     //MANIPULATE DOM 
                     console.log(data);
+                    curTag.innerHTML = "Request Sent";
+
                 });
+            }
+
+            function deletePost(curDel){
+                console.log(curDel.id)
+
+                console.log($('#'+curDel.id).parents('[class]:eq(1)'));
+                //get the first parent div wrapping the delete button
+                $.ajax({
+                    type: 'DELETE',
+                    url: 'http://localhost:8000/author/'+localStorage.getItem('uuid')+'/posts/'+curDel.id+'/',
+                }).done(function(data){    
+                    $('#'+curDel.id).parents('[class]:eq(1)').remove();
+                    console.log('deleted');
+                });
+
             }
         </script>
     </body>
