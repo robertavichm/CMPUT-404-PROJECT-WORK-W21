@@ -1,12 +1,19 @@
 from django.test import TestCase
-from Author.models import Author
+from Author.models import *
 from Author.tests.dummy_model_fields import get_author_fields
 
 class AuthorModelsTestCase(TestCase):
     def setUp(self):
-        # Creating test author
+        # Create and initialize test author model
         self.test_author = get_author_fields()
-        self.author = Author.objects.create(**self.test_info)
+        self.author = Author.objects.create(**self.test_author)
+
+        # Create and initialize test friend (author) and friendship model
+        self.test_author_friend = get_author_fields()
+        self.author_friend = Author.objects.create(**self.test_author_friend)
+        self.friendship = FriendShip.objects.create(author_primary=self.author, 
+                                                    author_friend=self.author_friend,
+                                                    accepted=True)
         
     def test_create_author(self):
         self.assertTrue(self.author.id)
@@ -19,9 +26,12 @@ class AuthorModelsTestCase(TestCase):
     def test_create_post(self):
         pass
 
-    def test_create_friendship(self):
-        pass
-
+    def test_create_friendship_true(self):
+        self.assertTrue(self.friendship.FriendShipId)
+        self.assertTrue(self.friendship.author_primary)
+        self.assertTrue(self.friendship.author_friend)
+        self.assertTrue(self.friendship.accepted)
+        
     def test_create_comment(self):
         pass
 
