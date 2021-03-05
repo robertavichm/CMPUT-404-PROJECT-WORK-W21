@@ -1,30 +1,49 @@
 from django.test import TestCase
 from Author.models import *
-from Author.tests.dummy_model_fields import get_author_fields
+from Author.tests.dummy_model_fields import *
 
 class AuthorModelsTestCase(TestCase):
     def setUp(self):
         # Create and initialize test author model
-        self.test_author = get_author_fields()
-        self.author = Author.objects.create(**self.test_author)
+        self.test_author_fields = get_author_fields()
+        self.author = Author.objects.create(**self.test_author_fields)
+
+        # Create and initialize test post
+        self.test_post_fields = get_post_fields()
+        self.post = Post.objects.create(**self.test_post_fields, author_id=self.author)
 
         # Create and initialize test friend (author) and friendship model
-        self.test_author_friend = get_author_fields()
-        self.author_friend = Author.objects.create(**self.test_author_friend)
+        self.test_author_friend_fields = get_author_fields()
+        self.author_friend = Author.objects.create(**self.test_author_friend_fields)
         self.friendship = FriendShip.objects.create(author_primary=self.author, 
                                                     author_friend=self.author_friend,
                                                     accepted=True)
         
     def test_create_author(self):
         self.assertTrue(self.author.id)
-        self.assertEqual(self.author.displayName, self.test_author["displayName"])
-        self.assertEqual(self.author.host, self.test_author["host"])
-        self.assertTrue(self.author.url, self.test_author["url"])
-        self.assertTrue(self.author.type, self.test_author["type"])
-        self.assertTrue(self.author.github, self.test_author["github"])
+        self.assertEqual(self.author.displayName, self.test_author_fields["displayName"])
+        self.assertEqual(self.author.host, self.test_author_fields["host"])
+        self.assertTrue(self.author.url, self.test_author_fields["url"])
+        self.assertTrue(self.author.type, self.test_author_fields["type"])
+        self.assertTrue(self.author.github, self.test_author_fields["github"])
 
     def test_create_post(self):
-        pass
+        self.assertTrue(self.post.post_id)
+        self.assertTrue(self.post.author_id)
+        self.assertEqual(self.post.type, "post")
+        self.assertEqual(self.post.description, self.test_post_fields["description"])
+        self.assertEqual(self.post.source, self.test_post_fields["source"])
+        self.assertEqual(self.post.origin, self.test_post_fields["origin"])
+        self.assertEqual(self.post.contentType, self.test_post_fields["contentType"])
+        self.assertEqual(self.post.content, self.test_post_fields["content"])
+        self.assertEqual(self.post.categories, self.test_post_fields["categories"])
+        self.assertEqual(self.post.commentLink, self.test_post_fields["commentLink"])
+        self.assertEqual(self.post.commentCount, self.test_post_fields["commentCount"])
+        self.assertEqual(self.post.pageSize, self.test_post_fields["pageSize"])
+        self.assertTrue(self.post.published)
+        self.assertEqual(self.post.visibility, self.test_post_fields["visibility"])
+        self.assertFalse(self.post.unlisted)
+
 
     def test_create_friendship_true(self):
         self.assertTrue(self.friendship.FriendShipId)
