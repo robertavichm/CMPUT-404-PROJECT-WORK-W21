@@ -1,5 +1,7 @@
 # CMPUT-404-PROJECT-WORK-W21
-A repository for CMPUT 404 project work.
+A repository for CMPUT 404 project work. \
+
+Live at https://cmput-404-group17.herokuapp.com/ \ 
 
 CMPUT404-project-socialdistribution
 ===================================
@@ -18,11 +20,11 @@ Generally everything is LICENSE'D under the Apache 2 license by Abram Hindle.
 All text is licensed under the CC-BY-SA 4.0 http://creativecommons.org/licenses/by-sa/4.0/deed.en_US
 
 Contributors:
-    
+
     Oran Rohoman
     Thi Ny Tran
     Justin Tan
-    Isaac Mensah 
+    Isaac Mensah
     Eden-Grace Muamba
     Karim Baaba
     Ali Sajedi
