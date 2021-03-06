@@ -105,6 +105,9 @@
     <div>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
       <script type="text/javascript">
+
+      const host_url = '{{ host_url }}';
+
       $('.signup-form').submit(function(e) {
         const data = {
           'displayName': $('input[name=dname]').val(),
@@ -114,7 +117,7 @@
         console.log(data);
         $.ajax({
           type: 'POST',
-          url: 'http://localhost:8000/author/',
+          url: host_url + 'author/',
           data: data,
         })
           .done(function(data){
@@ -122,8 +125,7 @@
             localStorage.setItem("uuid", data);
             // localStorage.setItem("uuid", data.id);
             localStorage.setItem("displayName", data.displayName);
-            window.location.href = 'http://localhost:8000/home';
-
+            window.location.href = host_url + 'home';
           });
 
           e.preventDefault();

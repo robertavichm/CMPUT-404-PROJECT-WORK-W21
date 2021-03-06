@@ -116,6 +116,9 @@
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script>
+
+        const host_url = '{{ host_url }}';
+
         var toggle_f_r = 0;
         $('#request-arrow').click(function() {
             if(toggle_f_r == 0){
@@ -170,7 +173,7 @@
         // GET Friend requests
         $.ajax({
           type: 'GET',
-          url: 'http://localhost:8000/author/'+ localStorage.getItem('uuid') +'/inbox/', // TODO: should point to current user
+          url: host_url + 'author/'+ localStorage.getItem('uuid') +'/inbox/', // TODO: should point to current user
           dataType: 'json',
         })
           .done(function(data){
@@ -206,7 +209,7 @@
           // GET Followers
           $.ajax({
             type: 'GET',
-            url: 'http://localhost:8000/author/'+ localStorage.getItem('uuid') +'/followers/', // TODO: should point to current user
+            url: host_url + 'author/'+ localStorage.getItem('uuid') +'/followers/', // TODO: should point to current user
             dataType: 'json',
           })
             .done(function(data){
