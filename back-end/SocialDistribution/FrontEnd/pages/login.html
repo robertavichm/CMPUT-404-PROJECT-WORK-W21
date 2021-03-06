@@ -34,15 +34,20 @@
 
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
       <script type="text/javascript">
+
+      const host_url = '{{ host_url }}';
+      var x = host_url + 'author/'+ $('input[name=username]').val() +'/';
+      console.log(x)
+
       $('.login-form').submit(function(e) {
         $.ajax({
-          url: 'http://localhost:8000/author/'+ $('input[name=username]').val() +'/',
+          url: host_url + 'author/'+ $('input[name=username]').val() +'/',
         })
           .done(function(data){
             console.log(data); // UUID of post
             localStorage.setItem("uuid", data.id);
             localStorage.setItem("displayName", data.displayName);
-            window.location.href = 'http://localhost:8000/home';
+            window.location.href = host_url + 'home';
           });
 
           e.preventDefault();

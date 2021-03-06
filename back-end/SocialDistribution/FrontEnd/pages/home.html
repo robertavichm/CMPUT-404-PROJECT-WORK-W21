@@ -174,6 +174,8 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js" integrity="sha512-L03kznCrNOfVxOUovR6ESfCz9Gfny7gihUX/huVbQB9zjODtYpxaVtIaAkpetoiyV2eqWbvxMH9fiSv5enX7bw==" crossorigin="anonymous"></script>
         <script>
 
+            const host_url = '{{ host_url }}';
+
             followerArray = [];
             const dname = localStorage.getItem('displayName');
             $('.username p').append(dname);
@@ -356,7 +358,7 @@
 
                 $.ajax({
                 type: 'POST',
-                url: 'http://localhost:8000/author/'+localStorage.getItem('uuid')+'/posts/', // TODO: should point to current user url
+                url: host_url + 'author/'+localStorage.getItem('uuid')+'/posts/', // TODO: should point to current user url
                 data: data,
                 })
                 .done(function(data){
@@ -371,7 +373,7 @@
 
                 $.ajax({
                     type: 'GET',
-                    url: 'http://localhost:8000/posts/'
+                    url: host_url + 'posts/'
                 })
                 .done(function(data){
 
@@ -415,7 +417,7 @@
                 //fetch followers of user and cross check with post in order to add "follow" feature to post
                 $.ajax({
                     type: 'GET',
-                    url: 'http://localhost:8000/author/'+localStorage.getItem('uuid')+'/followers/'
+                    url: host_url + 'author/'+localStorage.getItem('uuid')+'/followers/'
                 })
                 .done(function(data){
                     console.log(data.items);
@@ -431,7 +433,7 @@
             function checkFollowrequest(){
                 $.ajax({
                     type: 'GET',
-                    url: 'http://localhost:8000/author/'+localStorage.getItem('uuid')+'/inbox/'
+                    url: host_url + 'author/'+localStorage.getItem('uuid')+'/inbox/'
                 })
                 .done(function(data){
                     console.log(data)
@@ -448,7 +450,7 @@
                 $('#sum-body').empty();
                 $.ajax({
                     type: 'GET',
-                    url: 'http://localhost:8000/author/'+localStorage.getItem('uuid')+'/inbox/'
+                    url: host_url + 'author/'+localStorage.getItem('uuid')+'/inbox/'
                 })
                 .done(function(data){
 
@@ -577,7 +579,7 @@
                 $.ajax({
                     type:"POST",
                     data:data,
-                    url: 'http://localhost:8000/author/'+fid+'/inbox/'
+                    url: host_url + 'author/'+fid+'/inbox/'
                 })
                 .done(function(data){
                     //MANIPULATE DOM
@@ -594,7 +596,7 @@
                 //get the first parent div wrapping the delete button
                 $.ajax({
                     type: 'DELETE',
-                    url: 'http://localhost:8000/author/'+localStorage.getItem('uuid')+'/posts/'+curDel.id+'/',
+                    url: host_url + 'author/'+localStorage.getItem('uuid')+'/posts/'+curDel.id+'/',
                 }).done(function(data){
                     $('#'+curDel.id).parents('[class]:eq(1)').remove();
                     console.log('deleted');

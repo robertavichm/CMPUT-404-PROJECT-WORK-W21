@@ -149,6 +149,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
     <script>
 
+      const host_url = '{{ host_url }}';
+
       // Submit Profile
       $('.form-profile').submit(function(e) {
         e.preventDefault();
@@ -168,7 +170,7 @@
         //
         // $.ajax({
         //   type: 'POST',
-        //   url: 'http://localhost:8000/author/'+ localStorage.getItem('uuid') +'/', // TODO: should point to current user url
+        //   url: host_url + 'author/'+ localStorage.getItem('uuid') +'/', // TODO: should point to current user url
         //   data: d,
         // })
         //   .done(function(data){
@@ -180,7 +182,7 @@
       // GET Profile
       $.ajax({
         type: 'GET',
-        url: 'http://localhost:8000/author/'+ localStorage.getItem('uuid') +'/', // TODO: should point to current user url
+        url: host_url + 'author/'+ localStorage.getItem('uuid') +'/', // TODO: should point to current user url
       })
         .done(function(data){
           console.log(data);
