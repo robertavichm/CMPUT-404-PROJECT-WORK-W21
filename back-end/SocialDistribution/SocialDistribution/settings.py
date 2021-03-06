@@ -88,6 +88,8 @@ WSGI_APPLICATION = 'SocialDistribution.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
+HOST_URL = os.environ.get("Host_url")
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
