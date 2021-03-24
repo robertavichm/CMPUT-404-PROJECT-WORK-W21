@@ -10,7 +10,10 @@ from .formatters import like_formatter
 import json
 
 # this path is mostly for the sake of developing
+
 @api_view(["POST","GET"])
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([])
 def open_path(request):
     if(request.method == "POST"):
         json_data = request.data
