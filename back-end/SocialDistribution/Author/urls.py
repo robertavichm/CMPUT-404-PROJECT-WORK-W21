@@ -18,5 +18,4 @@ urlpatterns = [
     path('author/<author_id>/posts/<post_id>/comments/<comment_id>/', post_views.specific_comments),
     path('author/<author_id>/inbox/', inbox_views.handle_inbox),
     
-
 ]

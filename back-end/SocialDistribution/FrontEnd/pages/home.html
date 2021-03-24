@@ -1,0 +1,608 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
+    <link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" /><link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" />
+    <title>Home</title>
+</head>
+<body>
+    <body>
+      <div class="nav-w">
+        <div class="nav-bar">
+          <div class="logo">
+            <p>Social Distribution</p>
+          </div>
+          <div class="options">
+            <div class="profile"></div>
+            <div class="username"><p></p></div>
+          </div>
+        </div>
+      </div>
+
+        <div class="main-body">
+            <div class="vertical-nav">
+                <div class="server-main">
+                    <div class="menu-list-wrap">
+                        <div class="menu-list-profile"><p>John Doe</p></div>
+                        <div class="menu-list-cell">
+                            <div class="menu-l-img"><i class="material-icons" style="color:cadetblue"><a href="#"></a>stream</i></div>
+                            <div class="menu-l-text"><p><a href="{% url 'home' %}" style="text-decoration:none;color:black">Stream</a></p></div>
+                        </div>
+                        <div class="menu-list-cell">
+                            <div class="menu-l-img"><i class="material-icons" style="color:cornflowerblue">face</i></div>
+                            <div class="menu-l-text"><p><a href="{% url 'profile' %}" style="text-decoration:none;color:black">Profile</a></p></div>
+                        </div>
+                        <div class="menu-list-cell">
+                            <div class="menu-l-img"><i class="material-icons" style="color:coral">people</i></div>
+                            <div class="menu-l-text"><p><a href="{% url 'friends' %}" style="text-decoration:none;color:black">Friends</a></p></div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="content-head">
+                    <div class="post-holder">
+                        <div class="post-wrap">
+                            <input type="text" placeholder="What's on your mind?" id="post-input">
+                            <div class="post-format">
+                                <div class="p-f-h">
+                                    <div class="close">
+                                        <i class="material-icons">close</i>
+                                    </div>
+                                    <div class="tab-control">
+                                        <div class="post-raw">
+                                            <p>Write</p>
+                                        </div>
+                                        <div class="post-preview">
+                                            <p>Preview</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="post-body">
+                                    <div class="initial-body">
+                                        <div class="p-content-area">
+                                            <div class="post-b-text">
+                                                <div class="p-content-title">
+                                                    <input type="text" placeholder="title..." id="p-title">
+                                                </div>
+                                                <div class="p-content-desc">
+                                                    <input type="text" placeholder="decription..." id="p-description">
+                                                </div>
+                                                <textarea id="p-r-text-input" cols="30" rows="10" placeholder="Start a conversation ..."></textarea>
+                                            </div>
+                                            <div class="post-img-wrap">
+
+                                                <div class="p-close-wrap">
+                                                    <div class="p-close-img">
+                                                        <i class="material-icons" style="color:white">close</i>
+                                                    </div>
+                                                </div>
+                                                <div class="p-align-img">
+                                                    <div class="post-img-h">
+                                                        <img src="{%  static  'assets/preview.png'  %}" id="proimage">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="img-overall">
+                                            <div class="img-holder">
+
+                                                <div class="post-images">
+                                                    <input type="file" id="img-input"/>
+                                                    <div class="img-logo-wrap">
+                                                        <i class="material-icons">wallpaper</i>
+                                                    </div>
+                                                    <p class="img-logo-text" style="margin:0;margin-top:12.5px;float:left">Photo</p>
+                                                </div>
+
+                                                <div class="create-post">
+                                                    <p>Post</p>
+                                                </div>
+                                                <div style="display:inline-block"><input type="checkbox" id="l-ul" style="width:40px" value="listed" checked><span> Listed</span></div>
+                                                <div class="sel">
+                                                  <select  id="content_type">
+                                                     <option value="plain_text">Plain text</option>
+                                                     <option value="image/png">Image</option>
+                                                     <option value="image/jpeg">Text+image</option>
+                                                     <option value="markdown">Markdown</option>
+                                                   </select>
+                                                </div>
+                                                <div class="sel">
+                                                  <select id="visibility_choice">
+                                                    <option value="PUBLIC">Public</option>
+                                                    <option value="FRIENDS">Friends</option>
+                                                   </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="preview-body">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+                <div class="post-feed-w">
+                    <div class="post-feed">
+                        <div class="tab-switch" style="width:100%">
+                            <div class="tab-public">
+                                <div class="tab-icon"><i class="material-icons" style="color:rgba(0,0,0,0.50)">public</i></div>
+                                <div class="tab-text"><p>Public</p></div>
+
+                            </div>
+                            <div class="tab-inbox">
+                                <div class="tab-icon"><i class="material-icons" style="color:rgba(0,0,0,0.50)">inbox</i></div>
+                                <div class="tab-text"><p>Inbox</p></div>
+                            </div>
+                        </div>
+                        <div class="inbox-wrap">
+                            <div class="table-head">
+                                <p>Summary</p>
+                            </div>
+                            <div class="table-body">
+
+                                <table id="summary-table">
+                                    <tbody id="sum-body">
+
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+
+
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js" integrity="sha512-L03kznCrNOfVxOUovR6ESfCz9Gfny7gihUX/huVbQB9zjODtYpxaVtIaAkpetoiyV2eqWbvxMH9fiSv5enX7bw==" crossorigin="anonymous"></script>
+        <script>
+
+            const host_url = '{{ host_url }}';
+
+            followerArray = [];
+            const dname = localStorage.getItem('displayName');
+            $('.username p').append(dname);
+            // GET
+            fetchFollowers();
+            $('.check-visibility,.vis-dropdown').mouseenter(function(){
+                $('.vis-dropdown').show();
+            });
+
+            $('.check-visibility,.vis-dropdown').mouseleave(function(){
+                $('.vis-dropdown').hide();
+                document.getElementsByClassName('vis-authors')[0].style.display = "none";
+            });
+
+
+            $('.post-type-wrap,.post_type').mouseenter(function(){
+                $('.post_type').show();
+            });
+            $('.post-type-wrap,.post_type').mouseleave(function(){
+                $('.post_type').hide();
+            });
+            $('#post-input').click(function() {
+                document.getElementsByClassName("tab-switch")[0].style.visibility = "hidden";
+                document.getElementsByClassName('post-format')[0].style.display = "block";
+            })
+            $('#vis-input').click(function() {
+                document.getElementsByClassName('vis-authors')[0].style.display = "block";
+
+            })
+            document.getElementsByClassName('tab-public')[0].classList.add("current-tab");
+            $('.tab-public').click(function() {
+                $('.posted-wrap').remove();
+                document.getElementsByClassName('inbox-wrap')[0].style.display = "none";
+                document.getElementsByClassName('tab-public')[0].classList.add("current-tab");
+                document.getElementsByClassName('tab-inbox')[0].classList.remove("current-tab");
+                fetchPublicPost()
+            })
+            $('.tab-inbox').click(function() {
+                $('.posted-wrap').remove();
+                document.getElementsByClassName('tab-public')[0].classList.remove("current-tab");
+                document.getElementsByClassName('tab-inbox')[0].classList.add("current-tab");
+                fetchInboxMessages();
+            })
+
+            $('.post-preview').click(function() {
+                document.getElementsByClassName("preview-body")[0].style.display = "inline-block";
+                document.getElementsByClassName("initial-body")[0].style.display = "none";
+                document.getElementsByClassName("post-preview")[0].style.background = "white";
+                document.getElementsByClassName("post-raw")[0].style.background = "rgba(0,0,0,0)";
+                document.getElementsByClassName("post-preview")[0].style.color = "rgba(0, 0, 0, 0.45)";
+                document.getElementsByClassName("post-raw")[0].style.color = "cornflowerblue";
+                var text = document.getElementById('p-r-text-input').value;
+                //convert markdown to html
+                var converter = new showdown.Converter();
+                var md = '[**Showdown**](http://www.showdownjs.com) is *great*\n' +
+                         'because:\n\n' +
+                         ' - it\'s easy to use\n' +
+                         ' - it\'s extensible\n' +
+                         ' - works in the server and in the browser';
+                var html = converter.makeHtml(text);
+                document.getElementsByClassName('preview-body')[0].innerHTML += html;
+
+            });
+            $('.post-raw').click(function() {
+                $('.preview-body').empty();
+                document.getElementsByClassName("preview-body")[0].style.display = "none";
+                document.getElementsByClassName("initial-body")[0].style.display = "inline-block";
+                document.getElementsByClassName("post-preview")[0].style.background = "rgba(0,0,0,0)";
+                document.getElementsByClassName("post-raw")[0].style.background = "white";
+                document.getElementsByClassName("post-preview")[0].style.color = "cornflowerblue";
+                document.getElementsByClassName("post-raw")[0].style.color = "rgba(0, 0, 0, 0.45)";
+            });
+            $('.close').click(function() {
+                document.getElementsByClassName('post-format')[0].style.display = "none";
+                document.getElementsByClassName("tab-switch")[0].style.visibility = "visible";
+            });
+            $('.p-close-img').click(function() {
+                document.getElementsByClassName('p-close-img')[0].style.display = "none";
+                $('#proimage').attr('src',"preview.png");
+
+            });
+            var c_is_opened = false;
+            $('.comment-w').click(function() {
+                if(!c_is_opened){
+                    document.getElementsByClassName('o-comments')[0].style.display = "inline-block";
+                    c_is_opened = true;
+                }else{
+                    document.getElementsByClassName('o-comments')[0].style.display = "none";
+                    c_is_opened = false;
+                }
+            });
+            var c_is_opened = false;
+            function toggleComments(){
+                if(!c_is_opened){
+                    document.getElementsByClassName('o-comments')[0].style.display = "inline-block";
+                    c_is_opened = true;
+                }else{
+                    document.getElementsByClassName('o-comments')[0].style.display = "none";
+                    c_is_opened = false;
+                }
+            }
+
+            var is_checked_listed = false;
+            $('#checklist_listed').click(function() {
+                if(!is_checked_listed){
+                    document.getElementById('ch-listed').style.display = "flex";
+                    is_checked_listed = true;
+                }else{
+                    document.getElementById('ch-listed').style.display = "none";
+                    is_checked_listed = false;
+                }
+            });
+            var postVisibility;
+            var is_checked_friend = false;
+            $('#vis-friends').click(function() {
+                if(!is_checked_friend){
+                    document.getElementById('ch-friends').style.display = "flex";
+                    is_checked_friend = true;
+                    postVisibility = "FRIENDS";
+                }else{
+                    document.getElementById('ch-friends').style.display = "none";
+                    is_checked_friend = false;
+                }
+            });
+
+            var is_checked_pub = false;
+            $('#vis-pub').click(function() {
+                if(!is_checked_pub){
+                    document.getElementById('ch-pub').style.display = "flex";
+                    is_checked_pub = true;
+                    postVisibility = "PUBLIC";
+                }else{
+                    document.getElementById('ch-pub').style.display = "none";
+                    is_checked_pub = false;
+                }
+            });
+            var base64;
+            $('#img-input').change(function () {
+                selectedFile = event.target.files[0];
+                console.log(selectedFile)
+                var imageType = /image.*/;
+                if (selectedFile.type.match(imageType)) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        console.log(e.target.result)
+                        base64 = e.target.result;
+                        $('#proimage').attr('src', e.target.result);
+                        document.getElementsByClassName('p-close-img')[0].style.display = "flex";
+                        $('form input').val("");
+                };
+                    reader.readAsDataURL(this.files[0]);
+
+                }
+            });
+             // Creating new post
+             $('.create-post').click(function() {
+                var title = document.getElementById("p-title").value;
+                var description = document.getElementById("p-description").value;
+                var text = document.getElementById("p-r-text-input").value;
+                var checked = document.getElementById("l-ul").checked ? "False" : "True";
+                // var cttn = base64 ? text : base64 ;
+                var cttn = text;
+
+                const data = {
+                    'type'          : "post",
+                    'title'         : title,
+                    'description'   : description,
+                    'source'        : "change this",
+                    'origin'        : "change this",
+                    'contentType'   : $('#content_type').val(),
+                    'content'       : cttn,
+                    'pageSize'      : 1,
+                    'categories'    : ["change", "this"],
+                    'count'         : 1,
+                    'size'          : 1,
+                    'commentLink'   : "change this",
+                    'visibility'    : $('#visibility_choice').val(),
+                    'unlisted'      : checked ,
+                    };
+
+                $.ajax({
+                type: 'POST',
+                url: host_url + 'author/'+localStorage.getItem('uuid')+'/posts/', // TODO: should point to current user url
+                data: data,
+                })
+                .done(function(data){
+                    document.getElementsByClassName('post-format')[0].style.display = "none";
+                    console.log(data); // UUID of post
+                    //insert post data to DOM
+                    FillDOM(data);
+                });
+            });
+
+            function fetchPublicPost(){
+
+                $.ajax({
+                    type: 'GET',
+                    url: host_url + 'posts/'
+                })
+                .done(function(data){
+
+                    console.log(data.items); // UUID of post
+                    var posts = data.items;
+                    if(posts.length != 0){
+                        for ( i = 0 ; i < posts.length; i++){
+                            var data = posts[i];
+                            var flag;
+                            var delFlag;
+                            var editFlag;
+                            if(followerArray.includes(data.author.id)){
+                                flag="hideFollow"
+                            }else{
+                                flag="showFollow"
+                                //set a flag to handle follower logic
+                            }
+
+                            if(data.author.id == localStorage.getItem('uuid')){
+                                flag="hideFollow";
+                                delFlag = "unhideDel";
+                                editFlag="unhideEdit";
+                            }else{
+                                delFlag= "hideDel";
+                                editFlag="hideEdit";
+                            }
+
+                            //insert post data to DOM
+                            FillDOM(data,flag,delFlag,editFlag)
+
+                        }
+                    }else{
+                        //no public data exist
+
+                    }
+                });
+
+            }
+
+            function fetchFollowers(){
+                //fetch followers of user and cross check with post in order to add "follow" feature to post
+                $.ajax({
+                    type: 'GET',
+                    url: host_url + 'author/'+localStorage.getItem('uuid')+'/followers/'
+                })
+                .done(function(data){
+                    console.log(data.items);
+                    const followersRes =  data.items;
+                    for(i=0;i < followersRes.length; i++){
+                        followerArray.push(followersRes[0].id)
+                    }
+                    fetchPublicPost()
+                });
+
+            }
+            var arrayOfRequests = [];
+            function checkFollowrequest(){
+                $.ajax({
+                    type: 'GET',
+                    url: host_url + 'author/'+localStorage.getItem('uuid')+'/inbox/'
+                })
+                .done(function(data){
+                    console.log(data)
+                    console.log("IN check follow request");
+                    var requests = data.items;
+                    for(i=0;i < requests.length; i++){
+                        arrayOfRequests.push(requests[0].id)
+                    }
+
+
+                });
+            }
+            function fetchInboxMessages(){
+                $('#sum-body').empty();
+                $.ajax({
+                    type: 'GET',
+                    url: host_url + 'author/'+localStorage.getItem('uuid')+'/inbox/'
+                })
+                .done(function(data){
+
+                    console.log("IN PRIVATE AJAX CALL");
+                    console.log(data.items);
+                    var privatePosts = data.items;
+                    if(privatePosts.length == 0){
+                        //no private posts exist
+                        var nodata = `<div class="posted-wrap"><div class="noposts">
+                                            <img src="{%  static  'assets/nopost.png'  %}">
+                                            <p>You have no messages in your inbox</p>
+                                      </div></div>`
+                        $(".post-feed").append(nodata);
+
+                    }else{
+                        document.getElementsByClassName('inbox-wrap')[0].style.display = "block";
+                        for(i=0;i<privatePosts.length;i++){
+                            var data = privatePosts[i];
+
+                            $('#summary-table').find('tbody').append([
+                                '<tr>',
+                                    '<td>'+data.summary[0]+'</td>',
+                                '</tr>'
+                            ].join(''));
+                        }
+                    }
+
+                });
+            }
+
+
+            function FillDOM(data,flag,deleteFlag,editFlag){
+                const postHTML =  `<div class="posted-wrap">
+                    <div class="posted-w-h" >
+                        <div class="p-w-h-details">
+
+                            <div class="p-profile-wrap">
+                                <div class="p-profile">
+
+                                </div>
+
+                            </div>
+                            <div class="p-user-wrap">
+                                <p>${data.author.displayName}</p>
+                            </div>
+                            <p class="follow-user ${data.author.id}" id="${flag}" onclick="followUser(this)">Follow</p>
+                        </div>
+                        <div class="del-post ${deleteFlag}"  id="${data.post_id}" onclick="deletePost(this)">
+                            <i class="material-icons" style="color:rgba(0,0,0,0.45)">delete_outline</i>
+                        </div>
+                        <div class="edit-post ${editFlag}">
+                            <i class="material-icons" style="color:rgba(0,0,0,0.45)">mode</i>
+                        </div>
+                    </div>
+                    <div class="p-title-wrap">
+                        <p>${data.title}</p>
+                    </div>
+                    <div class="post-text">
+                        <p>${data.content}</p>
+                    </div>
+                    <div class="posted-img-wrap">
+                        <img src="{%  static  'assets/preview.png'  %}" id="proimage">
+                    </div>
+                    <div class="like-count-w">
+                        <p id="like-count">0 likes</p id="comment-count"><p>${data.commentCount} comments</p id="share-count"><p>0 shares</p>
+                    </div>
+                    <div class="social-controls">
+
+                        <div class="like-w">
+                            <div class="s-c-img">
+                                <i class="material-icons">thumb_up</i>
+                            </div>
+                            <p>Like</p>
+                        </div>
+                        <div class="comment-w">
+                            <div class="s-c-img">
+                                <i class="material-icons">comment</i>
+                            </div>
+                            <p>Comment</p>
+                        </div>
+                        <div class="share-w">
+                            <div class="s-c-img">
+                                <i class="material-icons">share</i>
+                            </div>
+                            <p>Share</p>
+                        </div>
+                    </div>
+                    <div class="o-comments">
+                        <div class="o-c-cell">
+                            <div class="oc-profile">
+
+                            </div>
+                            <div class="o-type-comment">
+                                <input type="text" placeholder="Type your comments here">
+                            </div>
+                        </div>
+                        <div class="o-r-cell">
+                            <div class="o-r-details">
+                                <p>Whatsup everyone Whatsup everyoneWhatsup everyoneWhatsup everyoneWhatsup everyoneWhatsup everyoneWhatsup everyone Whatsup everyoneWhatsup everyoneWhatsup everyone Whatsup everyoneWhatsup everyoneWhatsup everyone </p>
+                                <div class="c-p-wrap">
+                                    <p>By: <span>Sonia Woodelwels</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>`;
+                $(".post-feed").append(postHTML);
+            }
+
+
+            function followUser(curTag){
+                console.log("tapped follower tag")
+                var arr = (curTag.className).split(' ');
+                fid = arr[1];
+                console.log(fid);
+                followRequest(fid,curTag)
+
+            }
+
+            function followRequest(fid,curTag){
+                data = {
+                    "type":"follow",
+                    "author_id":localStorage.getItem('uuid')
+                }
+                $.ajax({
+                    type:"POST",
+                    data:data,
+                    url: host_url + 'author/'+fid+'/inbox/'
+                })
+                .done(function(data){
+                    //MANIPULATE DOM
+                    console.log(data);
+                    curTag.innerHTML = "Request Sent";
+
+                });
+            }
+
+            function deletePost(curDel){
+                console.log(curDel.id)
+
+                console.log($('#'+curDel.id).parents('[class]:eq(1)'));
+                //get the first parent div wrapping the delete button
+                $.ajax({
+                    type: 'DELETE',
+                    url: host_url + 'author/'+localStorage.getItem('uuid')+'/posts/'+curDel.id+'/',
+                }).done(function(data){
+                    $('#'+curDel.id).parents('[class]:eq(1)').remove();
+                    console.log('deleted');
+                });
+
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"  href="{%  static  'css/login.css'  %}">
+    <title>Login</title>
+
+  </head>
+  <body>
+    <div class="container">
+      <div class="wrap-login">
+        <form class="login-form" action="login.html" method="post">
+          <span class="login-form-title">Login</span>
+          <span class="login-l">Username</span>
+          <div class="wrap-input">
+            <input type="text" name="username" value="" placeholder="uuid for now">
+          </div>
+          <span class="login-l">Password</span>
+          <div class="wrap-input">
+            <input type="text" name="password" value="" disabled>
+          </div>
+          <div class="" style="margin-bottom:10px">
+            <a href="{% url 'register' %}" style="color:black">Register</a>
+          </div>
+          <div class="wrap-button">
+            <button type="submit" name="button">Login</button>
+          </div>
+        </form>
+      </div>
+    <div>
+
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+      <script type="text/javascript">
+
+      const host_url = '{{ host_url }}';
+      var x = host_url + 'author/'+ $('input[name=username]').val() +'/';
+      console.log(x)
+
+      $('.login-form').submit(function(e) {
+        $.ajax({
+          url: host_url + 'author/'+ $('input[name=username]').val() +'/',
+        })
+          .done(function(data){
+            console.log(data); // UUID of post
+            localStorage.setItem("uuid", data.id);
+            localStorage.setItem("displayName", data.displayName);
+            window.location.href = host_url + 'home';
+          });
+
+          e.preventDefault();
+      });
+
+      </script>
+  </body>
+
+</html>

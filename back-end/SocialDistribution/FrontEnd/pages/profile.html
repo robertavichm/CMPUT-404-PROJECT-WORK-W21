@@ -1,0 +1,198 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet"  href="{%  static  'css/profile.css'  %}">
+    <link rel="stylesheet"  href="{%  static  'css/frame.css'  %}">
+    <link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" />
+    <title>Profile</title>
+    <style>
+        .content{
+            display:flex;
+            justify-content:center;
+        }
+        .profile-content{
+            width:500px;
+            height:430px;
+            margin-top:50px;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
+        }
+        .profile-wrapper{
+            width:calc(100% - 40px);
+            margin-left:20px;
+        }
+        .profile-content-h{
+            width:100%;
+            height:49px;
+            text-align:center;
+            line-height:50px;
+            border-bottom:1px solid rgba(0, 0, 0, 0.05);
+        }
+        .profile-content-h p{
+            margin:0;
+            font-size:18px;
+            font-weight:700;
+        }
+        .p-cell{
+            width:100%;
+            height:40px;
+            margin-top:30px;
+        }
+        .p-c-left{
+            float:left;
+            width:60px;
+            height:100%;
+            line-height:40px;
+        }
+        .p-c-left p{
+            margin:0;
+            font-size:16px;
+            font-weight:600;
+        }
+        .p-c-right{
+            float:right;
+            width:calc(100% - 60px);
+            height:100%;
+        }
+        .p-c-right input{
+            width:100%;
+            height:30px;
+            margin-top:5px;
+            box-sizing:border-box;
+        }
+        .done-btn{
+            width:80px;
+            height:35px;
+            float:right;
+            margin-right:0px;
+            margin-top:30px;
+            background-color:cornflowerblue;
+            color:white;
+            border:none;
+            outline:none;
+            border-radius:5px;
+            cursor:pointer;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <div class="logo">
+            <p>Social Distribution</p>
+        </div>
+        <div class="options">
+            <div class="profile">
+
+            </div>
+        </div>
+
+    </div>
+    <div class="main-body">
+        <div class="vertical-nav">
+            <div class="server-main">
+                <div class="menu-list-wrap">
+                  <div class="menu-list-profile"><p>John Doe</p></div>
+                  <div class="menu-list-cell">
+                      <div class="menu-l-img"><i class="material-icons" style="color:cadetblue"><a href="#"></a>stream</i></div>
+                      <div class="menu-l-text"><p><a href="{% url 'home' %}" style="text-decoration:none;color:black">Stream</a></p></div>
+                  </div>
+                  <div class="menu-list-cell">
+                      <div class="menu-l-img"><i class="material-icons" style="color:cornflowerblue">face</i></div>
+                      <div class="menu-l-text"><p><a href="{% url 'profile' %}" style="text-decoration:none;color:black">Profile</a></p></div>
+                  </div>
+                  <div class="menu-list-cell">
+                      <div class="menu-l-img"><i class="material-icons" style="color:coral">people</i></div>
+                      <div class="menu-l-text"><p><a href="{% url 'friends' %}" style="text-decoration:none;color:black">Friends</a></p></div>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <div class="profile-content">
+                <div class="profile-wrapper">
+                  <form class="form-profile" method="post">
+                    {% csrf_token %}
+                    <div class="profile-content-h">
+                        <p>My Profile</p>
+                    </div>
+                    <div class="p-cell">
+                        <div class="p-c-left">Id</div>
+                        <div class="p-c-right"><input type="text" name="id" class="id" disabled></div>
+                    </div>
+                    <div class="p-cell">
+                        <div class="p-c-left">Display name</div>
+                        <div class="p-c-right"><input type="text" name="dname" class="dname"></div>
+                    </div>
+                    <div class="p-cell">
+                        <div class="p-c-left">Host</div>
+                        <div class="p-c-right"><input type="text" name="host" class="host"></div>
+                    </div>
+                    <div class="p-cell">
+                        <div class="p-c-left">Url</div>
+                        <div class="p-c-right"><input type="text" name="url" class="url" disabled></div>
+                    </div>
+                    <div class="p-cell">
+                        <div class="p-c-left">Github</div>
+                        <div class="p-c-right"><input type="text" name="github" class="github"></div>
+                    </div>
+                    <button class="done-btn" type="submit">Done</button>
+                  </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script>
+
+      const host_url = '{{ host_url }}';
+
+      // Submit Profile
+      $('.form-profile').submit(function(e) {
+        e.preventDefault();
+       location.rel();
+
+
+        // TODO: error from api
+        // // TODO: validation?
+        // const d = {
+        //   'id'            : $('input[name=id]').val(),
+        //   "displayName"   : $('input[name=dname]').val(),
+        //   'host'          : $('input[name=host]').val(),
+        //   'url'           : $('input[name=url]').val(),
+        //   'github'        : $('input[name=github]').val(),
+        // };
+        // console.log(d);
+        //
+        // $.ajax({
+        //   type: 'POST',
+        //   url: host_url + 'author/'+ localStorage.getItem('uuid') +'/', // TODO: should point to current user url
+        //   data: d,
+        // })
+        //   .done(function(data){
+        //     // TODO: error'Author' object is not callable
+        //     location.rel();
+        //   });
+      });
+
+      // GET Profile
+      $.ajax({
+        type: 'GET',
+        url: host_url + 'author/'+ localStorage.getItem('uuid') +'/', // TODO: should point to current user url
+      })
+        .done(function(data){
+          console.log(data);
+          document.getElementsByClassName("id")[0].value = data.id;
+          document.getElementsByClassName("dname")[0].value = data.displayName;
+          document.getElementsByClassName("host")[0].value = data.host;
+          document.getElementsByClassName("url")[0].value = data.url;
+          document.getElementsByClassName("github")[0].value = data.github;
+        });
+
+    </script>
+</body>
+</html>
