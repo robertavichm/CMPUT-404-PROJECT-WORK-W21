@@ -53,6 +53,7 @@ INSTALLED_APPS = [
 
 ]
 
+<<<<<<< HEAD
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication',
@@ -61,6 +62,18 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ]
 }
+=======
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.BasicAuthentication',
+#         'rest_framework.authentication.SessionAuthentication',
+#     ]
+#     # 'DEFAULT_PERMISSION_CLASSES': [
+#     #     'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+#     # ]
+
+# }
+>>>>>>> 46f648746d8e8852e5bdd60b9f01288dabc10c17
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

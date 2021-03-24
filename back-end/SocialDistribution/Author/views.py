@@ -8,15 +8,24 @@ from .author_serializer import AuthorSerializer, LikeSerializer, FriendshipSeria
 from .models import Author, Post, Like, FriendShip
 from .formatters import like_formatter
 import json
+<<<<<<< HEAD
 
 from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+=======
+from rest_framework.decorators import authentication_classes,permission_classes
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import BasePermission, IsAuthenticatedOrReadOnly,IsAuthenticated
+>>>>>>> 46f648746d8e8852e5bdd60b9f01288dabc10c17
 # this path is mostly for the sake of developing
 
+
+
 @api_view(["POST","GET"])
+<<<<<<< HEAD
 @authentication_classes([BasicAuthentication])
 @permission_classes([AllowAny])
 def open_path(request):
@@ -48,7 +57,28 @@ def open_path(request):
 
         return HttpResponse(str(new_author.id), status=status.HTTP_200_OK)
 
+=======
+@authentication_classes([SessionAuthentication, BasicAuthentication])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def open_path(request):
+    if(request.method == "POST"):
+        json_data = request.data
+        
+        new_author = Author()
+        #password = json_data["password"]
+        # json_data.pop("password")
+        for k, v in json_data.items():
+            #Author(k=v)
+            setattr(new_author, k, v)
+        #new_author.password set_password(password)
+        url = new_author.host+"/author/"+str(new_author.id)
+        new_author.url = url
+        new_author.save()
+        
+        return HttpResponse(str(new_author.id),status=status.HTTP_200_OK)
+>>>>>>> 46f648746d8e8852e5bdd60b9f01288dabc10c17
     if(request.method == "GET"):
+        return HttpResponse(request.user)
         data = Author.objects.all()
         ser = AuthorSerializer(data,many=True)
         return JsonResponse(ser.data, safe=False)
