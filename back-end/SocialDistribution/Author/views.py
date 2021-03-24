@@ -2,30 +2,52 @@ from django.shortcuts import render
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseBadRequest,HttpResponse
 from django.http import JsonResponse
-from rest_framework.decorators import api_view
-from rest_framework import status
+from django.db import IntegrityError
+
 from .author_serializer import AuthorSerializer, LikeSerializer, FriendshipSerializer
 from .models import Author, Post, Like, FriendShip
 from .formatters import like_formatter
 import json
-from rest_framework.decorators import authentication_classes,permission_classes
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+
+from rest_framework.decorators import api_view
+from rest_framework import status
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 # this path is mostly for the sake of developing
 
 @api_view(["POST","GET"])
-@authentication_classes([SessionAuthentication, BasicAuthentication])
-@permission_classes([])
+@authentication_classes([BasicAuthentication])
+@permission_classes([AllowAny])
 def open_path(request):
     if(request.method == "POST"):
         json_data = request.data
+
         new_author = Author()
+        
+        # Creating new user login information
+        if "password" in json_data:
+            password = json_data["password"]
+            json_data.pop("password")
+            new_author.set_password(password)
+            new_author.username = json_data["username"]
+
         for k, v in json_data.items():
             #Author(k=v)
             setattr(new_author, k, v)
+
         url = new_author.host+"/author/"+str(new_author.id)
         new_author.url = url
-        new_author.save()
-        return HttpResponse(str(new_author.id),status=status.HTTP_200_OK)
+        
+        # Try creating user, 
+        # if duplicate user, return Bad Request
+        try:
+            new_author.save()
+        except IntegrityError:
+            return HttpResponse(status=HttpResponseBadRequest)
+
+        return HttpResponse(str(new_author.id), status=status.HTTP_200_OK)
+
     if(request.method == "GET"):
         data = Author.objects.all()
         ser = AuthorSerializer(data,many=True)
