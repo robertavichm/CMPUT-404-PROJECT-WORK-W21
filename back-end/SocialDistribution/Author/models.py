@@ -44,15 +44,20 @@ class Post(models.Model):
 
 class FriendShip(models.Model):
     FriendShipId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    #local
     author_primary = models.ForeignKey(Author, on_delete=models.CASCADE,related_name="primary")
-    author_friend = models.ForeignKey(Author, on_delete=models.CASCADE,related_name="friend")
+    #remote?
+    #author_friend = models.ForeignKey(Author, on_delete=models.CASCADE,related_name="friend")
+    author_friend = models.TextField()
     accepted = models.BooleanField(default=False)
  
 
 class Comment(models.Model):
     comment_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
-    author_id = models.ForeignKey(Author, on_delete=models.CASCADE)
+    #post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post_id = models.TextField()
+    #liker
+    author_id = models.TextField()
     contentType = models.TextField()
     published = models.DateTimeField(default=timezone.now, editable=False)
     comment = models.TextField()
@@ -60,12 +65,16 @@ class Comment(models.Model):
 
 class Like(models.Model):
     like_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    author_id = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="likee")
-    object_id = models.TextField()
-    liker_id = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="liker")
     
-    comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
-    post_id = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
+    #author_id = TextField()
+    #me?
+    author_id = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="likee")
+    
+    #where's the person liking this?
+    liker_id = models.TextField()
+    
+    comment_id = models.TextField()
+    post_id = models.TextField()
     #type = "likes"
 
 #general inbox check

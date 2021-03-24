@@ -8,7 +8,8 @@ from .author_serializer import AuthorSerializer, LikeSerializer, FriendshipSeria
 from .models import Author, Post, Like, FriendShip
 from .formatters import like_formatter
 import json
-
+from rest_framework.decorators import authentication_classes,permission_classes
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 # this path is mostly for the sake of developing
 
 @api_view(["POST","GET"])
