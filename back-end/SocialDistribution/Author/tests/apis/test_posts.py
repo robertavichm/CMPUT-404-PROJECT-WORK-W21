@@ -3,8 +3,8 @@ from rest_framework import status
 import json
 from Author.models import Author, Post
 from Author.author_serializer import AuthorSerializer
-from Author.formatters import post_formater
 from Author.tests.dummy_model_fields import get_author_fields, get_post_fields
+from Author.formatters import post_formater
 
 invalid_uuid = '01234567-9ABC-DEF0-1234-56789ABCDEF0'
 

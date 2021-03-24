@@ -25,6 +25,11 @@ def get_post_fields():
         "unlisted": False,
     }
 
+def get_follow_fields():
+    return {
+        
+    }
+
 def get_comment_fields():
     return {
         "contentType": "text/plain",
