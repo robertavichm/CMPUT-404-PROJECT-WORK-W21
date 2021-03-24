@@ -89,3 +89,6 @@ class Notification(models.Model):
     like_id = models.ForeignKey(Like, on_delete=models.SET_NULL, null=True)
     comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
     post_id = models.ForeignKey(Post, on_delete=models.SET_NULL, null=True)
+
+# class Node(models.Model):
+#     pass
