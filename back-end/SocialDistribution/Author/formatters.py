@@ -7,7 +7,7 @@ from rest_framework import status
 from .author_serializer import AuthorSerializer,PostSerializer,CommentSerializer,LikeSerializer,NotificationSerializer
 from .models import Author, Post, Comment, Like, Notification, FriendShip
 import json
-
+from SocialDistribution.settings import HOST_URL
 
 def format_notif(notif):
     if(notif.request_id != None):
@@ -26,7 +26,7 @@ def format_notif(notif):
         if(notif.like_id.comment_id != None and notif.like_id.post_id != None):
             response["summary"] = (notif.like_id.liker_id.displayName+" likes comment on post "+notif.like_id.post_id.title)
             response["liker"] = AuthorSerializer(notif.like_id.liker_id,many=False).data
-            response["object"] = "localhost:8000/author/"+str(notif.like_id.author_id.id)+"/posts/"+ \
+            response["object"] = HOST_URL+"/author/"+str(notif.like_id.author_id.id)+"/posts/"+ \
             str(notif.like_id.post_id.post_id)+"/comments/"+str(notif.like_id.comment_id.comment_id)
 
         elif(notif.like_id.comment_id != None and notif.like_id.post_id == None):
@@ -34,7 +34,7 @@ def format_notif(notif):
         else:
             response["summary"] = (notif.like_id.liker_id.displayName+" likes post "+notif.like_id.post_id.title)
             response["liker"] = AuthorSerializer(notif.like_id.liker_id,many=False).data
-            response["object"] = "localhost:8000/author/"+str(notif.like_id.author_id.id)+"/posts/"+ \
+            response["object"] = HOST_URL+"/author/"+str(notif.like_id.author_id.id)+"/posts/"+ \
             str(notif.like_id.post_id.post_id)
         return response,200
     if(notif.post_id != None):
