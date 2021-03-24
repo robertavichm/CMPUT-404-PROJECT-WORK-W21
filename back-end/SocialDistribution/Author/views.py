@@ -10,27 +10,32 @@ from .formatters import like_formatter
 import json
 from rest_framework.decorators import authentication_classes,permission_classes
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.permissions import BasePermission, IsAuthenticated, SAFE_METHODS
+from rest_framework.permissions import BasePermission, IsAuthenticatedOrReadOnly,IsAuthenticated
 # this path is mostly for the sake of developing
 
 
 
 @api_view(["POST","GET"])
 @authentication_classes([SessionAuthentication, BasicAuthentication])
-#@permission_classes()
+@permission_classes([IsAuthenticatedOrReadOnly])
 def open_path(request):
     if(request.method == "POST"):
         json_data = request.data
-        return HttpResponse(request.user.password)
+        
         new_author = Author()
+        #password = json_data["password"]
+        # json_data.pop("password")
         for k, v in json_data.items():
             #Author(k=v)
             setattr(new_author, k, v)
+        #new_author.password set_password(password)
         url = new_author.host+"/author/"+str(new_author.id)
         new_author.url = url
         new_author.save()
+        
         return HttpResponse(str(new_author.id),status=status.HTTP_200_OK)
     if(request.method == "GET"):
+        return HttpResponse(request.user)
         data = Author.objects.all()
         ser = AuthorSerializer(data,many=True)
         return JsonResponse(ser.data, safe=False)
