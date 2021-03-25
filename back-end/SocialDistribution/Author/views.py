@@ -13,15 +13,18 @@ from rest_framework.decorators import api_view
 from rest_framework import status
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authentication import BasicAuthentication
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated
 # this path is mostly for the sake of developing
-
+from SocialDistribution.settings import HOST_URL
 
 
 @api_view(["POST","GET"])
 @authentication_classes([BasicAuthentication])
 @permission_classes([AllowAny])
 def open_path(request):
+    """
+        handles paths authors/
+    """
     if(request.method == "POST"):
         json_data = request.data
 
@@ -37,8 +40,8 @@ def open_path(request):
         for k, v in json_data.items():
             #Author(k=v)
             setattr(new_author, k, v)
-
-        url = new_author.host+"/author/"+str(new_author.id)
+        new_author.host = HOST_URL
+        url = new_author.host+"author/"+str(new_author.id)
         new_author.url = url
         
         # Try creating user, 
@@ -46,18 +49,20 @@ def open_path(request):
         try:
             new_author.save()
         except IntegrityError:
-            return HttpResponse(status=HttpResponseBadRequest)
+            return HttpResponseBadRequest("username taken")
 
         return HttpResponse(str(new_author.id), status=status.HTTP_200_OK)
 
     if(request.method == "GET"):
-        return HttpResponse(request.user)
+        
         data = Author.objects.all()
         ser = AuthorSerializer(data,many=True)
         return JsonResponse(ser.data, safe=False)
 
 
 @api_view(["GET","POST"])
+#@authentication_classes([BasicAuthentication])
+#@permission_classes([IsAuthenticated])
 def author_operation(request,pk):
     """
         handles paths authors/{author_id}
@@ -87,6 +92,9 @@ def author_operation(request,pk):
 
 @api_view(["GET"])
 def get_followers(request,author_id):
+    """
+        handles paths authors/{author_id}/followers/
+    """
     response = {}
     response["type"] = "followers"
     response["items"] = []
@@ -100,6 +108,9 @@ def get_followers(request,author_id):
 
 @api_view(["GET","PUT","DELETE"])
 def handle_follow(request,author_id,follow_id):
+    """
+        handles paths authors/{author_id}/followers/{follower_id}
+    """
     if request.method == "GET":
         data = FriendShip.objects.filter(author_primary=author_id, author_friend=follow_id,accepted=True)
         if(data.count() > 0):
@@ -126,10 +137,13 @@ def handle_follow(request,author_id,follow_id):
 
 @api_view(["GET"])
 def get_likes(request,author_id):
+    """
+        handles paths authors/{author_id}/liked
+    """
     response = {}
     response["type"] = "liked"
     response["items"] = []
-    liked = Like.objects.filter(liker_id=author_id)
+    liked = Like.objects.filter(liker_id__author_id=author_id)
     for i in range(0,len(liked)):
         new_like = like_formatter(liked[i],True)
         response["items"].append(new_like)
