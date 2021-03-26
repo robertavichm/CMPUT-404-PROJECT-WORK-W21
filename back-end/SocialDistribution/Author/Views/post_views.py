@@ -9,7 +9,7 @@ from ..models import Author, Post, Comment, Like
 from ..formatters import post_formater, comment_formatter, like_formatter
 import json
 
-
+import uuid
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated
@@ -21,7 +21,9 @@ def general_post(request,author_id):
         new_post = Post()
         json_data = request.data
         auth = get_object_or_404(Author, pk=author_id)
+        new_post.post_id = uuid.uuid4()
         new_post.author_id = auth
+        new_post.id = auth.url +"/posts/"+str(new_post.post_id)
         for k,v in json_data.items():
             setattr(new_post, k, v)
         new_post.save()

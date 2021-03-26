@@ -58,17 +58,22 @@ def handle_inbox(request,author_id):
 
 def handle_type(post_type,data,author):
     new_notification = Notification(author_id=author)
-    new_notification.items = data
+    #new_notification.items = data
     
     if post_type=="follow":
         if("author_id" in data):
             requestor_data = data["author_id"]
-            
-            new_friendship = FriendShip(author_primary=author,author_remote=requestor_data)
+            ser = AuthorSerializer(author, many=False)
+            data["summary"] = data["author_id"]["displayName"]+ " wants to be "+author.displayName+"'s friend"
+
+            new_friendship = FriendShip(author_local=author,author_remote=requestor_data)
             new_friendship.save()
-            new_notification.save() 
+
+            new_notification.items = data 
+            new_notification.save()
             return HttpResponse("follow request sent")
     if post_type=="like":
+        
         if "author_id" in data:
             liker_id = data["author_id"]
             
@@ -77,10 +82,16 @@ def handle_type(post_type,data,author):
                 post_id = data["post_id"]
                 post = get_object_or_404(Post,pk=post_id)
                 new_like.post_id = post
+                data["summary"] = data["author_id"]["displayName"]+" likes your post"
+                data["object"] = post.id
+                
             if "comment_id" in data:
                 comment_id = data["comment_id"]
                 comment = get_object_or_404(Comment , pk=comment_id)
                 new_like.comment_id = comment
+                data["summary"] = data["author_id"]["displayName"]+" likes your comment"
+                data["object"] = comment.post_id.id +"/comments/"+str(comment.comment_id)
+            new_notification.items = data    
             new_like.save()
             new_notification.save() 
             return HttpResponse("like notification sent")

@@ -8,7 +8,7 @@ import uuid
 
 class Author(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    displayName = models.TextField(null=True)
+    displayName = models.TextField(null=True, unique = True)
     host = models.TextField(null=True)
     url = models.TextField(null=True)
     type = models.TextField(default="author")
@@ -25,6 +25,7 @@ class Post(models.Model):
         choice5 = "image/jpeg;base64"
 
     post_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.TextField(null=True)
     author_id = models.ForeignKey(Author, on_delete=models.CASCADE, null=True)
     title = models.TextField()
     type = models.TextField(default="post")

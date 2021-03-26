@@ -9,6 +9,7 @@ from .models import Author, Post, Comment, Like, Notification, FriendShip
 import json
 from SocialDistribution.settings import HOST_URL
 
+
 def format_notif(notif):
     if(notif.request_id != None):
         response = {}
