@@ -4,6 +4,7 @@ from . import views
 
 
 urlpatterns = [
+    path("login/", views.login),
     path("posts/",post_views.get_all),
     path("author/", views.open_path),
     path('author/<pk>/', views.author_operation),

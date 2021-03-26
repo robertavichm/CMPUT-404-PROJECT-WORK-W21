@@ -9,8 +9,9 @@ from .models import Author, Post, Comment, Like, Notification, FriendShip
 import json
 from SocialDistribution.settings import HOST_URL
 
-
+#function became redundant i think
 def format_notif(notif):
+    #follow notification
     if(notif.request_id != None):
         response = {}
         response["type"] = "Follow"
@@ -20,24 +21,27 @@ def format_notif(notif):
         response["requester"] = friendser.data
         response["requestee"] = primaryser.data
         return response, 200
-
+    #like notification
     if(notif.like_id != None):
         response = {}
         response["type"] = "Like"
+        #comment
         if(notif.like_id.comment_id != None and notif.like_id.post_id != None):
             response["summary"] = (notif.like_id.liker_id.displayName+" likes comment on post "+notif.like_id.post_id.title)
             response["liker"] = AuthorSerializer(notif.like_id.liker_id,many=False).data
             response["object"] = HOST_URL+"author/"+str(notif.like_id.author_id.id)+"/posts/"+ \
             str(notif.like_id.post_id.post_id)+"/comments/"+str(notif.like_id.comment_id.comment_id)
-
+        #shouldnt happen
         elif(notif.like_id.comment_id != None and notif.like_id.post_id == None):
             return "like object comment id exists without a post id. shouldnt have gotten this far.",500 
+        #post like
         else:
             response["summary"] = (notif.like_id.liker_id.displayName+" likes post "+notif.like_id.post_id.title)
             response["liker"] = AuthorSerializer(notif.like_id.liker_id,many=False).data
             response["object"] = HOST_URL+"author/"+str(notif.like_id.author_id.id)+"/posts/"+ \
             str(notif.like_id.post_id.post_id)
         return response,200
+    #notification for a post
     if(notif.post_id != None):
         return post_formater(notif.post_id,False), 200
     return "empty notification",404
@@ -76,32 +80,25 @@ def comment_formatter(comment):
     #ser["author"] = comment.author_id
     return ser
 
-def like_formatter(like,liker):
+def like_formatter(like):
     ser = {}
-    if liker:
-
-        if(like.comment_id !=None and like.post_id !=None):
-            ser["summary"] = like.author_id.displayName+ " likes a comment"
-            ser["object"] = "author/"+str(like.author_id.id)+"/posts/"+str(like.post_id.post_id) + \
-            "/comments/"+str(like.comment_id.comment_id)
-        elif like.comment_id == None and like.post_id != None:
-            ser["summary"] = liker.displayName+ " likes a post"
-            ser["object"] = "http://localhost:8000/author/"+str(like.author_id.id)+"/posts/"+str(like.post_id.post_id)
-        else:
-            return 501
-        ser["author"] =  like.liker_id
-        return ser
-    else:
-        liker = get_object_or_404(Author, pk=like.author.id)
+    
         
-        ser["author"] =  AuthorSerializer(liker).data
-        if(like.comment_id !=None and like.post_id !=None):
-            ser["summary"] = liker["displayName"]+ " likes a comment"
-            ser["object"] = "http://localhost:8000/author/"+str(like.author_id.id)+"/posts/"+str(like.post_id.post_id) + \
-            "/comments/"+str(like.comment_id.comment_id)
-        elif like.comment_id == None and like.post_id != None:
-            ser["summary"] = liker.displayName+ " likes your post!"
-            ser["object"] = "http://localhost:8000/author/"+str(like.author_id.id)+"/posts/"+str(like.post_id.post_id)
-        else:
-            return 501
-        return ser
+    ser["summary"] = like.author_id.displayName+ " liked your activity"
+    ser["object"] = like.object_id
+    ser["author"] =  like.liker_id
+    return ser
+    # else:
+    #     liker = get_object_or_404(Author, pk=like.author.id)
+        
+    #     ser["author"] =  AuthorSerializer(liker).data
+    #     if(like.comment_id !=None and like.post_id !=None):
+    #         ser["summary"] = liker["displayName"]+ " likes a comment"
+    #         ser["object"] = "http://localhost:8000/author/"+str(like.author_id.id)+"/posts/"+str(like.post_id.post_id) + \
+    #         "/comments/"+str(like.comment_id.comment_id)
+    #     elif like.comment_id == None and like.post_id != None:
+    #         ser["summary"] = liker.displayName+ " likes your post!"
+    #         ser["object"] = "http://localhost:8000/author/"+str(like.author_id.id)+"/posts/"+str(like.post_id.post_id)
+    #     else:
+    #         return 501
+    #     return ser
