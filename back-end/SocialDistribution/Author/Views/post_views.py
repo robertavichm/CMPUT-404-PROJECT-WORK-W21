@@ -9,8 +9,10 @@ from ..models import Author, Post, Comment, Like
 from ..formatters import post_formater, comment_formatter, like_formatter
 import json
 
-
-
+import uuid
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated
 
 
 @api_view(["GET","POST"])
@@ -19,7 +21,9 @@ def general_post(request,author_id):
         new_post = Post()
         json_data = request.data
         auth = get_object_or_404(Author, pk=author_id)
+        new_post.post_id = uuid.uuid4()
         new_post.author_id = auth
+        new_post.id = auth.url +"/posts/"+str(new_post.post_id)
         for k,v in json_data.items():
             setattr(new_post, k, v)
         new_post.save()
@@ -56,7 +60,12 @@ def post_operation(request,author_id,post_id):
         return JsonResponse(formatted, safe=False)
 
     if(request.method == "POST"):
+        
         post = get_object_or_404(Post,pk=post_id)
+     
+        if(post.author_id != request.user):
+            #return forbidden
+            return HttpResponse("you dont own this post you sneaky devil",status=status.HTTP_403_FORBIDDEN)
         json_data = request.data
         
         for k,v in json_data.items():
@@ -79,9 +88,12 @@ def get_post_likes(request, author_id, post_id):
     response = {}
     response["type"] = "liked"
     response["items"] = []
-    likes = Like.objects.filter(author_id=author_id,post_id=post_id,comment_id=None)
+    post = get_object_or_404(Post,pk=post_id)
+    object_id = post.id 
+    likes = Like.objects.filter(object_id__icontains=object_id)
+    #likes = Like.objects.filter(author_id=author_id,post_id=post_id,comment_id=None)
     for i in range(0,len(likes)):
-        new_like = like_formatter(likes[i],True)
+        new_like = like_formatter(likes[i])
         response["items"].append(new_like)
     return JsonResponse(response, safe=False)
 
@@ -97,16 +109,22 @@ def general_comments(request, author_id, post_id):
     #ser = CommentSerializer(comment,many=True)
     if(request.method == "GET"):
         comments = Comment.objects.filter(post_id=post_id)
-        ser = CommentSerializer(comments,many=True)
-        return JsonResponse(ser.data,safe=False)
+        response = {}
+        response["type"] = "comment"
+        response["items"] = []
+        for i in range(0,len(comments)):
+            formatted = comment_formatter(comments[i])
+            response["items"].append(formatted)
+
+        return JsonResponse(response,safe=False)
     elif(request.method == "POST"):
         
         json_data = request.data
-        commenter_id = json_data["author_id"]
+        commenter_data = json_data["author_id"]
         json_data.pop("author_id")
-        commenter = get_object_or_404(Author,pk=commenter_id)
+        
         post = get_object_or_404(Post,pk=post_id)
-        new_comment = Comment(author_id=commenter,post_id=post)
+        new_comment = Comment(author_id=commenter_data,post_id=post)
         for k,v in json_data.items():
             setattr(new_comment, k, v)
         new_comment.save()
@@ -121,9 +139,13 @@ def get_comment_likes(request, author_id, post_id, comment_id):
     response = {}
     response["type"] = "liked"
     response["items"] = []
-    likes = Like.objects.filter(author_id=author_id,post_id=post_id,comment_id=comment_id)
+    post = get_object_or_404(Post,pk=post_id)
+    object_id = post.id+"/comments/"+comment_id
+    
+    #return HttpResponse(object_id) 
+    likes = Like.objects.filter(object_id__icontains=object_id)
     for i in range(0,len(likes)):
-        new_like = like_formatter(likes[i],True)
+        new_like = like_formatter(likes[i])
         response["items"].append(new_like)
     return JsonResponse(response, safe=False)
 
@@ -133,7 +155,10 @@ def get_comment_likes(request, author_id, post_id, comment_id):
 def specific_comments(request, author_id, post_id, comment_id):
     if(request.method == "GET"):
         data = get_object_or_404(Comment,pk=comment_id)
-        response = comment_formatter(data)
+        response = {}
+        response["type"] = "comment"
+        response["items"] = []
+        response["items"].append(comment_formatter(data))
         return JsonResponse(response, safe=False)
     if(request.method == "POST"):
         json_data = request.data

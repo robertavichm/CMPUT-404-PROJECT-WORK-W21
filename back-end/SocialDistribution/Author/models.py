@@ -6,12 +6,12 @@ import uuid
 # Create your models here.
 
 
-class Author(models.Model):
+class Author(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    displayName = models.TextField()
-    host = models.TextField()
-    url = models.TextField()
-    type = models.TextField()
+    displayName = models.TextField(null=True, unique = True)
+    host = models.TextField(null=True)
+    url = models.TextField(null=True)
+    type = models.TextField(default="author")
     github = models.TextField(null=True)
 
 
@@ -25,6 +25,7 @@ class Post(models.Model):
         choice5 = "image/jpeg;base64"
 
     post_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.TextField(null=True)
     author_id = models.ForeignKey(Author, on_delete=models.CASCADE, null=True)
     title = models.TextField()
     type = models.TextField(default="post")
@@ -41,31 +42,44 @@ class Post(models.Model):
     visibility = models.TextField()
     unlisted = models.BooleanField()
 
-
+    
 class FriendShip(models.Model):
     FriendShipId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    author_primary = models.ForeignKey(Author, on_delete=models.CASCADE,related_name="primary")
-    author_friend = models.ForeignKey(Author, on_delete=models.CASCADE,related_name="friend")
+    #local
+    author_local = models.ForeignKey(Author, on_delete=models.CASCADE,related_name="primary")
+    #author_friend = models.ForeignKey(Author, on_delete=models.CASCADE,related_name="friend")
+    # one author has to be local and another CAN be remote, hence the JSONFeild. 
+    author_remote = models.JSONField()
     accepted = models.BooleanField(default=False)
  
-
+#good?
 class Comment(models.Model):
     comment_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
-    author_id = models.ForeignKey(Author, on_delete=models.CASCADE)
+    #post_id = models.TextField()
+    #liker
+    author_id = models.JSONField()
     contentType = models.TextField()
     published = models.DateTimeField(default=timezone.now, editable=False)
     comment = models.TextField()
     type = models.TextField(default="comment")
 
+
 class Like(models.Model):
     like_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    author_id = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="likee")
-    object_id = models.TextField()
-    liker_id = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="liker")
     
-    comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
-    post_id = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
+    #author_id = TextField()
+    #me?
+    author_id = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="likee")
+    
+    #where's the person liking this?
+    #store json data if on a different server
+    liker_id = models.JSONField()
+    #link to comment that was liked
+    # comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE,null=True)
+    # #link to post that was liked
+    # post_id = models.ForeignKey(Post, on_delete=models.CASCADE,null=True)
+    object_id = models.TextField(null=False)
     #type = "likes"
 
 #general inbox check
@@ -76,7 +90,17 @@ class Notification(models.Model):
     author_id = models.ForeignKey(Author, on_delete=models.CASCADE, null=False)
     #isntances of what is sent
     #request_id = models.ForeignKey(Author, on_delete=models.CASCADE, null=True,related_name="requester")
-    request_id = models.ForeignKey(FriendShip, on_delete=models.SET_NULL, null=True)
-    like_id = models.ForeignKey(Like, on_delete=models.SET_NULL, null=True)
-    comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
-    post_id = models.ForeignKey(Post, on_delete=models.SET_NULL, null=True)
+
+    # request_id = models.ForeignKey(FriendShip, on_delete=models.SET_NULL, null=True)
+    # like_id = models.ForeignKey(Like, on_delete=models.SET_NULL, null=True)
+    # comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
+    # post_id = models.ForeignKey(Post, on_delete=models.SET_NULL, null=True)
+    items = models.JSONField()
+
+#data to connect to another server
+class Node(models.Model):
+    #host of server
+    host = models.TextField(null=False)
+    #user information for that server
+    username = models.TextField()
+    password = models.TextField()
