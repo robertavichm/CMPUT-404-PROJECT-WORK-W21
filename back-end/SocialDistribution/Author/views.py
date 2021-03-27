@@ -4,8 +4,8 @@ from django.http import HttpResponseBadRequest,HttpResponse
 from django.http import JsonResponse
 from django.db import IntegrityError
 
-from .author_serializer import AuthorSerializer, LikeSerializer, FriendshipSerializer
-from .models import Author, Post, Like, FriendShip
+from .author_serializer import AuthorSerializer, LikeSerializer, FriendshipSerializer,NodeSerializer
+from .models import Author, Post, Like, FriendShip, Node
 from .formatters import like_formatter
 import json
 
@@ -162,5 +162,19 @@ def get_likes(request,author_id):
     return JsonResponse(response, safe=False)
 
 
-
-
+@api_view(["GET","POST","DELETE"])
+def get_node(request,node_url):
+    if(request.method == "GET"):
+        node = get_object_or_404(Node, pk=node_url)
+        ser = NodeSerializer(node, many=False)
+        return JsonResponse(ser.data, safe=False)
+    if(request.method == "POST"):
+        new_node = Node(host=node_url)
+        for k,v in request.data.items():
+            setattr(new_node, k ,v)
+        new_node.save()
+        return JsonResponse(NodeSerializer(new_node, many=False).data, safe=False)
+    if(request.method == "DELETE"):
+        node = get_object_or_404(Node, pk=node_url)
+        node.delete()
+        return HttpResponse("node deleted")
