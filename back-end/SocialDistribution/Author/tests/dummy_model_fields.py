@@ -1,8 +1,13 @@
 import datetime
 
+def get_test_credentials(i=0):
+    return {
+        "username": f"user{i}",
+        "password": "123",
+    }
+
 def get_author_fields(i=0):
     return {
-        "username": f"Phil_Dunphy{i}",
         "displayName": f"Phil_Dunphy{i}",
         "host": f"http://somelink.xyz",
         "url": f"http://somelink.xyz/author/pdunph{i}",
