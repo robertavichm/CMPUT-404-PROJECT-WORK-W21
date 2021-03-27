@@ -42,7 +42,7 @@ class Post(models.Model):
     visibility = models.TextField()
     unlisted = models.BooleanField()
 
-
+    
 class FriendShip(models.Model):
     FriendShipId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     #local
@@ -76,9 +76,10 @@ class Like(models.Model):
     #store json data if on a different server
     liker_id = models.JSONField()
     #link to comment that was liked
-    comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE,null=True)
-    #link to post that was liked
-    post_id = models.ForeignKey(Post, on_delete=models.CASCADE,null=True)
+    # comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE,null=True)
+    # #link to post that was liked
+    # post_id = models.ForeignKey(Post, on_delete=models.CASCADE,null=True)
+    object_id = models.TextField(null=False)
     #type = "likes"
 
 #general inbox check

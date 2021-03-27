@@ -88,15 +88,17 @@ def get_post_likes(request, author_id, post_id):
     response = {}
     response["type"] = "liked"
     response["items"] = []
-    likes = Like.objects.filter(author_id=author_id,post_id=post_id,comment_id=None)
+    post = get_object_or_404(Post,pk=post_id)
+    object_id = post.id 
+    likes = Like.objects.filter(object_id__icontains=object_id)
+    #likes = Like.objects.filter(author_id=author_id,post_id=post_id,comment_id=None)
     for i in range(0,len(likes)):
-        new_like = like_formatter(likes[i],True)
+        new_like = like_formatter(likes[i])
         response["items"].append(new_like)
     return JsonResponse(response, safe=False)
 
 
 @api_view(["GET", "POST"])
-@permission_classes([AllowAny])
 def general_comments(request, author_id, post_id):
     #GET
     #queryset
@@ -137,9 +139,13 @@ def get_comment_likes(request, author_id, post_id, comment_id):
     response = {}
     response["type"] = "liked"
     response["items"] = []
-    likes = Like.objects.filter(author_id=author_id,post_id=post_id,comment_id=comment_id)
+    post = get_object_or_404(Post,pk=post_id)
+    object_id = post.id+"/comments/"+comment_id
+    
+    #return HttpResponse(object_id) 
+    likes = Like.objects.filter(object_id__icontains=object_id)
     for i in range(0,len(likes)):
-        new_like = like_formatter(likes[i],True)
+        new_like = like_formatter(likes[i])
         response["items"].append(new_like)
     return JsonResponse(response, safe=False)
 
