@@ -1,11 +1,12 @@
 import datetime
 
-def get_author_fields():
+def get_author_fields(i=0):
     return {
-        "displayName": "Phil Dunphy",
-        "host": "dummyHostUrl",
-        "url": "dummyUrl",
-        "github": "https://Github.com/phildunphy",
+        "username": f"Phil D{i}nphy",
+        "displayName": f"Phil Dunphy {i}",
+        "host": "localhost",
+        "url": f"localhost:8000/author/phildunphy{i}",
+        "github": f"https://github.com/phildunphy{i}",
         "type": "Author",
     }
 
@@ -36,7 +37,7 @@ def get_comment_fields():
         "comment": "hello I am comment"
     }
 
-def get_like_fields():
-    return {
-        "object_id": "link to post that was liked"
-    }
+# def get_like_fields():
+#     return {
+#         "object_id": "link to post that was liked"
+#     }

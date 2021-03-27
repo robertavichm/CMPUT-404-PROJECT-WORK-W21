@@ -45,12 +45,10 @@ class Post(models.Model):
 
 class FriendShip(models.Model):
     FriendShipId = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    #local
-    author_local = models.ForeignKey(Author, on_delete=models.CASCADE,related_name="primary")
-    #author_friend = models.ForeignKey(Author, on_delete=models.CASCADE,related_name="friend")
-    # one author has to be local and another CAN be remote, hence the JSONFeild. 
-    author_remote = models.JSONField()
+    author_local = models.ForeignKey(Author, on_delete=models.CASCADE,related_name="primary")   # local
+    author_remote = models.JSONField()  # one author has to be local & another CAN be remote, hence the JSONFeild. 
     accepted = models.BooleanField(default=False)
+    #author_friend = models.ForeignKey(Author, on_delete=models.CASCADE,related_name="friend")    
  
 #good?
 class Comment(models.Model):
@@ -94,7 +92,7 @@ class Notification(models.Model):
     # like_id = models.ForeignKey(Like, on_delete=models.SET_NULL, null=True)
     # comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE, null=True)
     # post_id = models.ForeignKey(Post, on_delete=models.SET_NULL, null=True)
-    items = models.JSONField()
+    items = models.JSONField(default=list)
 
 #data to connect to another server
 class Node(models.Model):
