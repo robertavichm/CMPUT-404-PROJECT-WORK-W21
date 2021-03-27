@@ -17,6 +17,12 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAu
 # this path is mostly for the sake of developing
 from SocialDistribution.settings import HOST_URL
 
+#if the response autheticates return persons data
+@api_view(["GET"])
+def login(request):
+    if(request.user.is_authenticated):
+        ser = AuthorSerializer(request.user,many=False)
+        return JsonResponse(ser.data,safe=False)
 
 @api_view(["POST","GET"])
 @authentication_classes([BasicAuthentication])
@@ -99,18 +105,13 @@ def get_followers(request,author_id):
     response["type"] = "followers"
     response["items"] = []
     #where author_id is local
-    friend_local = FriendShip.objects.filter(author_local=author_id, accepted=True)
-    #where author_id is remote
-    friend_remote = FriendShip.objects.filter(author_remote__id=author_id, accepted=True)
+    friend_local = FriendShip.objects.filter(author_local=author_id, accepted=True)    
     
     for i in range(0,len(friend_local)):
         #little bit of response cooking
         ser = AuthorSerializer(friend_local[i].author_local,many=False)
         response["items"].append(ser.data)
-    for i in range(0,len(friend_remote)):
-        #little bit of response cooking
-        data = friend_remote[i].author_remote
-        response["items"].append(data)
+    
     
     return JsonResponse(response, safe=False)
 
@@ -153,9 +154,10 @@ def get_likes(request,author_id):
     response = {}
     response["type"] = "liked"
     response["items"] = []
-    liked = Like.objects.filter(liker_id__author_id=author_id)
+    liked = Like.objects.filter(liker_id__id=author_id)
+    #return HttpResponse(liked.count())
     for i in range(0,len(liked)):
-        new_like = like_formatter(liked[i],True)
+        new_like = like_formatter(liked[i])
         response["items"].append(new_like)
     return JsonResponse(response, safe=False)
 
