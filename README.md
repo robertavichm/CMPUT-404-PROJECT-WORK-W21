@@ -3,6 +3,8 @@ A repository for CMPUT 404 project work.
 
 Live at https://cmput-404-group17.herokuapp.com/
 
+API documentation at https://docs.google.com/document/d/12Bw8JXGd7Xve46BY6p6KOTK02qD1Rm2uPE9B37XdyhM/edit?usp=sharing
+
 CMPUT404-project-socialdistribution
 ===================================
 

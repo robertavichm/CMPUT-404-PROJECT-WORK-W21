@@ -28,7 +28,7 @@ class LikeSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Comment
-        fields = ["comment_id", "post_id", "contentType", "published",
+        fields = ["comment_id", "post_id", "author_id","contentType", "published",
                   "comment", "type"]
 
 class NotificationSerializer(serializers.ModelSerializer):
@@ -36,3 +36,8 @@ class NotificationSerializer(serializers.ModelSerializer):
         model = models.Notification
         fields = ["notification_id", "author_id", "request_id", "like_id", 
                   "comment_id", "post_id"]
+
+class NodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Node
+        fields = ["host","username","password"]
