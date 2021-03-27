@@ -28,11 +28,10 @@ class AuthorModelsTestCase(TestCase):
                                                author_id=serializers.serialize('json', [self.author]))
 
         # Create and initialize Like model
-        # self.test_like_fields = get_like_fields()
-        self.like = Like.objects.create(author_id=self.author,
-                                        liker_id=serializers.serialize('json', [self.author_friend]),
-                                        comment_id=self.comment,
-                                        post_id=self.post)
+        self.test_like_fields = get_like_fields()
+        self.like = Like.objects.create(**self.test_like_fields,
+                                        author_id=self.author,
+                                        liker_id=serializers.serialize('json', [self.author_friend]))
 
         # Create and initialize Notification model
         self.notification = Notification.objects.create(author_id=self.author)
@@ -84,8 +83,7 @@ class AuthorModelsTestCase(TestCase):
         self.assertTrue(self.like.like_id)
         self.assertTrue(self.like.author_id)
         self.assertTrue(self.like.liker_id)
-        self.assertTrue(self.like.comment_id)
-        self.assertTrue(self.like.post_id)
+        self.assertTrue(self.like.object_id)
 
     def test_create_notification(self):
         self.assertTrue(self.notification.notification_id)
