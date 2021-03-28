@@ -24,11 +24,15 @@ def general_post(request,author_id):
         new_post.post_id = uuid.uuid4()
         new_post.author_id = auth
         new_post.id = auth.url +"/posts/"+str(new_post.post_id)
+        new_post.source = new_post.id
+        new_post.origin = new_post.id
+        new_post.commentLink = new_post.id+"/comments/"
         for k,v in json_data.items():
             setattr(new_post, k, v)
         new_post.save()
         formatted = post_formater(new_post,False)
-        notify_friends(author_id)
+        
+        #notify_friends(author_id)
         return JsonResponse(formatted)
     if request.method == "GET":
         response = {}
