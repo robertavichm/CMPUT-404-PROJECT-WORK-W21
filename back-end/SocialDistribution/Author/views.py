@@ -123,7 +123,6 @@ def handle_follow(request,author_id,follow_id):
     """
     if request.method == "GET":
         response = {}
-        response["accepted"] = False
         data = FriendShip.objects.filter(author_local=author_id,author_remote__id=follow_id)
         for i in range(0,len(data)):
             response["accepted"] = data[i].accepted
