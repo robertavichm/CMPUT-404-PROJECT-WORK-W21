@@ -9,6 +9,11 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
     <link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" /><link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" />
     <title>Home</title>
+    <style>
+        .inbox-wrap{
+            display:none;
+        }
+    </style>
 </head>
 <body>
     <body>
@@ -137,18 +142,17 @@
                 </div>
                 <div class="post-feed-w">
                     <div class="post-feed">
-                        <div class="tab-switch" style="width:100%">
+                        <div class="tab-switch" style="width:100%;">
                             <div class="tab-public">
                                 <div class="tab-icon"><i class="material-icons" style="color:rgba(0,0,0,0.50)">public</i></div>
                                 <div class="tab-text"><p>Public</p></div>
-
                             </div>
                             <div class="tab-inbox">
                                 <div class="tab-icon"><i class="material-icons" style="color:rgba(0,0,0,0.50)">inbox</i></div>
                                 <div class="tab-text"><p>Inbox</p></div>
                             </div>
                         </div>
-                        <div class="inbox-wrap">
+                        <div class="inbox-wrap" style="background-color: aqua;">
                             <div class="table-head">
                                 <p>Summary</p>
                             </div>
@@ -160,7 +164,6 @@
                                     </tbody>
                                 </table>
                             </div>
-
                         </div>
 
 
@@ -175,10 +178,30 @@
         <script>
 
             const host_url = '{{ host_url }}';
-
             followerArray = [];
+            var displayName_cur;
+            var github_cur;
+
             const dname = localStorage.getItem('displayName');
             $('.username p').append(dname);
+
+            function getLoginUser(){
+                $.ajax({
+                    type: 'GET',
+                    url: 'author/'+localStorage.getItem('uuid')+'/'
+                })
+                .done(function(data){
+                    console.log("USER CREDENTIALS");
+                    console.log(data)
+                    displayName_cur = data.displayName;
+                    github_cur = data.github;
+                });
+
+            }
+            getLoginUser()
+
+
+   
             // GET
             fetchFollowers();
             $('.check-visibility,.vis-dropdown').mouseenter(function(){
@@ -211,7 +234,7 @@
                 document.getElementsByClassName('inbox-wrap')[0].style.display = "none";
                 document.getElementsByClassName('tab-public')[0].classList.add("current-tab");
                 document.getElementsByClassName('tab-inbox')[0].classList.remove("current-tab");
-                fetchPublicPost()
+                fetchPublicPost(0)
             })
             $('.tab-inbox').click(function() {
                 $('.posted-wrap').remove();
@@ -336,25 +359,19 @@
                 var description = document.getElementById("p-description").value;
                 var text = document.getElementById("p-r-text-input").value;
                 var checked = document.getElementById("l-ul").checked ? "False" : "True";
-                // var cttn = base64 ? text : base64 ;
+                // var cttn = base64 ? text : base64;
                 var cttn = text;
 
                 const data = {
-                    'type'          : "post",
-                    'title'         : title,
-                    'description'   : description,
-                    'source'        : "change this",
-                    'origin'        : "change this",
-                    'contentType'   : $('#content_type').val(),
-                    'content'       : cttn,
-                    'pageSize'      : 1,
-                    'categories'    : ["change", "this"],
-                    'count'         : 1,
-                    'size'          : 1,
-                    'commentLink'   : "change this",
-                    'visibility'    : $('#visibility_choice').val(),
-                    'unlisted'      : checked ,
-                    };
+                    'title':title,
+                    'description':description, 
+                    'contentType':$('#content_type').val(),
+                    'content':cttn,
+                    'categories':["web","tutorial"],
+                    'pageSize':1,
+                    'visibility':$('#visibility_choice').val(),
+                    'unlisted': checked
+                };
 
                 $.ajax({
                 type: 'POST',
@@ -365,11 +382,11 @@
                     document.getElementsByClassName('post-format')[0].style.display = "none";
                     console.log(data); // UUID of post
                     //insert post data to DOM
-                    FillDOM(data);
+                    FillDOM(data,"hideFollow","unhideDel","unhideEdit");
                 });
             });
 
-            function fetchPublicPost(){
+            function fetchPublicPost(newflag){
 
                 $.ajax({
                     type: 'GET',
@@ -425,7 +442,7 @@
                     for(i=0;i < followersRes.length; i++){
                         followerArray.push(followersRes[0].id)
                     }
-                    fetchPublicPost()
+                    fetchPublicPost(0)
                 });
 
             }
@@ -442,8 +459,6 @@
                     for(i=0;i < requests.length; i++){
                         arrayOfRequests.push(requests[0].id)
                     }
-
-
                 });
             }
             function fetchInboxMessages(){
@@ -483,84 +498,143 @@
 
 
             function FillDOM(data,flag,deleteFlag,editFlag){
-                const postHTML =  `<div class="posted-wrap">
-                    <div class="posted-w-h" >
-                        <div class="p-w-h-details">
-
-                            <div class="p-profile-wrap">
-                                <div class="p-profile">
-
-                                </div>
-
-                            </div>
-                            <div class="p-user-wrap">
-                                <p>${data.author.displayName}</p>
-                            </div>
-                            <p class="follow-user ${data.author.id}" id="${flag}" onclick="followUser(this)">Follow</p>
-                        </div>
-                        <div class="del-post ${deleteFlag}"  id="${data.post_id}" onclick="deletePost(this)">
-                            <i class="material-icons" style="color:rgba(0,0,0,0.45)">delete_outline</i>
-                        </div>
-                        <div class="edit-post ${editFlag}">
-                            <i class="material-icons" style="color:rgba(0,0,0,0.45)">mode</i>
-                        </div>
-                    </div>
-                    <div class="p-title-wrap">
-                        <p>${data.title}</p>
-                    </div>
-                    <div class="post-text">
-                        <p>${data.content}</p>
-                    </div>
-                    <div class="posted-img-wrap">
-                        <img src="{%  static  'assets/preview.png'  %}" id="proimage">
-                    </div>
-                    <div class="like-count-w">
-                        <p id="like-count">0 likes</p id="comment-count"><p>${data.commentCount} comments</p id="share-count"><p>0 shares</p>
-                    </div>
-                    <div class="social-controls">
-
-                        <div class="like-w">
-                            <div class="s-c-img">
-                                <i class="material-icons">thumb_up</i>
-                            </div>
-                            <p>Like</p>
-                        </div>
-                        <div class="comment-w">
-                            <div class="s-c-img">
-                                <i class="material-icons">comment</i>
-                            </div>
-                            <p>Comment</p>
-                        </div>
-                        <div class="share-w">
-                            <div class="s-c-img">
-                                <i class="material-icons">share</i>
-                            </div>
-                            <p>Share</p>
-                        </div>
-                    </div>
-                    <div class="o-comments">
-                        <div class="o-c-cell">
-                            <div class="oc-profile">
-
-                            </div>
-                            <div class="o-type-comment">
-                                <input type="text" placeholder="Type your comments here">
-                            </div>
-                        </div>
-                        <div class="o-r-cell">
-                            <div class="o-r-details">
-                                <p>Whatsup everyone Whatsup everyoneWhatsup everyoneWhatsup everyoneWhatsup everyoneWhatsup everyoneWhatsup everyone Whatsup everyoneWhatsup everyoneWhatsup everyone Whatsup everyoneWhatsup everyoneWhatsup everyone </p>
-                                <div class="c-p-wrap">
-                                    <p>By: <span>Sonia Woodelwels</span></p>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>`;
-                $(".post-feed").append(postHTML);
+                persistLikes(data.author.id,data.post_id,data,flag,deleteFlag,editFlag);
+                console.log("meeee")
+                
             }
+            //likepost
+            function likepost(element){
+                console.log(element.id)
+                var postid= (element.id).slice(6);
 
+                ////get author id
+                var arr = (element.className).split(' ');
+                var extract = arr[1];
+                fid = extract.slice(6);
+                console.log("------")
+                console.log(fid);
+                console.log(postid);
+                data = {
+                    "type":"like",
+                    "author_id":{
+                        'author_id':localStorage.getItem('uuid'),
+                        'type':'author',
+                        'host':host_url,
+                        'displayName':displayName_cur,
+                        'url':host_url+"author/"+localStorage.getItem('uuid'),
+                        'github':github_cur
+                    },
+                    "object_id":host_url+"author/"+fid+"/posts/"+postid
+                }
+                $.ajax({
+                    type:"POST",
+                    contentType: "application/json",
+                    data:JSON.stringify(data),
+                    url: host_url + 'author/'+fid+'/inbox/'
+                })
+                .done(function(data){
+                    //MANIPULATE DOM
+                    console.log(data);
+                    //increment count 
+                    var countvaljunk = document.getElementsByClassName("like_row"+postid)[0].innerHTML += 1;
+                    var countval = + countvaljunk.slice(0, -6)
+                    countval+=1;
+                    document.getElementsByClassName("like_row"+postid)[0].innerHTML = countval + " likes"; 
+                });
+                
+            }
+            //persist likes
+            function persistLikes(author_id,post_id,data,flag,deleteFlag,editFlag,newflag){
+                var res_like_count;
+                $.ajax({
+                    type: 'GET',
+                    url: 'author/'+author_id+'/posts/'+post_id +"/likes"
+                })
+                .done(function(r){
+                    console.log("billion dollar coins")
+                    console.log(r.items.length);
+                    like_c = r.items.length
+                    
+                    const postHTML =  `<div class="posted-wrap">
+                        <div class="posted-w-h" >
+                            <div class="p-w-h-details">
+    
+                                <div class="p-profile-wrap">
+                                    <div class="p-profile">
+    
+                                    </div>
+    
+                                </div>
+                                <div class="p-user-wrap">
+                                    <p>${data.author.displayName}</p>
+                                </div>
+                                <p class="follow-user ${data.author.id}" id="${flag}" onclick="followUser(this)">Follow</p>
+                            </div>
+                            <div class="del-post ${deleteFlag}"  id="${data.post_id}" onclick="deletePost(this)">
+                                <i class="material-icons" style="color:rgba(0,0,0,0.45)">delete_outline</i>
+                            </div>
+                            <div class="edit-post ${editFlag}">
+                                <i class="material-icons" style="color:rgba(0,0,0,0.45)">mode</i>
+                            </div>
+                        </div>
+                        <div class="p-title-wrap">
+                            <p>${data.title}</p>
+                        </div>
+                        <div class="post-text">
+                            <p>${data.content}</p>
+                        </div>
+                        <div class="posted-img-wrap">
+                            <img src="{%  static  'assets/preview.png'  %}" id="proimage">
+                        </div>
+                        <div class="like-count-w">
+                            <p id="like-count" class="${"like_row"+data.post_id}">${like_c + " likes"}</p id="comment-count"><p>${data.commentCount}comments</p id="share-count"><p>0 shares</p>
+                        </div>
+                        <div class="social-controls">
+    
+                            <div class="like-w ${"thumb_"+data.author.id}" onclick="likepost(this)" id="${"thumb_"+data.post_id}">
+                                <div class="s-c-img">
+                                    <i class="material-icons">thumb_up</i>
+                                </div>
+                                <p>Like</p>
+                            </div>
+                            <div class="comment-w">
+                                <div class="s-c-img">
+                                    <i class="material-icons">comment</i>
+                                </div>
+                                <p>Comment</p>
+                            </div>
+                            <div class="share-w">
+                                <div class="s-c-img">
+                                    <i class="material-icons">share</i>
+                                </div>
+                                <p>Share</p>
+                            </div>
+                        </div>
+                        <div class="o-comments">
+                            <div class="o-c-cell">
+                                <div class="oc-profile">
+    
+                                </div>
+                                <div class="o-type-comment">
+                                    <input type="text" placeholder="Type your comments here">
+                                </div>
+                            </div>
+                            <div class="o-r-cell">
+                                <div class="o-r-details">
+                                    <p>Whatsup everyone Whatsup everyoneWhatsup everyoneWhatsup everyoneWhatsup everyoneWhatsup everyoneWhatsup everyone Whatsup everyoneWhatsup everyoneWhatsup everyone Whatsup everyoneWhatsup everyoneWhatsup everyone </p>
+                                    <div class="c-p-wrap">
+                                        <p>By: <span>Sonia Woodelwels</span></p>
+                                    </div>
+                                </div>
+                            </div>
+    
+                        </div>
+                    </div>`;
+                    $(".post-feed").append(postHTML);
+    
+                });
+                
+            }
 
             function followUser(curTag){
                 console.log("tapped follower tag")
@@ -574,24 +648,48 @@
             function followRequest(fid,curTag){
                 data = {
                     "type":"follow",
-                    "author_id":localStorage.getItem('uuid')
+                    "author_id":{
+                        'author_id':localStorage.getItem('uuid'),
+                        'type':'author',
+                        'host':host_url,
+                        'displayName':displayName_cur,
+                        'url':host_url+"author/"+localStorage.getItem('uuid'),
+                        'github':github_cur
+                    }
+                 
                 }
+                console.log(host_url)
                 $.ajax({
                     type:"POST",
-                    data:data,
+                    contentType: "application/json",
+                    data:JSON.stringify(data),
                     url: host_url + 'author/'+fid+'/inbox/'
                 })
                 .done(function(data){
                     //MANIPULATE DOM
                     console.log(data);
                     curTag.innerHTML = "Request Sent";
-
+                    replaceall(fid)
                 });
+            }
+
+            //replaces all follow request links of a particular user to "request sent"
+            function replaceall(fid,curTag){
+                $('.'+fid).each(function(i, obj) {
+                    //test
+                    console.log(obj)
+                    obj.innerHTML = "Request Sent";   
+                });
+            }
+            persistFollowStats();
+            //persist follow status on each public post 
+            function persistFollowStats(){
+                //to do:
+
             }
 
             function deletePost(curDel){
                 console.log(curDel.id)
-
                 console.log($('#'+curDel.id).parents('[class]:eq(1)'));
                 //get the first parent div wrapping the delete button
                 $.ajax({
@@ -603,6 +701,7 @@
                 });
 
             }
+            
         </script>
     </body>
 </html>
