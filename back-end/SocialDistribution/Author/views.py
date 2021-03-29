@@ -110,7 +110,7 @@ def get_followers(request,author_id):
     for i in range(0,len(friend_local)):
         #little bit of response cooking
         
-        response["items"].append(friend_local.author_remote)
+        response["items"].append(friend_local[i].author_remote)
     
     
     return JsonResponse(response, safe=False)
@@ -123,6 +123,7 @@ def handle_follow(request,author_id,follow_id):
     """
     if request.method == "GET":
         response = {}
+        response["accepted"] = False
         data = FriendShip.objects.filter(author_local=author_id,author_remote__id=follow_id)
         for i in range(0,len(data)):
             response["accepted"] = data[i].accepted
