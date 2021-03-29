@@ -4,6 +4,7 @@ from django.http import HttpResponse
 # grabbing .env variables
 from django.conf import settings
 host_url = settings.HOST_URL
+foreign_url = settings.FOREIGN_URL
 
 # Create your views here.
 
@@ -14,7 +15,7 @@ def register(request):
     return render(request,'register.html', {'host_url': host_url})
 
 def home(request):
-    return render(request,'home.html', {'host_url': host_url})
+    return render(request,'home.html', {'host_url': host_url, 'foreign_url': foreign_url})
 
 def friends(request):
     return render(request,'friends.html', {'host_url': host_url})
