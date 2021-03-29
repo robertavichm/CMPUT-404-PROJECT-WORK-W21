@@ -89,7 +89,11 @@
           <div class="wrap-input">
             <input type="text" name="dname" value="">
           </div>
-          <span class="login-l">Host</span>
+          <span class="login-l">Username</span>
+          <div class="wrap-input">
+            <input type="text" name="username" value="">
+          </div>
+          <span class="login-l">Password</span>
           <div class="wrap-input">
             <input type="text" name="host" value="">
           </div>
@@ -111,20 +115,19 @@
       $('.signup-form').submit(function(e) {
         const data = {
           'displayName': $('input[name=dname]').val(),
-          'host': $('input[name=host]').val(),
+          'password': $('input[name=host]').val(),
           'github': $('input[name=github]').val(),
+          'username': $('input[name=username]').val(),
         };
         console.log(data);
         $.ajax({
           type: 'POST',
+          headers: {'Content-Type': 'application/json'},
           url: host_url + 'author/',
-          data: data,
+          data: JSON.stringify(data),
         })
           .done(function(data){
             console.log(data); // UUID of post
-            localStorage.setItem("uuid", data);
-            // localStorage.setItem("uuid", data.id);
-            localStorage.setItem("displayName", data.displayName);
             window.location.href = host_url + 'home';
           });
 
