@@ -109,8 +109,8 @@ def get_followers(request,author_id):
     
     for i in range(0,len(friend_local)):
         #little bit of response cooking
-        ser = AuthorSerializer(friend_local[i].author_local,many=False)
-        response["items"].append(ser.data)
+        
+        response["items"].append(friend_local.author_remote)
     
     
     return JsonResponse(response, safe=False)
@@ -122,11 +122,11 @@ def handle_follow(request,author_id,follow_id):
         handles paths authors/{author_id}/followers/{follower_id}
     """
     if request.method == "GET":
-        data = FriendShip.objects.filter(author_local=author_id,author_remote__id=follow_id,accepted=True)
-        if(data.count() > 0):
-            
-            return HttpResponse("totally friends")
-        return HttpResponse("not friends")
+        response = {}
+        data = FriendShip.objects.filter(author_local=author_id,author_remote__id=follow_id)
+        for i in range(0,len(data)):
+            response["accepted"] = data[i].accepted
+        return JsonResponse(response,safe =False)
     #kinda bad form probably should be a POST but oh well.
     if request.method == "PUT":
         data = FriendShip.objects.filter(author_local=author_id, author_remote__id=follow_id)
