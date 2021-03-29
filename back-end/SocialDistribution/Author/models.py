@@ -98,7 +98,7 @@ class Notification(models.Model):
 #data to connect to another server
 class Node(models.Model):
     #host of server
-    host = models.TextField(null=False)
+    host = models.TextField(primary_key=True,null=False)
     #user information for that server
     username = models.TextField()
     password = models.TextField()

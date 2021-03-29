@@ -80,7 +80,7 @@ def handle_type(post_type,data,author):
             new_like = Like(author_id=author)
             if("author_id" in data):
 
-                 
+                data["summary"] = data["author_id"]["displayName"]+" likes your activity"
                 new_like.liker_id  = data["author_id"]
             else:
                 return HttpResponseBadRequest("need to specify author_id")

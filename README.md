@@ -1,7 +1,10 @@
 # CMPUT-404-PROJECT-WORK-W21
 A repository for CMPUT 404 project work. 
 
-Live at https://cmput-404-group17.herokuapp.com/
+Live at https://cmput-404-group17.herokuapp.com/ </br>
+<b>Node user for other groups:<b> </br>
+Username: node </br>
+Password: password </br>
 
 API documentation at https://docs.google.com/document/d/12Bw8JXGd7Xve46BY6p6KOTK02qD1Rm2uPE9B37XdyhM/edit?usp=sharing
 

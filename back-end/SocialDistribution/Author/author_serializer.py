@@ -36,3 +36,8 @@ class NotificationSerializer(serializers.ModelSerializer):
         model = models.Notification
         fields = ["notification_id", "author_id", "request_id", "like_id", 
                   "comment_id", "post_id"]
+
+class NodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Node
+        fields = ["host","username","password"]
