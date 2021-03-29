@@ -21,3 +21,7 @@ def friends(request):
 
 def profile(request):
     return render(request,'profile.html', {'host_url': host_url})
+
+
+def inbox(request):
+    return render(request,'inbox.html', {'host_url': host_url})

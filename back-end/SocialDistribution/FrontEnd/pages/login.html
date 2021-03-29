@@ -36,25 +36,31 @@
       <script type="text/javascript">
 
       const host_url = '{{ host_url }}';
-      const data = {
-        'password': $('input[name=password]').val(),
-        'username': $('input[name=username]').val(),
-      };
-      console.log(data);
+
       $('.login-form').submit(function(e) {
+        const d = {
+          'password': $('input[name=password]').val(),
+          'username': $('input[name=username]').val(),
+        };
         $.ajax({
           headers: {
-            "Authorization": "Basic " + btoa(data.username + ":" + data.password)
+              'Authorization': 'Basic ' + btoa(d.username+':'+d.password)
           },
           url: host_url + 'login/',
         })
           .done(function(data){
             console.log(data); // UUID of post
+            localStorage.setItem("uuid", data.id);
+            localStorage.setItem("username", d.username);
+            localStorage.setItem("pwd", d.password);
             window.location.href = host_url + 'home';
           });
 
           e.preventDefault();
       });
+
+      console.log(window.location.pathname);
+      
 
       </script>
   </body>

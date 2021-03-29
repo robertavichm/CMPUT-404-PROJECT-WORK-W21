@@ -1,0 +1,87 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet"  href="{%  static  'css/frame_.css'  %}">
+    <link rel="stylesheet"  href="{%  static  'css/inbox.css'  %}">
+    <link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" /><link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" />
+    <title>Friends</title>
+
+</head>
+<body>
+   {% include "components/topnav.html" %}
+    <div class="main-body">
+        {% include "components/leftnav.html" %}
+
+        <div class="content">
+          <div class="main_container">
+            <div class="inb_header">
+              <h1>Inbox</h1> <div class="del_btn"><i class="material-icons msg" style="color: #a57777;font-size: 1.5em;margin-left: 15px;cursor:pointer">delete</i></div>
+            </div>
+            <div class="ins_container">
+              <div class="inb_wrap">
+                Sample 1
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script>
+
+        const host_url = '{{ host_url }}';
+
+        // grabbing credentials from localStorage
+        const username = localStorage.getItem("username");
+        const password = localStorage.getItem("pwd");
+        const uuid  = localStorage.getItem("uuid");
+
+        // GET Inbox
+        // TODO: Pagination and ORdering
+        $.ajax({
+          type: 'GET',
+          headers: {
+              'Authorization': 'Basic ' + btoa(username+':'+password),
+          },
+          url: host_url + 'author/'+ uuid +'/inbox/',
+          dataType: 'json',
+        })
+          .done(function(data){
+            console.log(data);
+
+            for(el in data['items']){
+              $('.ins_container').append(`
+                <div class="inb_wrap">
+                  ${el.type} from ${el.author_id.displayName}
+                </div>`);
+            }
+
+          });
+
+          // DELETE inbox
+          $('.del_btn').click(function() {
+            $.ajax({
+              type: 'DELETE',
+              headers: {
+                  'Authorization': 'Basic ' + btoa(username+':'+password),
+              },
+              url: host_url + 'author/'+ uuid +'/inbox/',
+            })
+              .done(function(data){
+                console.log(data);
+
+                location.reload();
+
+              });
+          });
+
+
+    </script>
+</body>
+</html>

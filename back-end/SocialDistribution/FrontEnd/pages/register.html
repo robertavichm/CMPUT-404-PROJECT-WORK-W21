@@ -113,27 +113,32 @@
       const host_url = '{{ host_url }}';
 
       $('.signup-form').submit(function(e) {
-        const data = {
+        const d = {
           'displayName': $('input[name=dname]').val(),
           'password': $('input[name=password]').val(),
           'github': $('input[name=github]').val(),
           'username': $('input[name=username]').val(),
         };
-        console.log(data);
+        console.log(d);
         $.ajax({
           type: 'POST',
           headers: {'Content-Type': 'application/json'},
           url: host_url + 'author/',
-          data: JSON.stringify(data),
+          data: JSON.stringify(d),
         })
           .done(function(data){
             console.log(data); // UUID of post
+            localStorage.setItem("uuid", data);
+            localStorage.setItem("username", d.username);
+            localStorage.setItem("pwd", d.password);
             window.location.href = host_url + 'home';
           });
 
           e.preventDefault();
       });
 
+      console.log(window.location.pathname);
+      
       </script>
   </body>
 </html>

@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet"  href="{%  static  'css/profile.css'  %}">
-    <link rel="stylesheet"  href="{%  static  'css/frame.css'  %}">
+    <link rel="stylesheet"  href="{%  static  'css/frame_.css'  %}">
     <link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" />
     <title>Profile</title>
     <style>
@@ -81,43 +81,40 @@
     </style>
 </head>
 <body>
-    <div class="nav-bar">
-        <div class="logo">
-            <p>Social Distribution</p>
-        </div>
-        <div class="options">
-            <div class="profile">
-
-            </div>
-        </div>
-
-    </div>
+     {% include "components/topnav.html" %}
     <div class="main-body">
-        <div class="vertical-nav">
-            <div class="server-main">
-                <div class="menu-list-wrap">
-                  <div class="menu-list-profile"><p>John Doe</p></div>
-                  <div class="menu-list-cell">
-                      <div class="menu-l-img"><i class="material-icons" style="color:cadetblue"><a href="#"></a>stream</i></div>
-                      <div class="menu-l-text"><p><a href="{% url 'home' %}" style="text-decoration:none;color:black">Stream</a></p></div>
-                  </div>
-                  <div class="menu-list-cell">
-                      <div class="menu-l-img"><i class="material-icons" style="color:cornflowerblue">face</i></div>
-                      <div class="menu-l-text"><p><a href="{% url 'profile' %}" style="text-decoration:none;color:black">Profile</a></p></div>
-                  </div>
-                  <div class="menu-list-cell">
-                      <div class="menu-l-img"><i class="material-icons" style="color:coral">people</i></div>
-                      <div class="menu-l-text"><p><a href="{% url 'friends' %}" style="text-decoration:none;color:black">Friends</a></p></div>
-                  </div>
-                </div>
-            </div>
-        </div>
+          {% include "components/leftnav.html" %}
         <div class="content">
             <div class="profile-content">
                 <div class="profile-wrapper">
                   <form class="form-profile" method="post">
                     {% csrf_token %}
-                    <div class="profile-content-h">
+                    <span class="login-form-title">My Profile</span>
+                    <span class="login-l">Display name</span>
+                    <div class="wrap-input">
+                      <input type="text" name="dname" class="dname" value="">
+                    </div>
+                    <span class="login-l">Host</span>
+                    <div class="wrap-input">
+                      <input type="text" name="host" class="host" value="" >
+                    </div>
+                    <span class="login-l">Github</span>
+                    <div class="wrap-input">
+                      <input type="text" name="github" class="github" value="" >
+                    </div>
+                    <span class="login-l">Id</span>
+                    <div class="wrap-input">
+                      <input type="text" name="id" class="id" value="" disabled>
+                    </div>
+                    <span class="login-l">Url</span>
+                    <div class="wrap-input">
+                      <input type="text" name="url" class="url" value="" disabled>
+                    </div>
+                    <div class="wrap-button">
+                      <button type="submit" name="button">Done</button>
+                    </div>
+
+                    <!-- <div class="profile-content-h">
                         <p>My Profile</p>
                     </div>
                     <div class="p-cell">
@@ -140,49 +137,55 @@
                         <div class="p-c-left">Github</div>
                         <div class="p-c-right"><input type="text" name="github" class="github"></div>
                     </div>
-                    <button class="done-btn" type="submit">Done</button>
+                    <button class="done-btn" type="submit">Done</button> -->
                   </form>
                 </div>
             </div>
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="{% static 'common.js' %}"></script>
     <script>
 
       const host_url = '{{ host_url }}';
 
+      // grabbing credentials from localStorage
+      const username = localStorage.getItem("username");
+      const password = localStorage.getItem("pwd");
+      const uuid  = localStorage.getItem("uuid");
+
       // Submit Profile
       $('.form-profile').submit(function(e) {
         e.preventDefault();
-       location.rel();
 
+        // TODO: validation?
+        const d = {
+          'id'            : $('input[name=id]').val(),
+          "displayName"   : $('input[name=dname]').val(),
+          'host'          : $('input[name=host]').val(),
+          'url'           : $('input[name=url]').val(),
+          'github'        : $('input[name=github]').val(),
+        };
+        console.log(d);
 
-        // TODO: error from api
-        // // TODO: validation?
-        // const d = {
-        //   'id'            : $('input[name=id]').val(),
-        //   "displayName"   : $('input[name=dname]').val(),
-        //   'host'          : $('input[name=host]').val(),
-        //   'url'           : $('input[name=url]').val(),
-        //   'github'        : $('input[name=github]').val(),
-        // };
-        // console.log(d);
-        //
-        // $.ajax({
-        //   type: 'POST',
-        //   url: host_url + 'author/'+ localStorage.getItem('uuid') +'/', // TODO: should point to current user url
-        //   data: d,
-        // })
-        //   .done(function(data){
-        //     // TODO: error'Author' object is not callable
-        //     location.rel();
-        //   });
+        $.ajax({
+          type: 'POST',
+          headers: {
+              'Authorization': 'Basic ' + btoa(username+':'+password),
+              'Content-Type': 'application/json',
+          },
+          url: host_url + 'author/' + uuid + '/',// TODO: should point to current user url
+          data: JSON.stringify(d),
+        })
+          .done(function(data){
+            location.reload();
+          });
       });
 
       // GET Profile
       $.ajax({
         type: 'GET',
-        url: host_url + 'author/'+ localStorage.getItem('uuid') +'/', // TODO: should point to current user url
+        url: host_url + 'author/'+ uuid // TODO: use correct url
       })
         .done(function(data){
           console.log(data);
