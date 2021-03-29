@@ -157,14 +157,15 @@
           dataType: 'json',
         })
           .done(function(data){
-            console.log(data);
+            // console.log(data);
             var fr_req = []; // IDs and dname of requesters
 
-            for(el in data['items']){
-              if(data['items'][el].type === "Follow"){
+            for(el of data['items']){
+              console.log(el)
+              if(el.type === "follow"){
                 var d = {
-                  'id': data['items'][el].requester.id,
-                  'displayName': data['items'][el].requester.displayName,
+                  'id': el.author_id.id,
+                  'displayName': el.author_id.displayName,
                 }
                 fr_req.push(d);
               }

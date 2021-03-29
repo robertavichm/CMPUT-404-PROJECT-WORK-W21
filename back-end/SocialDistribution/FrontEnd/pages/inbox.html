@@ -23,9 +23,9 @@
               <h1>Inbox</h1> <div class="del_btn"><i class="material-icons msg" style="color: #a57777;font-size: 1.5em;margin-left: 15px;cursor:pointer">delete</i></div>
             </div>
             <div class="ins_container">
-              <div class="inb_wrap">
+              <!-- <div class="inb_wrap">
                 Sample 1
-              </div>
+              </div> -->
 
             </div>
           </div>
@@ -55,7 +55,7 @@
           .done(function(data){
             console.log(data);
 
-            for(el in data['items']){
+            for(el of data['items']){
               $('.ins_container').append(`
                 <div class="inb_wrap">
                   ${el.type} from ${el.author_id.displayName}

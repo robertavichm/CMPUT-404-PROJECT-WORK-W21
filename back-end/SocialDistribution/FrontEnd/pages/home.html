@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet"  href="{%  static  'css/frame_.css'  %}">
     <link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" /><link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" />
     <title>Home</title>
     <style>
@@ -17,40 +18,10 @@
 </head>
 <body>
     <body>
-      <div class="nav-w">
-        <div class="nav-bar">
-          <div class="logo">
-            <p>Social Distribution</p>
-          </div>
-          <div class="options">
-            <div class="profile"></div>
-            <div class="username"><p></p></div>
-          </div>
-        </div>
-      </div>
+      {% include "components/topnav.html" %}
 
         <div class="main-body">
-            <div class="vertical-nav">
-                <div class="server-main">
-                    <div class="menu-list-wrap">
-                        <div class="menu-list-profile"><p>John Doe</p></div>
-                        <div class="menu-list-cell">
-                            <div class="menu-l-img"><i class="material-icons" style="color:cadetblue"><a href="#"></a>stream</i></div>
-                            <div class="menu-l-text"><p><a href="{% url 'home' %}" style="text-decoration:none;color:black">Stream</a></p></div>
-                        </div>
-                        <div class="menu-list-cell">
-                            <div class="menu-l-img"><i class="material-icons" style="color:cornflowerblue">face</i></div>
-                            <div class="menu-l-text"><p><a href="{% url 'profile' %}" style="text-decoration:none;color:black">Profile</a></p></div>
-                        </div>
-                        <div class="menu-list-cell">
-                            <div class="menu-l-img"><i class="material-icons" style="color:coral">people</i></div>
-                            <div class="menu-l-text"><p><a href="{% url 'friends' %}" style="text-decoration:none;color:black">Friends</a></p></div>
-                        </div>
-
-
-                    </div>
-                </div>
-            </div>
+              {% include "components/leftnav.html" %}
             <div class="content">
                 <div class="content-head">
                     <div class="post-holder">
@@ -175,9 +146,16 @@
         </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js" integrity="sha512-L03kznCrNOfVxOUovR6ESfCz9Gfny7gihUX/huVbQB9zjODtYpxaVtIaAkpetoiyV2eqWbvxMH9fiSv5enX7bw==" crossorigin="anonymous"></script>
+        <script src="{% static 'common.js' %}"></script>
         <script>
 
             const host_url = '{{ host_url }}';
+
+            // grabbing credentials from localStorage
+            const username = localStorage.getItem("username");
+            const password = localStorage.getItem("pwd");
+            const uuid  = localStorage.getItem("uuid");
+
             followerArray = [];
             var displayName_cur;
             var github_cur;
@@ -201,7 +179,7 @@
             getLoginUser()
 
 
-   
+
             // GET
             fetchFollowers();
             $('.check-visibility,.vis-dropdown').mouseenter(function(){
@@ -283,9 +261,9 @@
             var openedcomments = [];
             function toggleComments(element){
                 console.log(element)
-                var commentblockid = "o-comment_"+element.id; 
+                var commentblockid = "o-comment_"+element.id;
                 if(!(openedcomments.includes(commentblockid))){
-                    openedcomments.push(commentblockid);    
+                    openedcomments.push(commentblockid);
                     document.getElementById(commentblockid).style.display = "inline-block";
                     console.log("comment opened")
                     console.log(openedcomments)
@@ -363,7 +341,7 @@
 
                 const data = {
                     'title':title,
-                    'description':description, 
+                    'description':description,
                     'contentType':$('#content_type').val(),
                     'content':cttn,
                     'categories':["web","tutorial"],
@@ -374,8 +352,12 @@
 
                 $.ajax({
                 type: 'POST',
+                headers: {
+                    'Authorization': 'Basic ' + btoa(username+':'+password),
+                    'Content-Type': 'application/json',
+                },
                 url: host_url + 'author/'+localStorage.getItem('uuid')+'/posts/', // TODO: should point to current user url
-                data: data,
+                data: JSON.stringify(data),
                 })
                 .done(function(data){
                     document.getElementsByClassName('post-format')[0].style.display = "none";
@@ -501,12 +483,12 @@
                     //newly added post
                     like_c = 0;
                     addnewpost(data,flag,deleteFlag,editFlag,like_c)
-        
+
                 }else{
                     persistLikes(data.author.id,data.post_id,data,flag,deleteFlag,editFlag);
                 }
-                
-    
+
+
             }
             //likepost
             function likepost(element){
@@ -541,13 +523,13 @@
                 .done(function(data){
                     //MANIPULATE DOM
                     console.log(data);
-                    //increment count 
+                    //increment count
                     var countvaljunk = document.getElementsByClassName("like_row"+postid)[0].innerHTML += 1;
                     var countval = + countvaljunk.slice(0, -6)
                     countval+=1;
-                    document.getElementsByClassName("like_row"+postid)[0].innerHTML = countval + " likes"; 
+                    document.getElementsByClassName("like_row"+postid)[0].innerHTML = countval + " likes";
                 });
-                
+
             }
             //persist likes
             function persistLikes(author_id,post_id,data,flag,deleteFlag,editFlag){
@@ -563,9 +545,9 @@
                     console.log(d.items.length);
                     var like_c = d.items.length;
                     persistFollowStats(localStorage.getItem('uuid'),data,flag,deleteFlag,editFlag,like_c);
-                    
+
                 });
-                
+
             }
 
             function addnewpost(data,flag,deleteFlag,editFlag,like_c){
@@ -667,7 +649,7 @@
                         'url':host_url+"author/"+localStorage.getItem('uuid'),
                         'github':github_cur
                     }
-                 
+
                 }
                 console.log(host_url)
                 $.ajax({
@@ -689,15 +671,15 @@
                 $('.'+fid).each(function(i, obj) {
                     //test
                     console.log(obj)
-                    obj.innerHTML = "Request Sent";   
+                    obj.innerHTML = "Request Sent";
                 });
             }
-            //persist follow status on each public post 
+            //persist follow status on each public post
             function persistFollowStats(fid,data,flag,deleteFlag,editFlag,like_c){
                 //to do:
                 $.ajax({
                     type: 'GET',
-                    url: host_url + 'author/'+data.author.id+'/followers/'+fid 
+                    url: host_url + 'author/'+data.author.id+'/followers/'+fid
                 })
                 .done(function(dd){
                     console.log("IN persistent follow stats");
@@ -716,7 +698,7 @@
                     const postHTML =  `<div class="posted-wrap">
                         <div class="posted-w-h" >
                             <div class="p-w-h-details">
-    
+
                                 <div class="p-profile-wrap">
                                     <div class="p-profile">
                                     </div>
@@ -769,7 +751,7 @@
                         <div class="o-comments" id="${"o-comment_"+data.post_id}">
                             <div class="o-c-cell">
                                 <div class="oc-profile">
-    
+
                                 </div>
                                 <div class="o-type-comment">
                                     <input type="text" placeholder="Type your comments here">
@@ -802,7 +784,7 @@
                 });
 
             }
-            
+
         </script>
     </body>
 </html>
