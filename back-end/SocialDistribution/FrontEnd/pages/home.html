@@ -79,6 +79,21 @@
             margin-top:5px;
 
         }
+        .unhideDel,.unhideEdit{
+
+        }
+        .hideDel,.hideEdit{
+            display:none;
+        }
+        .outside-post {
+          width:50px;
+          height: 100%;
+          background-color: rgba(0,0,0,0.03);
+          float:right;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
     </style>
 </head>
 <body>
@@ -463,27 +478,27 @@
                   if(posts.length != 0){
                       for ( i = 0 ; i < posts.length; i++){
                           var data = posts[i];
-                          // var flag;
-                          // var delFlag;
-                          // var editFlag;
-                          // if(followerArray.includes(data.author.id)){
-                          //     flag="hideFollow"
-                          // }else{
-                          //     flag="showFollow"
-                          //     //set a flag to handle follower logic
-                          // }
-                          //
-                          // if(data.author.id == localStorage.getItem('uuid')){
-                          //     flag="hideFollow";
-                          //     delFlag = "unhideDel";
-                          //     editFlag="unhideEdit";
-                          // }else{
-                          //     delFlag= "hideDel";
-                          //     editFlag="hideEdit";
-                          // }
+                          var flag;
+                          var delFlag;
+                          var editFlag;
+                          if(followerArray.includes(data.author.id)){
+                              flag="hideFollow"
+                          }else{
+                              flag="showFollow"
+                              //set a flag to handle follower logic
+                          }
+
+                          if(data.author.id == localStorage.getItem('uuid')){
+                              flag="hideFollow";
+                              delFlag = "unhideDel";
+                              editFlag="unhideEdit";
+                          }else{
+                              delFlag= "hideDel";
+                              editFlag="hideEdit";
+                          }
 
                           //insert post data to DOM
-                          FillDOM(data,0,0,0,1)
+                          FillDOM(data,flag,delFlag,editFlag, 1);
 
                       }
                   }
@@ -676,7 +691,7 @@
             function addnewpost(data,flag,deleteFlag,editFlag,like_c){
                 const postHTML =  `<div class="posted-wrap">
                     <div class="posted-w-h" >
-                        <div class="p-w-h-details">
+                        <div class="p-w-h-details" style="width:calc(100%-160px)">
 
                             <div class="p-profile-wrap">
                                 <div class="p-profile">
@@ -694,6 +709,9 @@
                         </div>
                         <div class="edit-post ${editFlag}">
                             <i class="material-icons" style="color:rgba(0,0,0,0.45)">mode</i>
+                        </div>
+                        <div class="outside-post">
+                            <i class="material-icons" style="color:rgba(0,0,0,0.45)">travel_explore</i>
                         </div>
                     </div>
                     <div class="p-title-wrap">
@@ -895,6 +913,9 @@
                 //get the first parent div wrapping the delete button
                 $.ajax({
                     type: 'DELETE',
+                    headers: {
+                        'Authorization': 'Basic ' + btoa(username+':'+password),
+                    },
                     url: host_url + 'author/'+localStorage.getItem('uuid')+'/posts/'+curDel.id+'/',
                 }).done(function(data){
                     $('#'+curDel.id).parents('[class]:eq(1)').remove();
@@ -931,6 +952,9 @@
                 console.log(host_url)
                 $.ajax({
                     type:"POST",
+                    headers: {
+                        'Authorization': 'Basic ' + btoa(username+':'+password),
+                    },
                     contentType: "application/json",
                     data:JSON.stringify(data),
                     url:host_url+"author/"+localStorage.getItem('uuid')+"/posts/"+pid+"/comments/"
