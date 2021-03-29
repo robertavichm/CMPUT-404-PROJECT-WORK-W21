@@ -50,9 +50,14 @@
         })
           .done(function(data){
             console.log(data); // UUID of post
+<<<<<<< HEAD
             localStorage.setItem("uuid", data.id);
             localStorage.setItem("username", d.username);
             localStorage.setItem("pwd", d.password);
+=======
+            console.log(data.id)
+            localStorage.setItem("uuid",data.id);
+>>>>>>> 20656e8889adfaf16157fab1ad8d9a12c89aa3c2
             window.location.href = host_url + 'home';
           });
 
