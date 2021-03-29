@@ -34,7 +34,7 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost' ,'127.0.0.1','cmput-404-group17.herokuapp.com']
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost' ,'127.0.0.1','cmput-404-group17.herokuapp.com','*']
 
 
 
