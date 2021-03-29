@@ -280,24 +280,23 @@
                 $('#proimage').attr('src',"preview.png");
 
             });
-            var c_is_opened = false;
-            $('.comment-w').click(function() {
-                if(!c_is_opened){
-                    document.getElementsByClassName('o-comments')[0].style.display = "inline-block";
-                    c_is_opened = true;
+            var openedcomments = [];
+            function toggleComments(element){
+                console.log(element)
+                var commentblockid = "o-comment_"+element.id; 
+                if(!(openedcomments.includes(commentblockid))){
+                    openedcomments.push(commentblockid);    
+                    document.getElementById(commentblockid).style.display = "inline-block";
+                    console.log("comment opened")
+                    console.log(openedcomments)
                 }else{
-                    document.getElementsByClassName('o-comments')[0].style.display = "none";
-                    c_is_opened = false;
-                }
-            });
-            var c_is_opened = false;
-            function toggleComments(){
-                if(!c_is_opened){
-                    document.getElementsByClassName('o-comments')[0].style.display = "inline-block";
-                    c_is_opened = true;
-                }else{
-                    document.getElementsByClassName('o-comments')[0].style.display = "none";
-                    c_is_opened = false;
+                    const index = openedcomments.indexOf(commentblockid);
+                    if (index > -1) {
+                        openedcomments.splice(index, 1);
+                    }
+                    console.log(openedcomments)
+                    document.getElementById(commentblockid).style.display = "none";
+                    console.log("comment closed")
                 }
             }
 
@@ -382,7 +381,7 @@
                     document.getElementsByClassName('post-format')[0].style.display = "none";
                     console.log(data); // UUID of post
                     //insert post data to DOM
-                    FillDOM(data,"hideFollow","unhideDel","unhideEdit");
+                    FillDOM(data,"hideFollow","unhideDel","unhideEdit",1);
                 });
             });
 
@@ -419,7 +418,7 @@
                             }
 
                             //insert post data to DOM
-                            FillDOM(data,flag,delFlag,editFlag)
+                            FillDOM(data,flag,delFlag,editFlag,newflag)
 
                         }
                     }else{
@@ -492,15 +491,22 @@
                             ].join(''));
                         }
                     }
-
                 });
             }
 
 
-            function FillDOM(data,flag,deleteFlag,editFlag){
-                persistLikes(data.author.id,data.post_id,data,flag,deleteFlag,editFlag);
-                console.log("meeee")
+            function FillDOM(data,flag,deleteFlag,editFlag,newflag){
+                var like_c;
+                if(newflag == 1){
+                    //newly added post
+                    like_c = 0;
+                    addnewpost(data,flag,deleteFlag,editFlag,like_c)
+        
+                }else{
+                    persistLikes(data.author.id,data.post_id,data,flag,deleteFlag,editFlag);
+                }
                 
+    
             }
             //likepost
             function likepost(element){
@@ -543,17 +549,22 @@
                 });
                 
             }
+            persistFollowStats("1b3e0794-9b11-4116-8a3b-d04873fdc013");
             //persist likes
-            function persistLikes(author_id,post_id,data,flag,deleteFlag,editFlag,newflag){
+            function persistLikes(author_id,post_id,data,flag,deleteFlag,editFlag){
+                console.log("THIS IS AUTHOR ID " + author_id);
+                console.log("THIS IS POST ID " + post_id);
                 var res_like_count;
                 $.ajax({
                     type: 'GET',
                     url: 'author/'+author_id+'/posts/'+post_id +"/likes"
                 })
-                .done(function(r){
+                .done(function(d){
                     console.log("billion dollar coins")
-                    console.log(r.items.length);
-                    like_c = r.items.length
+                    console.log(d.items.length);
+                    var like_c = d.items.length
+
+                     <!-- persistFollowStats("1b3e0794-9b11-4116-8a3b-d04873fdc013"); -->
                     
                     const postHTML =  `<div class="posted-wrap">
                         <div class="posted-w-h" >
@@ -561,9 +572,7 @@
     
                                 <div class="p-profile-wrap">
                                     <div class="p-profile">
-    
                                     </div>
-    
                                 </div>
                                 <div class="p-user-wrap">
                                     <p>${data.author.displayName}</p>
@@ -587,17 +596,17 @@
                             <img src="{%  static  'assets/preview.png'  %}" id="proimage">
                         </div>
                         <div class="like-count-w">
-                            <p id="like-count" class="${"like_row"+data.post_id}">${like_c + " likes"}</p id="comment-count"><p>${data.commentCount}comments</p id="share-count"><p>0 shares</p>
+                            <p id="like-count" class="${"like_row"+data.post_id}">${like_c + " likes"}</p id="comment-count"><p>${data.commentCount}comments</p id="share-count">
                         </div>
                         <div class="social-controls">
-    
+
                             <div class="like-w ${"thumb_"+data.author.id}" onclick="likepost(this)" id="${"thumb_"+data.post_id}">
                                 <div class="s-c-img">
                                     <i class="material-icons">thumb_up</i>
                                 </div>
                                 <p>Like</p>
                             </div>
-                            <div class="comment-w">
+                            <div class="comment-w" onclick="toggleComments(this)" id="${data.post_id}">
                                 <div class="s-c-img">
                                     <i class="material-icons">comment</i>
                                 </div>
@@ -610,7 +619,7 @@
                                 <p>Share</p>
                             </div>
                         </div>
-                        <div class="o-comments">
+                        <div class="o-comments" id="${"o-comment_"+data.post_id}">
                             <div class="o-c-cell">
                                 <div class="oc-profile">
     
@@ -631,9 +640,88 @@
                         </div>
                     </div>`;
                     $(".post-feed").append(postHTML);
-    
+                    
                 });
                 
+            }
+
+            function addnewpost(data,flag,deleteFlag,editFlag,like_c){
+                const postHTML =  `<div class="posted-wrap">
+                    <div class="posted-w-h" >
+                        <div class="p-w-h-details">
+
+                            <div class="p-profile-wrap">
+                                <div class="p-profile">
+
+                                </div>
+
+                            </div>
+                            <div class="p-user-wrap">
+                                <p>${data.author.displayName}</p>
+                            </div>
+                            <p class="follow-user ${data.author.id}" id="${flag}" onclick="followUser(this)">Follow</p>
+                        </div>
+                        <div class="del-post ${deleteFlag}"  id="${data.post_id}" onclick="deletePost(this)">
+                            <i class="material-icons" style="color:rgba(0,0,0,0.45)">delete_outline</i>
+                        </div>
+                        <div class="edit-post ${editFlag}">
+                            <i class="material-icons" style="color:rgba(0,0,0,0.45)">mode</i>
+                        </div>
+                    </div>
+                    <div class="p-title-wrap">
+                        <p>${data.title}</p>
+                    </div>
+                    <div class="post-text">
+                        <p>${data.content}</p>
+                    </div>
+                    <div class="posted-img-wrap">
+                        <img src="{%  static  'assets/preview.png'  %}" id="proimage">
+                    </div>
+                    <div class="like-count-w">
+                        <p id="like-count" class="${"like_row"+data.post_id}">${like_c + " likes"}</p id="comment-count"><p>${data.commentCount}comments</p id="share-count">
+                    </div>
+                    <div class="social-controls">
+
+                        <div class="like-w ${"thumb_"+data.author.id}" onclick="likepost(this)" id="${"thumb_"+data.post_id}">
+                            <div class="s-c-img">
+                                <i class="material-icons">thumb_up</i>
+                            </div>
+                            <p>Like</p>
+                        </div>
+                        <div class="comment-w">
+                            <div class="s-c-img">
+                                <i class="material-icons">comment</i>
+                            </div>
+                            <p>Comment</p>
+                        </div>
+                        <div class="share-w">
+                            <div class="s-c-img">
+                                <i class="material-icons">share</i>
+                            </div>
+                            <p>Share</p>
+                        </div>
+                    </div>
+                    <div class="o-comments">
+                        <div class="o-c-cell">
+                            <div class="oc-profile">
+
+                            </div>
+                            <div class="o-type-comment">
+                                <input type="text" placeholder="Type your comments here">
+                            </div>
+                        </div>
+                        <div class="o-r-cell">
+                            <div class="o-r-details">
+                                <p>Whatsup everyone Whatsup everyoneWhatsup everyoneWhatsup everyoneWhatsup everyoneWhatsup everyoneWhatsup everyone Whatsup everyoneWhatsup everyoneWhatsup everyone Whatsup everyoneWhatsup everyoneWhatsup everyone </p>
+                                <div class="c-p-wrap">
+                                    <p>By: <span>Sonia Woodelwels</span></p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>`;
+                $(".post-feed").append(postHTML);
             }
 
             function followUser(curTag){
@@ -681,11 +769,17 @@
                     obj.innerHTML = "Request Sent";   
                 });
             }
-            persistFollowStats();
             //persist follow status on each public post 
-            function persistFollowStats(){
+            function persistFollowStats(fid){
                 //to do:
-
+                $.ajax({
+                    type: 'GET',
+                    url: host_url + 'author/'+localStorage.getItem('uuid')+'/followers/'+fid
+                })
+                .done(function(data){
+                    console.log("IN persistent follow stats");
+                    console.log(data);
+                });
             }
 
             function deletePost(curDel){
