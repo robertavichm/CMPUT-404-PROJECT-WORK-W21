@@ -14,6 +14,71 @@
         .inbox-wrap{
             display:none;
         }
+        .send-comment{
+            width:50px;
+            height:40px;
+            float:right;
+            margin-top:-40px;
+            margin-right:20px;
+            border-radius: 0 25px 25px 0;
+            background-color:rgba(0,0,0,0.10);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            cursor:pointer;
+        }
+        .send-comment:hover{
+            background-color:rgba(0,0,0,0.20);
+        }
+        .o-r-cell{
+            margin-top:10px;
+            background-color:white;
+        }
+        .o-r-details{
+            border-radius:5px;
+            background-color:rgba(0,0,0,0.05);
+        }
+        .o-r-details p{
+            width:100%;
+            padding-left:10px;
+            padding-right:10px;
+            padding-top:5px;
+            box-sizing: border-box;
+        }
+        .c-p-wrap{
+
+            line-height:20px;
+            height:25px;
+            padding-bottom:5px;
+            padding-top:5px;
+        }
+        .c-p-wrap p{
+            font-size:14px;
+            padding:0;
+            margin-top:2.5px;
+            padding-left:10px;
+            text-align:left;
+        }
+        .comment-profile{
+            width:25px;
+            height:25px;
+            float:left;
+            margin-left:10px;
+            margin-right:15px;
+            border-radius:12.5px;
+            background-color:white;
+        }
+        .comment-time{
+            height:30px;
+            margin-top:-45px;
+            margin-right:10px;
+            float:right;line-height:30px;
+        }
+        .comment-time p{
+            margin-top:0;
+            margin-top:5px;
+
+        }
     </style>
 </head>
 <body>
@@ -268,6 +333,7 @@
                     document.getElementById(commentblockid).style.display = "inline-block";
                     console.log("comment opened")
                     console.log(openedcomments)
+                    fetchcomment(element)
                 }else{
                     const index = openedcomments.indexOf(commentblockid);
                     if (index > -1) {
@@ -585,7 +651,7 @@
                     var countval = + countvaljunk.slice(0, -6)
                     countval+=1;
                     document.getElementsByClassName("like_row"+postid)[0].innerHTML = countval + " likes";
-                });
+                })
 
             }
             //persist likes
@@ -640,7 +706,7 @@
                         <img src="{%  static  'assets/preview.png'  %}" id="proimage">
                     </div>
                     <div class="like-count-w">
-                        <p id="like-count" class="${"like_row"+data.post_id}">${like_c + " likes"}</p id="comment-count"><p>${data.commentCount}comments</p id="share-count">
+                        <p id="like-count" class="${"like_row"+data.post_id}">${like_c + " likes"}</p><p id="${"comment-count_"+data.post_id}">${data.commentCount} comments</p">
                     </div>
                     <div class="social-controls">
 
@@ -650,7 +716,7 @@
                             </div>
                             <p>Like</p>
                         </div>
-                        <div class="comment-w">
+                        <div class="comment-w" onclick="toggleComments(this)" id="${data.post_id}">
                             <div class="s-c-img">
                                 <i class="material-icons">comment</i>
                             </div>
@@ -663,24 +729,21 @@
                             <p>Share</p>
                         </div>
                     </div>
-                    <div class="o-comments">
+                    <div class="o-comments" id="${"o-comment_"+data.post_id}">
                         <div class="o-c-cell">
                             <div class="oc-profile">
 
                             </div>
                             <div class="o-type-comment">
-                                <input type="text" placeholder="Type your comments here">
+                                <input type="text" placeholder="Type your comments here" id="${"comment_input"+data.post_id}">
+                            </div>
+                            <div class="send-comment" onclick="addcomment(this)" id="${data.post_id}">
+                                <i class="material-icons" style="color:white">send</i>
                             </div>
                         </div>
-                        <div class="o-r-cell">
-                            <div class="o-r-details">
-                                <p>Whatsup everyone Whatsup everyoneWhatsup everyoneWhatsup everyoneWhatsup everyoneWhatsup everyoneWhatsup everyone Whatsup everyoneWhatsup everyoneWhatsup everyone Whatsup everyoneWhatsup everyoneWhatsup everyone </p>
-                                <div class="c-p-wrap">
-                                    <p>By: <span>Sonia Woodelwels</span></p>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="o-r-cell" id="${"comment_cell"+data.post_id}">
 
+                        </div>
                     </div>
                 </div>`;
                 $(".post-feed").append(postHTML);
@@ -782,7 +845,7 @@
                             <img src="{%  static  'assets/preview.png'  %}" id="proimage">
                         </div>
                         <div class="like-count-w">
-                            <p id="like-count" class="${"like_row"+data.post_id}">${like_c + " likes"}</p id="comment-count"><p>${data.commentCount}comments</p id="share-count">
+                            <p id="like-count" class="${"like_row"+data.post_id}">${like_c + " likes"}</p><p id="${"comment-count_"+data.post_id}">${data.commentCount} comments</p">
                         </div>
                         <div class="social-controls">
 
@@ -811,16 +874,14 @@
 
                                 </div>
                                 <div class="o-type-comment">
-                                    <input type="text" placeholder="Type your comments here">
+                                    <input type="text" placeholder="Type your comments here" id="${"comment_input"+data.post_id}">
+                                </div>
+                                <div class="send-comment" onclick="addcomment(this)" id="${data.post_id}">
+                                    <i class="material-icons" style="color:white">send</i>
                                 </div>
                             </div>
-                            <div class="o-r-cell">
-                                <div class="o-r-details">
-                                    <p>Whatsup everyone Whatsup everyoneWhatsup everyoneWhatsup everyoneWhatsup everyoneWhatsup everyoneWhatsup everyone Whatsup everyoneWhatsup everyoneWhatsup everyone Whatsup everyoneWhatsup everyoneWhatsup everyone </p>
-                                    <div class="c-p-wrap">
-                                        <p>By: <span>Sonia Woodelwels</span></p>
-                                    </div>
-                                </div>
+                            <div class="o-r-cell" id="${"comment_cell"+data.post_id}">
+
                             </div>
                         </div>
                     </div>`;
@@ -841,6 +902,89 @@
                 });
 
             }
+
+
+
+            //handlinf comments
+            function addcomment(element){
+                var pid = element.id;
+                console.log(pid)
+                var textfield = document.getElementById("comment_input"+pid).value;
+                if(textfield == ""){
+                    return
+                }
+                console.log(textfield)
+                data = {
+                    "type":"comment",
+                    "author_id":{
+                        'id':localStorage.getItem('uuid'),
+                        'type':'author',
+                        'host':host_url,
+                        'displayName':displayName_cur,
+                        'url':host_url+"author/"+localStorage.getItem('uuid'),
+                        'github':github_cur
+                    },
+
+                    "contentType":"text",
+                    "comment":textfield
+                }
+                console.log(host_url)
+                $.ajax({
+                    type:"POST",
+                    contentType: "application/json",
+                    data:JSON.stringify(data),
+                    url:host_url+"author/"+localStorage.getItem('uuid')+"/posts/"+pid+"/comments/"
+                })
+                .done(function(data){
+                    //MANIPULATE DOM
+                    console.log(data);
+
+                    var c_cell = `<div class="o-r-details">
+                        <p>${textfield}</p>
+                        <div class="c-p-wrap">
+                            <div class="comment-profile"> <i class="material-icons" style="color:cornflowerblue;">sentiment_satisfied_alt</i></div><p><span>${displayName_cur}</span></p>
+                        </div>
+                    </div>`
+                    $("#comment_cell"+pid).append(c_cell);
+                    var commentlabel = document.getElementById("comment-count_"+pid).innerHTML;
+                    var countvalarr = commentlabel.split(" ");
+                    var countval;
+                    countval = + countvalarr[0];
+                    countval+=1;
+                    console.log(commentlabel);
+                    document.getElementById("comment_input"+pid).value = ""
+                    document.getElementById("comment-count_"+pid).innerHTML = countval + " comments";
+
+                });
+            }
+
+            function fetchcomment(element){
+                var pid = element.id;
+                $.ajax({
+                    type:"GET",
+                    url:host_url+"author/"+localStorage.getItem('uuid')+"/posts/"+pid+"/comments/"
+                })
+                .done(function(data){
+                    //MANIPULATE DOM
+                    console.log(data.items);
+                    for(i=0;i<data.items.length;i++){
+                        console.log(data.items[i].comment)
+                        var comment = data.items[i].comment;
+
+                        var c_cell = `<div class="o-r-details">
+                            <p>${comment}</p>
+                            <div class="c-p-wrap">
+                                <div class="comment-profile"> <i class="material-icons" style="color:cornflowerblue">sentiment_satisfied_alt</i></div><p><span>${data.items[i].author_id.displayName}</span></p><div class="comment-time"><p>${data.items[i].published.split("T")[0]}</p><div/>
+                            </div>
+                        </div>`
+                        $("#comment_cell"+pid).append(c_cell);
+                    }
+
+
+                });
+            }
+
+
 
         </script>
     </body>
