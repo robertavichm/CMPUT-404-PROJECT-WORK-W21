@@ -95,7 +95,7 @@
           </div>
           <span class="login-l">Password</span>
           <div class="wrap-input">
-            <input type="text" name="host" value="">
+            <input type="text" name="password" value="">
           </div>
           <span class="login-l">Github</span>
           <div class="wrap-input">
@@ -115,7 +115,7 @@
       $('.signup-form').submit(function(e) {
         const data = {
           'displayName': $('input[name=dname]').val(),
-          'password': $('input[name=host]').val(),
+          'password': $('input[name=password]').val(),
           'github': $('input[name=github]').val(),
           'username': $('input[name=username]').val(),
         };
