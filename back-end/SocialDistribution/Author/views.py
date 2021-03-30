@@ -163,6 +163,7 @@ def get_likes(request,author_id):
 
 
 @api_view(["GET","POST","DELETE"])
+@permission_classes([IsAuthenticated])
 def get_node(request,node_url):
     if(request.method == "GET"):
         node = get_object_or_404(Node, pk=node_url)
@@ -178,3 +179,15 @@ def get_node(request,node_url):
         node = get_object_or_404(Node, pk=node_url)
         node.delete()
         return HttpResponse("node deleted")
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_all_nodes(request):
+    response = {}
+    response["type"] = "nodes"
+    response["items"] = []
+    nodes = Node.objects.all()
+    for node in nodes:
+        ser = NodeSerializer(node,many=False)
+        response["items"].append(ser.data)
+    return JsonResponse(response, safe=False)
