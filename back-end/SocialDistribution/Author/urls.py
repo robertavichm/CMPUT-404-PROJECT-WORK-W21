@@ -5,6 +5,7 @@ from . import views
 
 urlpatterns = [
     path("login/", views.login),
+    path("nodes/", views.get_all_nodes),
     path("nodes/<node_url>/", views.get_node),
     path("posts/",post_views.get_all),
     path("author/", views.open_path),
