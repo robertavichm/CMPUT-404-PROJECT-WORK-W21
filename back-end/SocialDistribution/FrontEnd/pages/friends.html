@@ -6,46 +6,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet"  href="{%  static  'css/frame.css'  %}">
+    <link rel="stylesheet"  href="{%  static  'css/frame_.css'  %}">
     <link rel="stylesheet"  href="{%  static  'css/friends.css'  %}">
     <link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" /><link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" />
     <title>Friends</title>
 
 </head>
 <body>
-  <div class="nav-w">
-    <div class="nav-bar">
-      <div class="logo">
-        <p>Social Distribution</p>
-      </div>
-      <div class="options">
-        <div class="profile"></div>
-        <div class="username"><p></p></div>
-      </div>
-    </div>
-  </div>
+   {% include "components/topnav.html" %}
     <div class="main-body">
-        <div class="vertical-nav">
-            <div class="server-main">
-                <div class="menu-list-wrap">
-                  <div class="menu-list-profile"><p>John Doe</p></div>
-                  <div class="menu-list-cell">
-                      <div class="menu-l-img"><i class="material-icons" style="color:cadetblue"><a href="#"></a>stream</i></div>
-                      <div class="menu-l-text"><p><a href="{% url 'home' %}" style="text-decoration:none;color:black">Stream</a></p></div>
-                  </div>
-                  <div class="menu-list-cell">
-                      <div class="menu-l-img"><i class="material-icons" style="color:cornflowerblue">face</i></div>
-                      <div class="menu-l-text"><p><a href="{% url 'profile' %}" style="text-decoration:none;color:black">Profile</a></p></div>
-                  </div>
-                  <div class="menu-list-cell">
-                      <div class="menu-l-img"><i class="material-icons" style="color:coral">people</i></div>
-                      <div class="menu-l-text"><p><a href="{% url 'friends' %}" style="text-decoration:none;color:black">Friends</a></p></div>
-                  </div>
+        {% include "components/leftnav.html" %}
 
-
-                </div>
-            </div>
-        </div>
         <div class="content">
             <div class="content-aligner">
                 <div class="friend-request-wrap">
@@ -115,9 +86,15 @@
         </div>
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <script src="{% static 'common.js' %}"></script>
     <script>
 
         const host_url = '{{ host_url }}';
+
+        // grabbing credentials from localStorage
+        const username = localStorage.getItem("username");
+        const password = localStorage.getItem("pwd");
+        const uuid  = localStorage.getItem("uuid");
 
         var toggle_f_r = 0;
         $('#request-arrow').click(function() {
@@ -173,18 +150,22 @@
         // GET Friend requests
         $.ajax({
           type: 'GET',
-          url: host_url + 'author/'+ localStorage.getItem('uuid') +'/inbox/', // TODO: should point to current user
+          headers: {
+              'Authorization': 'Basic ' + btoa(username+':'+password),
+          },
+          url: host_url + 'author/'+ localStorage.getItem('uuid') +'/inbox/',
           dataType: 'json',
         })
           .done(function(data){
-            console.log(data);
+            // console.log(data);
             var fr_req = []; // IDs and dname of requesters
 
-            for(el in data['items']){
-              if(data['items'][el].type === "Follow"){
+            for(el of data['items']){
+              console.log(el)
+              if(el.type === "follow"){
                 var d = {
-                  'id': data['items'][el].requester.id,
-                  'displayName': data['items'][el].requester.displayName,
+                  'id': el.author_id.id,
+                  'displayName': el.author_id.displayName,
                 }
                 fr_req.push(d);
               }
@@ -209,7 +190,7 @@
           // GET Followers
           $.ajax({
             type: 'GET',
-            url: host_url + 'author/'+ localStorage.getItem('uuid') +'/followers/', // TODO: should point to current user
+            url: host_url + 'author/'+ localStorage.getItem('uuid') +'/followers/',
             dataType: 'json',
           })
             .done(function(data){
@@ -225,9 +206,11 @@
 
               formatAndAppendFollowers(followers);
 
-              console.log('done');
+              console.log('followers pushed.');
             });
 
+
+            // appending to the DOM
             function formatAndAppendFollowers(followers){
               console.log(followers);
 

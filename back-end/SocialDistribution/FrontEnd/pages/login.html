@@ -16,11 +16,11 @@
           <span class="login-form-title">Login</span>
           <span class="login-l">Username</span>
           <div class="wrap-input">
-            <input type="text" name="username" value="" placeholder="uuid for now">
+            <input type="text" name="username" value="">
           </div>
           <span class="login-l">Password</span>
           <div class="wrap-input">
-            <input type="text" name="password" value="" disabled>
+            <input type="text" name="password" value="" >
           </div>
           <div class="" style="margin-bottom:10px">
             <a href="{% url 'register' %}" style="color:black">Register</a>
@@ -36,22 +36,31 @@
       <script type="text/javascript">
 
       const host_url = '{{ host_url }}';
-      var x = host_url + 'author/'+ $('input[name=username]').val() +'/';
-      console.log(x)
 
       $('.login-form').submit(function(e) {
+        const d = {
+          'password': $('input[name=password]').val(),
+          'username': $('input[name=username]').val(),
+        };
         $.ajax({
-          url: host_url + 'author/'+ $('input[name=username]').val() +'/',
+          headers: {
+              'Authorization': 'Basic ' + btoa(d.username+':'+d.password)
+          },
+          url: host_url + 'login/',
         })
           .done(function(data){
             console.log(data); // UUID of post
             localStorage.setItem("uuid", data.id);
-            localStorage.setItem("displayName", data.displayName);
+            localStorage.setItem("username", d.username);
+            localStorage.setItem("pwd", d.password);
             window.location.href = host_url + 'home';
           });
 
           e.preventDefault();
       });
+
+      console.log(window.location.pathname);
+
 
       </script>
   </body>

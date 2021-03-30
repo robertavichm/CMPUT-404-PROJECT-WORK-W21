@@ -89,9 +89,13 @@
           <div class="wrap-input">
             <input type="text" name="dname" value="">
           </div>
-          <span class="login-l">Host</span>
+          <span class="login-l">Username</span>
           <div class="wrap-input">
-            <input type="text" name="host" value="">
+            <input type="text" name="username" value="">
+          </div>
+          <span class="login-l">Password</span>
+          <div class="wrap-input">
+            <input type="text" name="password" value="">
           </div>
           <span class="login-l">Github</span>
           <div class="wrap-input">
@@ -109,28 +113,32 @@
       const host_url = '{{ host_url }}';
 
       $('.signup-form').submit(function(e) {
-        const data = {
+        const d = {
           'displayName': $('input[name=dname]').val(),
-          'host': $('input[name=host]').val(),
+          'password': $('input[name=password]').val(),
           'github': $('input[name=github]').val(),
+          'username': $('input[name=username]').val(),
         };
-        console.log(data);
+        console.log(d);
         $.ajax({
           type: 'POST',
+          headers: {'Content-Type': 'application/json'},
           url: host_url + 'author/',
-          data: data,
+          data: JSON.stringify(d),
         })
           .done(function(data){
             console.log(data); // UUID of post
             localStorage.setItem("uuid", data);
-            // localStorage.setItem("uuid", data.id);
-            localStorage.setItem("displayName", data.displayName);
+            localStorage.setItem("username", d.username);
+            localStorage.setItem("pwd", d.password);
             window.location.href = host_url + 'home';
           });
 
           e.preventDefault();
       });
 
+      console.log(window.location.pathname);
+      
       </script>
   </body>
 </html>

@@ -50,7 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'whitenoise.runserver_nostatic',
-
+    'corsheaders',
 ]
 
 REST_FRAMEWORK = {
@@ -63,6 +63,7 @@ REST_FRAMEWORK = {
 }
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -98,6 +99,7 @@ WSGI_APPLICATION = 'SocialDistribution.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 HOST_URL = os.environ.get("Host_url")
+FOREIGN_URL = os.environ.get("Foreign_url")
 
 DATABASES = {
     'default': {
@@ -130,6 +132,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_WHITELIST = (
+#   'http://localhost:8000',
+# )
+
+
 AUTH_USER_MODEL = 'Author.Author'
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -158,4 +166,3 @@ STATICFILES_DIRS = [
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 MEDIA_URL = '/media/'
 django_on_heroku.settings(locals())
-
