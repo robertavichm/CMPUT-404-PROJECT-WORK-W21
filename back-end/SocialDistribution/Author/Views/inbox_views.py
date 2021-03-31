@@ -67,7 +67,8 @@ def handle_type(post_type,data,author):
             requestor_data = data["author_id"]
             ser = AuthorSerializer(author, many=False)
             data["summary"] = data["author_id"]["displayName"]+ " wants to be "+author.displayName+"'s friend"
-
+            if(FriendShip.objects.filter(author_local=author, author_remote__id=data["author_id"]["id"])):
+                return HttpResponseBadRequest()
             new_friendship = FriendShip(author_local=author,author_remote=requestor_data)
             new_friendship.save()
 
