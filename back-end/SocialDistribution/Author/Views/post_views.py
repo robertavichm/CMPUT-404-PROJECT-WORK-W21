@@ -35,6 +35,9 @@ def general_post(request,author_id):
         #notify_friends(author_id)
         return JsonResponse(formatted)
     if request.method == "GET":
+        # Can't GET post from invalid author
+        auth = get_object_or_404(Author, pk=author_id)
+
         response = {}
         response["type"] = "posts"
         response["items"] = []
