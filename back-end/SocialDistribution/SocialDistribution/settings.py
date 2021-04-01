@@ -98,7 +98,7 @@ WSGI_APPLICATION = 'SocialDistribution.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 HOST_URL = os.environ.get("Host_url")
-FOREIGN_URL = os.environ.get("Foreign_url")
+
 
 DATABASES = {
     'default': {
