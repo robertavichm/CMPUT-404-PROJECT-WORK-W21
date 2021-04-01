@@ -19,6 +19,7 @@ class AuthorModelsTestCase(TestCase):
         self.test_author_friend_fields = get_author_fields(1)
         self.author_friend = Author.objects.create(**self.test_author_friend_fields,
                                                    **get_test_credentials(1))
+                                                   
         self.friendship = FriendShip.objects.create(author_local=self.author, 
                                                     author_remote=serializers.serialize('json', [self.author_friend]),
                                                     accepted=True)
