@@ -1,0 +1,16 @@
+non-admin Credentials:
+username = node
+password = password
+Admin Credentials:
+username = node_admin
+password = password
+
+
+Instructions to add a new node:
+"POST"
+https://cmput-404-group17.herokuapp.com/nodes/{url of node}
+REQUEST BODY
+{
+    "username":"{username}",
+    "password":"{password}"
+}
