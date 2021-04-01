@@ -68,7 +68,7 @@ def handle_type(post_type,data,author):
             ser = AuthorSerializer(author, many=False)
             data["summary"] = data["author_id"]["displayName"]+ " wants to be "+author.displayName+"'s friend"
             if(FriendShip.objects.filter(author_local=author, author_remote__id=data["author_id"]["id"])):
-                return HttpResponseBadRequest()
+                return HttpResponseBadRequest("request already sent")
             new_friendship = FriendShip(author_local=author,author_remote=requestor_data)
             new_friendship.save()
 
@@ -76,7 +76,7 @@ def handle_type(post_type,data,author):
             new_notification.save()
             return HttpResponse("follow request sent")
     if post_type=="like":
-        
+        existing = Like.objects.filter(author_id=author)
         if "author_id" in data:
             new_like = Like(author_id=author)
             if("author_id" in data):
@@ -87,26 +87,14 @@ def handle_type(post_type,data,author):
                 return HttpResponseBadRequest("need to specify author_id")
 
             
-         
+            
             if("object_id" in data):
                 new_like.object_id = data["object_id"]
             else:
-                return HttpResponseBadRequest("need to specify author_id")
-            #******************
-            #these feilds might break things because a comment liked on another server wouldnt be housed locally
-            # if "post_id" in data:
-            #     post_id = data["post_id"]
-            #     post = get_object_or_404(Post,pk=post_id)
-            #     new_like.post_id = post
-            #     data["summary"] = data["author_id"]["displayName"]+" likes your post"
-            #     data["object"] = post.id
-                
-            # if "comment_id" in data:
-            #     comment_id = data["comment_id"]
-            #     comment = get_object_or_404(Comment , pk=comment_id)
-            #     new_like.comment_id = comment
-            #     data["summary"] = data["author_id"]["displayName"]+" likes your comment"
-            #     data["object"] = comment.post_id.id +"/comments/"+str(comment.comment_id)
+                return HttpResponseBadRequest("need to specify object_id")
+            existing = Like.objects.filter(author_id=author,liker_id=data["author_id"],object_id=data["object_id"])
+            if(existing.count() > 0):
+                return HttpResponseBadRequest("like with this data already exists")
             new_notification.items = data    
             new_like.save()
             new_notification.save() 

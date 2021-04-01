@@ -5,6 +5,9 @@ Live at https://cmput-404-group17.herokuapp.com/ </br>
 <b>Node user for other groups:<b> </br>
 Username: node </br>
 Password: password </br>
+<b>Node admin for TA:<b> </br>
+    Username: node_admin </br>
+    Password: password </br>
 
 API documentation at https://docs.google.com/document/d/12Bw8JXGd7Xve46BY6p6KOTK02qD1Rm2uPE9B37XdyhM/edit?usp=sharing
 
