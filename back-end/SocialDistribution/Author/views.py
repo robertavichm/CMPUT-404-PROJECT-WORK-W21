@@ -164,32 +164,36 @@ def get_likes(request,author_id):
     return JsonResponse(response, safe=False)
 
 
-@api_view(["GET","POST","DELETE"])
+@api_view(["GET","DELETE"])
 @permission_classes([IsAuthenticated])
 def get_node(request,node_url):
     if(request.method == "GET"):
         node = get_object_or_404(Node, pk=node_url)
         ser = NodeSerializer(node, many=False)
         return JsonResponse(ser.data, safe=False)
-    if(request.method == "POST"):
-        new_node = Node(host=node_url)
-        for k,v in request.data.items():
-            setattr(new_node, k ,v)
-        new_node.save()
-        return JsonResponse(NodeSerializer(new_node, many=False).data, safe=False)
+    
     if(request.method == "DELETE"):
         node = get_object_or_404(Node, pk=node_url)
         node.delete()
         return HttpResponse("node deleted")
 
-@api_view(["GET"])
+@api_view(["GET","POST"])
 @permission_classes([IsAuthenticated])
 def get_all_nodes(request):
-    response = {}
-    response["type"] = "nodes"
-    response["items"] = []
-    nodes = Node.objects.all()
-    for node in nodes:
-        ser = NodeSerializer(node,many=False)
-        response["items"].append(ser.data)
-    return JsonResponse(response, safe=False)
+    if(request.method== "GET"):
+        response = {}
+        response["type"] = "nodes"
+        response["items"] = []
+        nodes = Node.objects.all()
+        for node in nodes:
+            ser = NodeSerializer(node,many=False)
+            response["items"].append(ser.data)
+        return JsonResponse(response, safe=False)
+
+    else:
+        if(request.method == "POST"):
+            new_node = Node()
+            for k,v in request.data.items():
+                setattr(new_node, k ,v)
+            new_node.save()
+            return JsonResponse(NodeSerializer(new_node, many=False).data, safe=False)

@@ -8,9 +8,10 @@ password = password
 
 Instructions to add a new node:
 "POST"
-https://cmput-404-group17.herokuapp.com/nodes/{url of node}
+https://cmput-404-group17.herokuapp.com/nodes/
 REQUEST BODY
 {
+    "host":{url of node ex. https://herokuapp.com/},
     "username":"{username}",
     "password":"{password}"
 }
