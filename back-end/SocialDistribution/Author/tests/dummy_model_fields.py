@@ -15,20 +15,20 @@ def get_author_fields(i=0):
         "type": "Author",
     }
 
-def get_post_fields():
+def get_post_fields(i=0, visibility="PUBLIC", unlisted=False):
     return {
-        "title": "dummy title",
+        "title": f"dummy title {i}",
         "description": "hello dummy description",
-        "source": "source from somewhere",
-        "origin": "origial post location",
+        "source": f"source from somewhere {i}",
+        "origin": f"origial post location {i}",
         "contentType": "text/plain",
         "content": "grrrr content content content lorem ipsum",
         "categories": ["test", "data"],
-        "commentLink": "comment link",
+        "commentLink": f"comment link {i}",
         "commentCount": 50,
         "pageSize": 10,
-        "visibility": "PUBLIC",
-        "unlisted": False,
+        "visibility": visibility,
+        "unlisted": unlisted,
     }
 
 def get_follow_fields():
