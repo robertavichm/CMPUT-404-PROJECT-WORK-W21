@@ -1,10 +1,10 @@
 from django.test import TestCase, Client
 from rest_framework import status
-import json
+import json, base64
 from Author.models import Author, Post
 from Author.author_serializer import AuthorSerializer
+from Author.tests.dummy_model_fields import get_author_fields, get_post_fields, get_test_credentials
 from Author.formatters import post_formater
-from Author.tests.dummy_model_fields import get_author_fields, get_post_fields
 
 invalid_uuid = '01234567-9ABC-DEF0-1234-56789ABCDEF0'
 
@@ -14,16 +14,27 @@ Testing GET on /author/{author_ID}/posts/{post_ID}/
 class PostGetTest(TestCase):
     def setUp(self):
         self.client = Client()
+        self.headers = {
+           'HTTP_AUTHORIZATION': 'Basic ' + 
+                base64.b64encode(b'user0:123').decode("ascii")
+       }
 
+        self.test_credentials = get_test_credentials()
         self.test_author_fields = get_author_fields()
-        self.test_author = Author.objects.create(**self.test_author_fields)
+        self.test_author = Author.objects.create(**self.test_author_fields, 
+                                                 **self.test_credentials)
+        self.test_author.set_password("123")
+        self.test_author.save()
 
         self.test_post_fields = get_post_fields()
         self.test_post = Post.objects.create(**self.test_post_fields, author_id=self.test_author)
 
     """ Test successful Post creation and GET'ing a Post by id """
     def test_get_post_successful(self):
-        response = self.client.get(f'/author/{self.test_author.id}/posts/{self.test_post.post_id}/')
+        response = self.client.get(
+            f'/author/{self.test_author.id}/posts/{self.test_post.post_id}/',
+            **self.headers
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # TODO: Think about serializer change to avoid using post_formatter
@@ -32,7 +43,10 @@ class PostGetTest(TestCase):
     
     """ Test unsuccessful GET on non-existing /author/authorID/posts/{post_ID}/"""
     def test_get_post_unsuccessful(self):
-        response = self.client.get(f'/author/{invalid_uuid}/posts/{invalid_uuid}/')
+        response = self.client.get(
+            f'/author/{invalid_uuid}/posts/{invalid_uuid}/',
+            **self.headers    
+        )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 """
@@ -41,9 +55,17 @@ Testing update with POST on /author/{author_ID}/posts/{post_ID}/
 class PostUpdateTest(TestCase):
     def setUp(self):
         self.client = Client()
+        self.headers = {
+           'HTTP_AUTHORIZATION': 'Basic ' + 
+                base64.b64encode(b'user0:123').decode("ascii")
+       }
 
+        self.test_credentials = get_test_credentials()
         self.test_author_fields = get_author_fields()
-        self.test_author = Author.objects.create(**self.test_author_fields)
+        self.test_author = Author.objects.create(**self.test_author_fields, 
+                                                 **self.test_credentials)
+        self.test_author.set_password("123")
+        self.test_author.save()
 
         self.test_post_fields = get_post_fields()
         self.test_post = Post.objects.create(**self.test_post_fields, author_id=self.test_author)
@@ -58,7 +80,8 @@ class PostUpdateTest(TestCase):
         response = self.client.post(
             f'/author/{self.test_author.id}/posts/{self.test_post.post_id}/',
             data=json.dumps(self.body),
-            content_type="application/json"
+            content_type="application/json",
+            **self.headers
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -73,7 +96,8 @@ class PostUpdateTest(TestCase):
         response = self.client.post(
             f'/author/{invalid_uuid}/posts/{invalid_uuid}/',
             data=json.dumps(self.body),
-            content_type="application/json"
+            content_type="application/json",
+            **self.headers
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
@@ -105,19 +129,33 @@ Testing Post Deletion with DELETE on /author/{author_ID}/posts/{post_ID}/
 class PostDeleteTest(TestCase):
     def setUp(self):
         self.client = Client()
+        self.headers = {
+           'HTTP_AUTHORIZATION': 'Basic ' + 
+                base64.b64encode(b'user0:123').decode("ascii")
+       }
 
+        self.test_credentials = get_test_credentials()
         self.test_author_fields = get_author_fields()
-        self.test_author = Author.objects.create(**self.test_author_fields)
+        self.test_author = Author.objects.create(**self.test_author_fields, 
+                                                 **self.test_credentials)
+        self.test_author.set_password("123")
+        self.test_author.save()
 
         self.test_post_fields = get_post_fields()
         self.test_post = Post.objects.create(**self.test_post_fields, author_id=self.test_author)
 
     """ Test successful Post update and POST'ing on a Post by id """
     def test_post_delete_successful(self):
-        response = self.client.delete(f'/author/{self.test_author.id}/posts/{self.test_post.post_id}/')
+        response = self.client.delete(
+            f'/author/{self.test_author.id}/posts/{self.test_post.post_id}/',
+            **self.headers    
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
     
     """ Test unsuccessful POST on non-existing /author/authorID/posts/{post_ID}/"""
     def test_post_delete_unsuccessful(self):
-        response = self.client.delete(f'/author/{invalid_uuid}/posts/{invalid_uuid}/')
+        response = self.client.delete(
+            f'/author/{invalid_uuid}/posts/{invalid_uuid}/',
+            **self.headers    
+        )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

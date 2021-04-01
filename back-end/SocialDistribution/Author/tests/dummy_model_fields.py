@@ -1,11 +1,17 @@
 import datetime
 
-def get_author_fields():
+def get_test_credentials(i=0):
     return {
-        "displayName": "Phil Dunphy",
-        "host": "dummyHostUrl",
-        "url": "dummyUrl",
-        "github": "https://Github.com/phildunphy",
+        "username": f"user{i}",
+        "password": "123",
+    }
+
+def get_author_fields(i=0):
+    return {
+        "displayName": f"Phil_Dunphy{i}",
+        "host": f"http://somelink.xyz",
+        "url": f"http://somelink.xyz/author/pdunph{i}",
+        "github": f"http://github.com/phildunphy{i}",
         "type": "Author",
     }
 
@@ -25,6 +31,11 @@ def get_post_fields():
         "unlisted": False,
     }
 
+def get_follow_fields():
+    return {
+        
+    }
+
 def get_comment_fields():
     return {
         "contentType": "text/plain",
@@ -33,5 +44,5 @@ def get_comment_fields():
 
 def get_like_fields():
     return {
-        "object_id": "link to post that was liked"
+        "object_id": "http://somelink.xyz"
     }

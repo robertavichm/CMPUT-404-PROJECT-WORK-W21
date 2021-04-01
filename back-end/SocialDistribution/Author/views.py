@@ -129,6 +129,7 @@ def handle_follow(request,author_id,follow_id):
         return JsonResponse(response,safe =False)
     #kinda bad form probably should be a POST but oh well.
     if request.method == "PUT":
+        # data = get_object_or_404(FriendShip, author_local=author_id, author_remote=follow_id)
         data = FriendShip.objects.filter(author_local=author_id, author_remote__id=follow_id)
         if(data.count() > 0):
             
@@ -138,6 +139,7 @@ def handle_follow(request,author_id,follow_id):
             return HttpResponse("request accepted: ",data[0].FriendShipId)
         return HttpResponseBadRequest()
     if request.method == "DELETE":
+        data = get_object_or_404(FriendShip, author_local=author_id, author_remote=follow_id)
         data = FriendShip.objects.filter(author_local=author_id, author_remote=follow_id)
         if(data.count() > 0):
             instance = FriendShip.objects.get(author_local=author_id, author_remote=follow_id)

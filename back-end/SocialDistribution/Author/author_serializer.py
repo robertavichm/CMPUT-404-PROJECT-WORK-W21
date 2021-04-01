@@ -18,7 +18,7 @@ class PostSerializer(serializers.ModelSerializer):
 class FriendshipSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.FriendShip
-        fields = ["FriendshipId", "author_primary", "author_friend", "accepted"]
+        fields = ["FriendShipId", "author_local", "author_remote", "accepted"]
 
 class LikeSerializer(serializers.ModelSerializer):
     class Meta:
