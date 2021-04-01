@@ -11,11 +11,6 @@
     <link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" />
     <title>Profile</title>
     <style>
-        .content{
-            display:flex;
-            justify-content:center;
-        }
-        
         .profile-content-h{
             width:100%;
             height:49px;
@@ -101,34 +96,17 @@
                     <div class="wrap-input">
                       <input type="text" name="url" class="url" value="" disabled>
                     </div>
+                    <span class="login-l">Remote servers</span>
+                    <div class="wrap-input">
+                      <ul class="server_list">
+                      </ul>
+                      <!-- <input type="text" name="url" class="url" value="" disabled> -->
+                    </div>
                     <div class="wrap-button">
                       <button type="submit" name="button">Done</button>
                     </div>
 
-                    <!-- <div class="profile-content-h">
-                        <p>My Profile</p>
-                    </div>
-                    <div class="p-cell">
-                        <div class="p-c-left">Id</div>
-                        <div class="p-c-right"><input type="text" name="id" class="id" disabled></div>
-                    </div>
-                    <div class="p-cell">
-                        <div class="p-c-left">Display name</div>
-                        <div class="p-c-right"><input type="text" name="dname" class="dname"></div>
-                    </div>
-                    <div class="p-cell">
-                        <div class="p-c-left">Host</div>
-                        <div class="p-c-right"><input type="text" name="host" class="host"></div>
-                    </div>
-                    <div class="p-cell">
-                        <div class="p-c-left">Url</div>
-                        <div class="p-c-right"><input type="text" name="url" class="url" disabled></div>
-                    </div>
-                    <div class="p-cell">
-                        <div class="p-c-left">Github</div>
-                        <div class="p-c-right"><input type="text" name="github" class="github"></div>
-                    </div>
-                    <button class="done-btn" type="submit">Done</button> -->
+
                   </form>
                 </div>
             </div>
@@ -186,6 +164,24 @@
           document.getElementsByClassName("url")[0].value = data.url;
           document.getElementsByClassName("github")[0].value = data.github;
         });
+
+        // GET Remote servers
+        $.ajax({
+          type: 'GET',
+          headers: {
+              'Authorization': 'Basic ' + btoa(username+':'+password),
+          },
+          url: host_url + 'nodes/'
+        })
+          .done(function(data){
+            console.log(data.oite);
+            for (d of data.items){
+              $('.server_list').append(`
+                <li>${d.host}</li>
+                `);
+            }
+          });
+
 
     </script>
 </body>
