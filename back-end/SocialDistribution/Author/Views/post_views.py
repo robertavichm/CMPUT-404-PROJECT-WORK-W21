@@ -8,7 +8,7 @@ from ..author_serializer import AuthorSerializer,PostSerializer,CommentSerialize
 from ..models import Author, Post, Comment, Like
 from ..formatters import post_formater, comment_formatter, like_formatter
 import json
-
+from django.core.paginator import Paginator,EmptyPage,PageNotAnInteger
 import uuid
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authentication import BasicAuthentication
@@ -36,15 +36,40 @@ def general_post(request,author_id):
         return JsonResponse(formatted)
     if request.method == "GET":
         # Can't GET post from invalid author
+        #return HttpResponse(request.GET.get("page"))
         auth = get_object_or_404(Author, pk=author_id)
-
+        
         response = {}
         response["type"] = "posts"
         response["items"] = []
         posts = Post.objects.filter(author_id=author_id, visibility="PUBLIC")
-        for i in range(0,len(posts)):
-            new_formatted = post_formater(posts[i],True)
-            response["items"].append(new_formatted)
+        #handle pagination options for size=?,page=?
+        if(len(request.GET) > 0):
+
+            if("size" in request.GET):
+
+                paginator = Paginator(posts,int(request.GET.get("size")))
+            else:
+                #default size of 5
+                paginator = Paginator(posts,5)
+            
+            page = request.GET.get("page")
+            try:
+                subset = paginator.page(page)
+            except PageNotAnInteger:
+                subset = paginator.page(1)
+            except EmptyPage:
+                subset = paginator.page(paginator.num_pages)
+            
+            for i in range(0,len(subset)):
+                new_formatted = post_formater(subset[i],True)
+                response["items"].append(new_formatted)
+
+        else:
+
+            for i in range(0,len(posts)):
+                new_formatted = post_formater(posts[i],True)
+                response["items"].append(new_formatted)
 
         return JsonResponse(response, safe=False)
         
@@ -62,6 +87,7 @@ def get_all(request):
 @api_view(["GET","POST","PUT","DELETE"])
 def post_operation(request,author_id,post_id):
     if(request.method == "GET"):
+        
         data = get_object_or_404(Post,pk=post_id)
         formatted = post_formater(data,True)
         return JsonResponse(formatted, safe=False)
@@ -69,7 +95,7 @@ def post_operation(request,author_id,post_id):
     if(request.method == "POST"):
         
         post = get_object_or_404(Post,pk=post_id)
-     
+
         if(post.author_id != request.user):
             #return forbidden
             return HttpResponse("you dont own this post you sneaky devil",status=status.HTTP_403_FORBIDDEN)
@@ -99,6 +125,7 @@ def get_post_likes(request, author_id, post_id):
     object_id = post.id 
     likes = Like.objects.filter(object_id__icontains=object_id)
     #likes = Like.objects.filter(author_id=author_id,post_id=post_id,comment_id=None)
+    
     for i in range(0,len(likes)):
         new_like = like_formatter(likes[i])
         response["items"].append(new_like)
@@ -115,13 +142,44 @@ def general_comments(request, author_id, post_id):
     #   comment[i].comment_id
     #ser = CommentSerializer(comment,many=True)
     if(request.method == "GET"):
+        
         comments = Comment.objects.filter(post_id=post_id)
         response = {}
         response["type"] = "comment"
         response["items"] = []
-        for i in range(0,len(comments)):
-            formatted = comment_formatter(comments[i])
-            response["items"].append(formatted)
+        if(len(request.GET) > 0):
+
+            if("size" in request.GET):
+
+                paginator = Paginator(comments,int(request.GET.get("size")))
+            else:
+                #default size of 5
+                paginator = Paginator(comments,5)
+            
+            # if("page" in request.GET):
+            #     #return HttpResponse(int(request.GET.get("page")))
+            #     subset = paginator.page(int(request.GET.get("page")))
+            # else:
+                
+
+            #     subset = paginator.page(1)
+            page = request.GET.get("page")
+            try:
+                subset = paginator.page(page)
+            except PageNotAnInteger:
+                subset = paginator.page(1)
+            except EmptyPage:
+                subset = paginator.page(paginator.num_pages)
+            for i in range(0,len(subset)):
+                formatted = comment_formatter(subset[i])
+                response["items"].append(formatted)
+
+        else:
+
+            for i in range(0,len(comments)):
+                formatted = comment_formatter(comments[i])
+                response["items"].append(formatted)
+        
 
         return JsonResponse(response,safe=False)
     elif(request.method == "POST"):

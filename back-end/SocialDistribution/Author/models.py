@@ -102,3 +102,9 @@ class Node(models.Model):
     #user information for that server
     username = models.TextField()
     password = models.TextField()
+
+#if we send like objects to foreign servers we cant look them up locally in author/{author_id}/liked
+#hence we need a custom api to store where those foreign likes are stored.
+# class ForeginLike(models.Model):
+#     author_id = models.ForeignKey(Author, on_delete=models.CASCADE)
+#     object_id = models.TextField(null=False)
