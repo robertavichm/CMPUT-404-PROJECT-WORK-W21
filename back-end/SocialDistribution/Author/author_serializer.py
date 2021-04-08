@@ -40,4 +40,4 @@ class NotificationSerializer(serializers.ModelSerializer):
 class NodeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Node
-        fields = ["host","username","password"]
+        fields = ["host","username","password","token"]
