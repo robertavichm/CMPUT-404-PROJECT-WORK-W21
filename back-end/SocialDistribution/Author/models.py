@@ -52,12 +52,15 @@ class FriendShip(models.Model):
  
 #good?
 class Comment(models.Model):
+    class comment_choices(models.TextChoices):
+        choice1 = "text/plain"
+        choice2 = "text/markdown"
     comment_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
     #post_id = models.TextField()
     #liker
     author_id = models.JSONField()
-    contentType = models.TextField()
+    contentType = models.TextField(choices=comment_choices.choices,default = "text/plain")
     published = models.DateTimeField(default=timezone.now, editable=False)
     comment = models.TextField()
     type = models.TextField(default="comment")

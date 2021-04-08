@@ -13,8 +13,8 @@ import uuid
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated
-
-
+from django.db import IntegrityError
+from django.core.exceptions import ValidationError
 @api_view(["GET","POST"])
 def general_post(request,author_id):
     if request.method == "POST":
@@ -29,6 +29,10 @@ def general_post(request,author_id):
         new_post.commentLink = new_post.id+"/comments/"
         for k,v in json_data.items():
             setattr(new_post, k, v)
+        try:
+            new_post.full_clean()
+        except ValidationError:
+            return HttpResponseBadRequest("bad content type")
         new_post.save()
         formatted = post_formater(new_post,False)
         
@@ -192,6 +196,10 @@ def general_comments(request, author_id, post_id):
         new_comment = Comment(author_id=commenter_data,post_id=post)
         for k,v in json_data.items():
             setattr(new_comment, k, v)
+        try:
+            new_comment.full_clean()
+        except ValidationError:
+            return HttpResponseBadRequest("bad content type")
         new_comment.save()
         post.commentCount +=1
         post.save()
