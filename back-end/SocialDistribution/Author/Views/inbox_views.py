@@ -100,11 +100,11 @@ def handle_type(post_type,data,author):
                 new_like.object_id = data["object_id"]
             else:
                 return HttpResponseBadRequest("need to specify object_id")
-            existing = Like.objects.filter(author_id=author,liker_id=data["author_id"],object_id=data["object_id"])
-            if(existing.count() > 0):
-                return HttpResponseBadRequest("like with this data already exists")
+            # existing = .objects.filter(author_id=author,liker_id=data["author_id"],object_id=data["object_id"])
+            # if(existing.count() > 0):
+            #     return HttpResponseBadRequest("like with this data already exists")
             new_notification.items = data    
-            new_like.save()
+            #new_like.save()
             new_notification.save() 
             return HttpResponse("like notification sent")
     

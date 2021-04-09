@@ -85,7 +85,7 @@ def like_formatter(like):
     
         
     ser["summary"] = like.liker_id["displayName"]+ " liked "+like.author_id.displayName+" activity"
-    ser["object"] = like.object_id
+    ser["object_id"] = like.object_id
     ser["author"] =  like.liker_id
     return ser
     # else:
