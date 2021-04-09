@@ -15,6 +15,7 @@ from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
+
 @api_view(["GET","POST"])
 def general_post(request,author_id):
     if request.method == "POST":
