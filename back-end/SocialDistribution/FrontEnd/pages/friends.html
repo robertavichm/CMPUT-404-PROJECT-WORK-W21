@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet"  href="{%  static  'css/frame_.css'  %}">
     <link rel="stylesheet"  href="{%  static  'css/friends.css'  %}">
-    <link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" /><link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" />
+    <link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" />
     <title>Friends</title>
 
 </head>
@@ -22,7 +22,7 @@
                 <div class="friend-request-wrap">
                     <div class="friend-r-inner">
                         <div class="f-head">
-                            <p>Friend requests</p>
+                            <p>Follower requests</p>
                             <div class="arrow-down" id="request-arrow">
                                 <i class="material-icons" style="color:rgba(0,0,0,0.50)">arrow_downward</i>
                             </div>
@@ -33,7 +33,7 @@
                                     <tr>
                                         <td>sample friend request</td>
                                         <td><div class="accept_btn">Accept</div></td>
-                                        <td><div class="decline_btn">Decline</div></td>
+                                        <!-- <td><div class="decline_btn">Decline</div></td> -->
                                     </tr>
                                 </tbody>
                             </table>
@@ -51,7 +51,7 @@
                         <div class="friends-w-body">
 
                                 <table id="friends-table">
-                                    <tbody>
+                                    <tbody class="f-body">
                                         <tr>
                                             <td>sample friend</td>
                                             <td><div class="remove_btn">Remove</div></td>
@@ -71,7 +71,7 @@
                         </div>
                         <div class="friends-w-body">
 
-                                <table id="friends-table">
+                                <table id="followers-table">
                                     <tbody class="followers-body">
                                         <tr>
                                             <td>sample follower</td>
@@ -96,6 +96,7 @@
         const password = localStorage.getItem("pwd");
         const uuid  = localStorage.getItem("uuid");
 
+        // Opens/Closes 'Friend request' tab
         var toggle_f_r = 0;
         $('#request-arrow').click(function() {
             if(toggle_f_r == 0){
@@ -111,6 +112,8 @@
             }
 
         });
+
+        // Opens/Closes 'Friend' tab
         var toggle_f = 0;
         $('#friends-arrow').click(function() {
             if(toggle_f == 0){
@@ -124,6 +127,7 @@
             }
         });
 
+        // Opens/Closes 'Followers' tab
         var toggle_ff = 0;
         $('.foll-w').click(function() {
             if(toggle_ff == 0){
@@ -137,17 +141,7 @@
             }
         });
 
-        // $('#friends-table').on('click',".remove_btn",function(){
-        //     var currrentRow = $(this).closest('tr');
-        //     currrentRow.remove();
-        //     var isTableEmpty = document.getElementById("friends-table").rows.length;
-        //     if (isTableEmpty == 0){
-        //         document.getElementsByClassName('friends-w-body')[0].style.display = "none";
-        //         document.getElementsByClassName('friends-wrap')[0].classList.remove("open-f");
-        //     }
-        // });
-
-        // GET Friend requests
+        // GET Friend requests from inbox
         $.ajax({
           type: 'GET',
           headers: {
@@ -157,15 +151,16 @@
           dataType: 'json',
         })
           .done(function(data){
-            // console.log(data);
+            console.log(data.items)
             var fr_req = []; // IDs and dname of requesters
 
             for(el of data['items']){
-              console.log(el)
+
               if(el.type === "follow"){
                 var d = {
                   'id': el.author_id.id,
                   'displayName': el.author_id.displayName,
+                  'notif_id': el.notif_id, // used to delete item from inbox once approved
                 }
                 fr_req.push(d);
               }
@@ -175,13 +170,13 @@
 
           });
 
+          // Append friend request data to DOM
           function formatAndAppendFriendRequests(fr_req){
-            for(fr in fr_req){
+            for(fr of fr_req){
               $('.f-req-body').append(`
                 <tr>
-                    <td>${fr_req[fr].displayName}</td>
-                    <td><div class="accept_btn">Accept</div></td>
-                    <td><div class="decline_btn">Decline</div></td>
+                    <td>${fr.displayName}</td>
+                    <td><div data-id="${fr.id}" data-notif-id="${fr.notif_id}"class="accept_btn">Accept</div></td>
                 </tr>
                 `);
             }
@@ -205,24 +200,101 @@
               }
 
               formatAndAppendFollowers(followers);
-
-              console.log('followers pushed.');
+              getFriends(followers);
             });
 
 
-            // appending to the DOM
+            // Append Followers data to DOM
             function formatAndAppendFollowers(followers){
-              console.log(followers);
-
-              for(f in followers){
+              for(f of followers){
                 $('.followers-body').append(`
                   <tr>
                       <td>${f.displayName}</td>
+                      <td><div data-id="${f.id}"  class="remove_btn">Remove</div></td>
                   </tr>
                   `);
               }
             }
 
+            // 'Accept' follow request
+            $('#friend-request-table').on('click', '.accept_btn', function(){
+                const follower_id = $(this).data("id");
+                const notif_id  = $(this).data("notif-id");
+
+                $.ajax({
+                  type: 'PUT',
+                  headers: {
+                      'Authorization': 'Basic ' + btoa(username+':'+password),
+                  },
+                  url: host_url + 'author/'+ localStorage.getItem('uuid') +'/followers/'+ follower_id + '/',
+                  // dataType: 'json',
+                })
+                  .done(function(data){
+                    // remove notification from inbox
+                    // TODO: ask Oran to add notif_if for inbox type "follow"
+                    console.log('inside ajax');
+                    $.ajax({
+                      type: 'DELETE',
+                      headers: {
+                          'Authorization': 'Basic ' + btoa(username+':'+password),
+                      },
+                      url: host_url + 'author/'+ localStorage.getItem('uuid') +'/inbox/'+ notif_id + '/',
+                      dataType: 'json',
+                    })
+                      .done(function(data){
+
+                        console.log('request accepted')
+                        location.reload();
+                      });
+                  });
+            });
+
+            // TODO: decline follower request
+
+
+            // 'Remove' follower
+            // TODO: URL Not Found
+            $('#followers-table').on('click', '.remove_btn', function(){
+                const follower_id = $(this).data("id");
+
+                $.ajax({
+                  type: 'DELETE',
+                  headers: {
+                      'Authorization': 'Basic ' + btoa(username+':'+password),
+                  },
+                  url: host_url + 'author/'+ localStorage.getItem('uuid') +'/followers/'+ follower_id,
+                })
+                  .done(function(data){
+                    // TODO: reload?
+                    location.reload();
+
+                    console.log('follower deleted');
+                  });
+            });
+
+            // GET Friends
+            // 1. Get all followers
+            // 2. Check if request was accepted
+            function getFriends(followers){
+              // for every follower, check if friend request was accepted
+              for(f of followers){
+
+                $.ajax({
+                  type: 'GET',
+                  url: host_url + 'author/'+ localStorage.getItem('uuid') + '/followers/' + f.id,
+                  dataType: 'json',
+                })
+                  .done(function(data){
+                    if(data.friends){
+                      $('.f-table').append(`
+                        <tr>
+                            <td>${f.displayName}</td>
+                        </tr>
+                        `);
+                    }
+                  });
+              }
+            }
 
 
 
