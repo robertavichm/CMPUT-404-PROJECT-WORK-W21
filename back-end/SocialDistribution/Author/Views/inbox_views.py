@@ -24,7 +24,7 @@ class InboxPermissions(permissions.BasePermission):
 
 #need authentication that allows 
 @api_view(["GET","POST","DELETE"])
-@permission_classes([InboxPermissions])
+@permission_classes([IsAuthenticated])
 def handle_inbox(request,author_id):
     author = get_object_or_404(Author,pk=author_id)
 
