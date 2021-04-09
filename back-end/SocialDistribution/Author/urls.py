@@ -20,5 +20,6 @@ urlpatterns = [
     path('author/<author_id>/posts/<post_id>/comments/<comment_id>/likes/', post_views.get_comment_likes),
     path('author/<author_id>/posts/<post_id>/comments/<comment_id>/', post_views.specific_comments),
     path('author/<author_id>/inbox/', inbox_views.handle_inbox),
+    path('author/<author_id>/inbox/<notif_id>/', inbox_views.delete_item),
     
 ]

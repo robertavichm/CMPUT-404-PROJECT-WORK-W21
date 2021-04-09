@@ -22,6 +22,13 @@ class InboxPermissions(permissions.BasePermission):
             return True
         return request.user.is_authenticated
 
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def delete_item(request,author_id,notif_id):
+    notif = get_object_or_404(Notification,pk=notif_id)
+    notif.delete()
+    return HttpResponse("Deleted inbox item")
+
 #need authentication that allows 
 @api_view(["GET","POST","DELETE"])
 @permission_classes([IsAuthenticated])
@@ -49,6 +56,7 @@ def handle_inbox(request,author_id):
             #     pass
             # else:
             #     response["items"].append(formated)
+            all_notif[i].items["notif_id"] = all_notif[i].notification_id
             response["items"].append(all_notif[i].items)
         #ser = NotificationSerializer(all_notif, many=True)
         return JsonResponse(response, safe=False)
