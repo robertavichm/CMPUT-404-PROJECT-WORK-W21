@@ -15,6 +15,7 @@ from rest_framework.authentication import BasicAuthentication
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated
 from django.db import IntegrityError
 from django.core.exceptions import ValidationError
+
 @api_view(["GET","POST"])
 def general_post(request,author_id):
     if request.method == "POST":
@@ -120,21 +121,34 @@ def post_operation(request,author_id,post_id):
     return HttpResponse("TODO general post operation")
 
 
-@api_view(["GET"])
+@api_view(["GET","POST"])
 def get_post_likes(request, author_id, post_id):
-    response = {}
-    response["type"] = "liked"
-    response["items"] = []
-    post = get_object_or_404(Post,pk=post_id)
-    object_id = post.id 
-    likes = Like.objects.filter(object_id__icontains=object_id)
-    #likes = Like.objects.filter(author_id=author_id,post_id=post_id,comment_id=None)
-    
-    for i in range(0,len(likes)):
-        new_like = like_formatter(likes[i])
-        response["items"].append(new_like)
-    return JsonResponse(response, safe=False)
+    if request.method == "GET":
+        response = {}
+        response["type"] = "liked"
+        response["items"] = []
+        post = get_object_or_404(Post,pk=post_id)
+        object_id = post.id 
+        likes = Like.objects.filter(object_id__icontains=object_id)
+        #likes = Like.objects.filter(author_id=author_id,post_id=post_id,comment_id=None)
 
+        for i in range(0,len(likes)):
+            new_like = like_formatter(likes[i])
+            response["items"].append(new_like)
+        return JsonResponse(response, safe=False)
+    else:
+        post = get_object_or_404(Post,pk=post_id)
+        object_id = post.id
+        author = get_object_or_404(Author,pk=author_id)
+        new_like = Like(author_id=author)
+        new_like.object_id = object_id
+        existing = Like.objects.filter(author_id=author,liker_id=request.data["author_id"],object_id=object_id)
+        #return JsonResponse(LikeSerializer(existing[0],many=False).data,safe=False)
+        if(existing.count() > 0):
+            return HttpResponseBadRequest("like with this data already exists")
+        new_like.liker_id = request.data["author_id"]
+        new_like.save()
+        return HttpResponse("like saved")
 
 @api_view(["GET", "POST"])
 def general_comments(request, author_id, post_id):
@@ -207,21 +221,33 @@ def general_comments(request, author_id, post_id):
     return HttpResponse("TODO General comment return")
 
 
-@api_view(["GET"])
+@api_view(["GET","POST"])
 def get_comment_likes(request, author_id, post_id, comment_id):
-    response = {}
-    response["type"] = "liked"
-    response["items"] = []
-    post = get_object_or_404(Post,pk=post_id)
-    object_id = post.id+"/comments/"+comment_id
-    
-    #return HttpResponse(object_id) 
-    likes = Like.objects.filter(object_id__icontains=object_id)
-    for i in range(0,len(likes)):
-        new_like = like_formatter(likes[i])
-        response["items"].append(new_like)
-    return JsonResponse(response, safe=False)
-
+    if(request.method == "GET"):
+        response = {}
+        response["type"] = "liked"
+        response["items"] = []
+        post = get_object_or_404(Post,pk=post_id)
+        object_id = post.id+"/comments/"+comment_id
+        
+        #return HttpResponse(object_id) 
+        likes = Like.objects.filter(object_id__icontains=object_id)
+        for i in range(0,len(likes)):
+            new_like = like_formatter(likes[i])
+            response["items"].append(new_like)
+        return JsonResponse(response, safe=False)
+    else:
+        post = get_object_or_404(Post,pk=post_id)
+        object_id = post.id+"/comments/"+comment_id
+        author = get_object_or_404(Author,pk=author_id)
+        new_like = Like(author_id=author)
+        existing = Like.objects.filter(author_id=author,liker_id=request.data["author_id"],object_id=object_id)
+        if(existing.count() > 0):
+            return HttpResponseBadRequest("like with this data already exists")
+        new_like.object_id = object_id
+        new_like.liker_id = request.data["author_id"]
+        new_like.save()
+        return HttpResponse("like saved")
 
 #not sure if this path is even necessary
 @api_view(["GET","POST","DELETE"])

@@ -13,6 +13,7 @@ class Author(AbstractUser):
     url = models.TextField(null=True)
     type = models.TextField(default="author")
     github = models.TextField(null=True)
+    
 
 
 class Post(models.Model):
@@ -70,16 +71,13 @@ class Like(models.Model):
     like_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     
     #author_id = TextField()
-    #me?
+    #author of post or comment on our local server
     author_id = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="likee")
     
     #where's the person liking this?
-    #store json data if on a different server
+    #store json data incase author is on a different server
     liker_id = models.JSONField()
-    #link to comment that was liked
-    # comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE,null=True)
-    # #link to post that was liked
-    # post_id = models.ForeignKey(Post, on_delete=models.CASCADE,null=True)
+    #link to comment or post that was liked
     object_id = models.TextField(null=False)
     #type = "likes"
 
