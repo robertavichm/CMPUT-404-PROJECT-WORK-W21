@@ -143,6 +143,7 @@ def get_post_likes(request, author_id, post_id):
         new_like = Like(author_id=author)
         new_like.object_id = object_id
         existing = Like.objects.filter(author_id=author,liker_id=request.data["author_id"],object_id=object_id)
+        #return JsonResponse(LikeSerializer(existing[0],many=False).data,safe=False)
         if(existing.count() > 0):
             return HttpResponseBadRequest("like with this data already exists")
         new_like.liker_id = request.data["author_id"]
