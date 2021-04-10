@@ -103,94 +103,89 @@
         <div class="main-body">
               {% include "components/leftnav.html" %}
             <div class="content">
-                <div class="content-head">
-                    <div class="post-holder">
-                        <div class="post-wrap">
-                            <input type="text" placeholder="What's on your mind?" id="post-input">
-                            <div class="post-format">
-                                <div class="p-f-h">
-                                    <div class="close">
-                                        <i class="material-icons">close</i>
-                                    </div>
-                                    <div class="tab-control">
-                                        <div class="post-raw">
-                                            <p>Write</p>
-                                        </div>
-                                        <div class="post-preview">
-                                            <p>Preview</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="post-body">
-                                    <div class="initial-body">
-                                        <div class="p-content-area">
-                                            <div class="post-b-text">
-                                                <div class="p-content-title">
-                                                    <input type="text" placeholder="title..." id="p-title">
-                                                </div>
-                                                <div class="p-content-desc">
-                                                    <input type="text" placeholder="decription..." id="p-description">
-                                                </div>
-                                                <textarea id="p-r-text-input" cols="30" rows="10" placeholder="Start a conversation ..."></textarea>
-                                            </div>
-                                            <div class="post-img-wrap">
 
-                                                <div class="p-close-wrap">
-                                                    <div class="p-close-img">
-                                                        <i class="material-icons" style="color:white">close</i>
-                                                    </div>
-                                                </div>
-                                                <div class="p-align-img">
-                                                    <div class="post-img-h">
-                                                        <img src="{%  static  'assets/preview.png'  %}" id="proimage">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                <div id="post-top-container">
+                  <div id="post-input-w"><input id="post-input" type="text" placeholder="What's on your mind?" ></div>
 
-                                        <div class="img-overall">
-                                            <div class="img-holder">
-
-                                                <div class="post-images">
-                                                    <input type="file" id="img-input"/>
-                                                    <div class="img-logo-wrap">
-                                                        <i class="material-icons">wallpaper</i>
-                                                    </div>
-                                                    <p class="img-logo-text" style="margin:0;margin-top:12.5px;float:left">Photo</p>
-                                                </div>
-
-                                                <div class="create-post">
-                                                    <p>Post</p>
-                                                </div>
-                                                <div style="display:inline-block"><input type="checkbox" id="l-ul" style="width:40px" value="listed" checked><span> Listed</span></div>
-                                                <div class="sel">
-                                                  <select  id="content_type">
-                                                     <option value="text/plain">Plain text</option>
-                                                     <option value="image/png">Image</option>
-                                                     <option value="image/jpeg">Text+image</option>
-                                                     <option value="markdown">Markdown</option>
-                                                   </select>
-                                                </div>
-                                                <div class="sel">
-                                                  <select id="visibility_choice">
-                                                    <option value="PUBLIC">Public</option>
-                                                    <option value="FRIENDS">Friends</option>
-                                                   </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="preview-body">
-
-                                    </div>
-                                </div>
+                  <div id="post-container" >
+                    <div class="p-f-h">
+                        <div class="close">
+                            <i class="material-icons">close</i>
+                        </div>
+                        <div class="tab-control">
+                            <div class="post-raw">
+                                <p>Write</p>
+                            </div>
+                            <div class="post-preview">
+                                <p>Preview</p>
                             </div>
                         </div>
-
-
                     </div>
 
+                    <div class="post-body">
+                      <div class="post-main" style="text-align:center">
+                        <div class="p-content-title">
+                            <input type="text" placeholder="title..." id="p-title">
+                        </div>
+                        <div class="p-content-desc">
+                            <input type="text" placeholder="decription..." id="p-description">
+                        </div>
+                        <textarea id="p-r-text-input" cols="30" rows="5" placeholder="Start a conversation ..."></textarea>
+
+                        <div class="post-main-bot">
+                          <div class="post-images">
+                              <input type="file" id="img-input"/>
+                              <div class="img-logo-wrap">
+                                  <i class="material-icons">wallpaper</i>
+                              </div>
+                              <p class="img-logo-text" style="margin:0;margin-top:12.5px;float:left">Photo</p>
+                          </div>
+
+
+                          <div class="sel">
+                            <select  id="content_type">
+                               <option value="text/plain">Plain text</option>
+                               <option value="text/markdown">Markdown</option>
+                               <option value="image/png;base64">Image</option>
+                               <option value="image/jpeg;base64">Text+image</option>
+                               <option value="application/base64">Application</option>
+                             </select>
+                          </div>
+                          <div class="sel">
+                            <select id="visibility_choice">
+                              <option value="PUBLIC">Public</option>
+                              <option value="FRIENDS">Friends</option>
+                             </select>
+                          </div>
+                          <div class="sel">
+                            <select id="one_friend">
+                              <option value=""></option>
+                              <option value="FRIENDS">Friends</option>
+                             </select>
+                          </div>
+                          <div class="sel">
+                            <select id="unlisted_listed">
+                              <option value="Listed">Listed</option>
+                              <option value="Unlisted">Unlisted</option>
+                             </select>
+                          </div>
+                          <div class="create-post">
+                              <p>Post</p>
+                          </div>
+                        </div>
+
+                      </div>
+
+                      <div class="post-preview"></div>
+
+                      <div class="post-img">
+                        <p>image will be here</p>
+                      </div>
+                    </div>
+
+                  </div>
                 </div>
+
                 <div class="post-feed-w">
                     <div class="post-feed">
                         <div class="tab-switch" style="width:100%;">
@@ -258,7 +253,22 @@
             }
             getLoginUser()
 
+            // Added jquery for top container(new post)
 
+            // hide top input bar
+            $("#post-input").click(function(){
+              $("#post-input-w").hide();
+              $("#post-container").show();
+            });
+
+
+            $(".close").click(function(){
+              $("#post-input-w").show();
+              $("#post-container").hide();
+            });
+
+
+            // End of added container
 
             // GET
             fetchFollowers();
@@ -272,20 +282,20 @@
             });
 
 
-            $('.post-type-wrap,.post_type').mouseenter(function(){
-                $('.post_type').show();
-            });
-            $('.post-type-wrap,.post_type').mouseleave(function(){
-                $('.post_type').hide();
-            });
-            $('#post-input').click(function() {
-                document.getElementsByClassName("tab-switch")[0].style.visibility = "hidden";
-                document.getElementsByClassName('post-format')[0].style.display = "block";
-            })
-            $('#vis-input').click(function() {
-                document.getElementsByClassName('vis-authors')[0].style.display = "block";
-
-            })
+            // $('.post-type-wrap,.post_type').mouseenter(function(){
+            //     $('.post_type').show();
+            // });
+            // $('.post-type-wrap,.post_type').mouseleave(function(){
+            //     $('.post_type').hide();
+            // });
+            // $('#post-input').click(function() {
+            //     document.getElementsByClassName("tab-switch")[0].style.visibility = "hidden";
+            //     document.getElementsByClassName('post-format')[0].style.display = "block";
+            // })
+            // $('#vis-input').click(function() {
+            //     document.getElementsByClassName('vis-authors')[0].style.display = "block";
+            //
+            // })
             document.getElementsByClassName('tab-public')[0].classList.add("current-tab");
             $('.tab-public').click(function() {
                 $('.posted-wrap').remove();
@@ -331,10 +341,10 @@
                 document.getElementsByClassName("post-preview")[0].style.color = "cornflowerblue";
                 document.getElementsByClassName("post-raw")[0].style.color = "rgba(0, 0, 0, 0.45)";
             });
-            $('.close').click(function() {
-                document.getElementsByClassName('post-format')[0].style.display = "none";
-                document.getElementsByClassName("tab-switch")[0].style.visibility = "visible";
-            });
+            // $('.close').click(function() {
+            //     document.getElementsByClassName('post-format')[0].style.display = "none";
+            //     document.getElementsByClassName("tab-switch")[0].style.visibility = "visible";
+            // });
             $('.p-close-img').click(function() {
                 document.getElementsByClassName('p-close-img')[0].style.display = "none";
                 $('#proimage').attr('src',"preview.png");
@@ -395,6 +405,7 @@
                     is_checked_pub = false;
                 }
             });
+
             var base64;
             $('#img-input').change(function () {
                 selectedFile = event.target.files[0];
@@ -413,6 +424,7 @@
 
                 }
             });
+
              // Creating new post
              $('.create-post').click(function() {
                 var title = document.getElementById("p-title").value;
