@@ -123,7 +123,7 @@ def handle_follow(request,author_id,follow_id):
     """
     if request.method == "GET":
         response = {}
-
+        author = get_object_or_404(Atuhor,pk=author_id)
         data = FriendShip.objects.filter(author_local=author_id,author_remote__id__icontains=follow_id)
         recipricol = FriendShip.objects.filter(author_local=follow_id,author_remote__id__icontains=author_id)
         first = False
@@ -161,21 +161,32 @@ def handle_follow(request,author_id,follow_id):
             
 
 
-@api_view(["GET"])
+@api_view(["GET","POST"])
 def get_likes(request,author_id):
     """
         handles paths authors/{author_id}/liked
     """
-    response = {}
-    response["type"] = "liked"
-    response["items"] = []
-    liked = Like.objects.filter(liker_id__id=author_id)
-    #return HttpResponse(liked.count())
-    for i in range(0,len(liked)):
-        new_like = like_formatter(liked[i])
-        response["items"].append(new_like)
-    return JsonResponse(response, safe=False)
+    if request.method == "GET":
+        response = {}
+        response["type"] = "liked"
+        response["items"] = []
+        liked = Like.objects.filter(liker_id__id=author_id)
+        #return HttpResponse(liked.count())
+        for i in range(0,len(liked)):
+            new_like = like_formatter(liked[i])
+            response["items"].append(new_like)
+        return JsonResponse(response, safe=False)
+    else:
+        author = get_object_or_404(Author,pk=author_id)
+        liker = request.data["author"]
+        object_id = request.data["object"]
 
+        new_like = Like(author_id=author, liker_id=liker,object_id=object_id)
+        existing = Like.objects.filter(author_id=author,liker_id=liker,object_id=object_id)
+        if(existing.count() > 0):
+            return HttpResponseBadRequest("like object")
+        new_like.save()
+        return("like saved")
 
 @api_view(["GET","DELETE"])
 @permission_classes([IsAuthenticated])
