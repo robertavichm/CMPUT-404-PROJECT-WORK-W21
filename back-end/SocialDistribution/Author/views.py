@@ -33,9 +33,9 @@ def open_path(request):
     """
     if(request.method == "POST"):
         json_data = request.data
-
         new_author = Author()
-        
+        #uncomment line 38 when we actually are done with the program. Confroms with requirement better
+        #new_author = Author(is_active=False)
         # Creating new user login information
         if "password" in json_data:
             password = json_data["password"]
@@ -124,8 +124,20 @@ def handle_follow(request,author_id,follow_id):
     if request.method == "GET":
         response = {}
         data = FriendShip.objects.filter(author_local=author_id,author_remote__id=follow_id)
-        for i in range(0,len(data)):
+        recipricol = FriendShip.objects.filter(author_local=follow_id,author_remote__id=author_id)
+        first = False
+        second = False
+        for i in range(0,len(data)):    
             response["accepted"] = data[i].accepted
+            if data[i].accepted:
+                first = True
+        for i in range(0,len(recipricol)):    
+            if recipricol[i].accepted:
+                second = True
+        if(second == True and first == True):
+            response["friends"] = True
+        else:
+            response["friends"] = False
         return JsonResponse(response,safe =False)
     #kinda bad form probably should be a POST but oh well.
     if request.method == "PUT":

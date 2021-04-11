@@ -13,6 +13,7 @@ class Author(AbstractUser):
     url = models.TextField(null=True)
     type = models.TextField(default="author")
     github = models.TextField(null=True)
+    
 
 
 class Post(models.Model):
@@ -52,12 +53,15 @@ class FriendShip(models.Model):
  
 #good?
 class Comment(models.Model):
+    class comment_choices(models.TextChoices):
+        choice1 = "text/plain"
+        choice2 = "text/markdown"
     comment_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     post_id = models.ForeignKey(Post, on_delete=models.CASCADE)
     #post_id = models.TextField()
     #liker
     author_id = models.JSONField()
-    contentType = models.TextField()
+    contentType = models.TextField(choices=comment_choices.choices,default = "text/plain")
     published = models.DateTimeField(default=timezone.now, editable=False)
     comment = models.TextField()
     type = models.TextField(default="comment")
@@ -67,16 +71,13 @@ class Like(models.Model):
     like_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     
     #author_id = TextField()
-    #me?
+    #author of post or comment on our local server
     author_id = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="likee")
     
     #where's the person liking this?
-    #store json data if on a different server
+    #store json data incase author is on a different server
     liker_id = models.JSONField()
-    #link to comment that was liked
-    # comment_id = models.ForeignKey(Comment, on_delete=models.CASCADE,null=True)
-    # #link to post that was liked
-    # post_id = models.ForeignKey(Post, on_delete=models.CASCADE,null=True)
+    #link to comment or post that was liked
     object_id = models.TextField(null=False)
     #type = "likes"
 
@@ -100,5 +101,11 @@ class Node(models.Model):
     #host of server
     host = models.TextField(primary_key=True,null=False)
     #user information for that server
-    username = models.TextField()
-    password = models.TextField()
+    username = models.TextField(null=True)
+    password = models.TextField(null=True)
+    token = models.TextField(null=True)
+#if we send like objects to foreign servers we cant look them up locally in author/{author_id}/liked
+#hence we need a custom api to store where those foreign likes are stored.
+# class ForeginLike(models.Model):
+#     author_id = models.ForeignKey(Author, on_delete=models.CASCADE)
+#     object_id = models.TextField(null=False)
