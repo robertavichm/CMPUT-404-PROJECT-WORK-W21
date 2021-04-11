@@ -338,6 +338,17 @@
 
             }
 
+
+            if(localStorage.getItem('uuid') == null){
+                //just view public post
+                console.log("this is meee"+localStorage.getItem('uuid'));
+                fetchPublicPost(0);
+            }else{
+                //retrieve signed in users post and assign authenticated user priviledges
+                getLoginUser();
+                fetchFollowers();
+            }
+
             // Added jquery for top container(new post)
 
             // hide top input bar
@@ -358,15 +369,7 @@
             // GET
             fetchFollowers();
 
-            if(localStorage.getItem('uuid') == null){
-                //just view public post
-                console.log("this is meee"+localStorage.getItem('uuid'));
-                fetchPublicPost(0);
-            }else{
-                //retrieve signed in users post and assign authenticated user priviledges
-                getLoginUser();
-                fetchFollowers();
-            }
+
             $('.check-visibility,.vis-dropdown').mouseenter(function(){
                 $('.vis-dropdown').show();
             });
