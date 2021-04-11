@@ -25,3 +25,6 @@ def profile(request):
 
 def inbox(request):
     return render(request,'inbox.html', {'host_url': host_url})
+
+def git(request):
+    return render(request,'gitactivity.html', {'host_url': host_url})

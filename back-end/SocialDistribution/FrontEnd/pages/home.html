@@ -14,6 +14,7 @@
         .inbox-wrap{
             display:none;
         }
+
         .send-comment{
             width:50px;
             height:40px;
@@ -94,12 +95,92 @@
           align-items: center;
           justify-content: center;
         }
+        .nodiscoveries{
+            width:100%;
+            height:200px;
+            background-color: antiquewhite;
+        }
+        .popup-auth{
+            width:400px;
+            height:200px;
+            top:calc(30%);
+            left:calc(50% - 50px);
+            position: absolute;
+            z-index:99;
+            display:none;
+            background-color:white;
+            box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+        }
+        .pop-up-head{
+            height:39px;
+            border-bottom:1px solid rgba(0,0,0,0.05);
+        }
+        .popup-close{
+            float:right;
+            height:100%;
+            width:40px;
+            display:flex;
+            align-items: center;
+            justify-content: center;
+            cursor:pointer;
+            background-color:rgba(0,0,0,0.05);
+        }
+        .popup-close:hover{
+            background-color:rgba(0,0,0,0.2);
+        }
+        .popup-body{
+            height:calc(100% - 90px);   
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }
+        .popup-body h3{
+            margin-top:0;
+            font-size:16px;
+            font-weight:600;
+            color:rgba(0,0,0,0.75);
+        }
+        .pop-up-action{
+            height:49px;
+            border-top:1px solid rgba(0,0,0,0.05);
+        }
+        .signin-act{
+            width:calc(50% - 1px);
+            height:40px;
+            margin-top:5px;
+            float:left;
+            border-right:1px solid rgba(0,0,0,0.20);
+            background-color:white;
+            cursor:pointer;
+            color:rgba(0,0,0,0.50);
+            line-height:40px;
+        } 
+        .signup-act{
+            width:50%;
+            height:40px;
+            margin-top:5px;
+            float:right;
+            cursor:pointer;
+            line-height:40px;
+            color:rgba(0,0,0,0.50);
+            background-color:white;
+        }
+        .signup-act:hover,.signin-act:hover{
+            background-color:darkcyan;
+            color:white;
+        }
+        .signin-act p,.signup-act p{
+            margin:0;
+            text-align:center;  
+        }
     </style>
 </head>
 <body>
     <body>
-      {% include "components/topnav.html" %}
+        <div class="navb">
 
+        </div>
+      {% include "components/topnav.html" %};
         <div class="main-body">
               {% include "components/leftnav.html" %}
             <div class="content">
@@ -191,17 +272,34 @@
                     </div>
 
                 </div>
+                <div class="popup-auth">
+                    <div class="pop-up-head">
+                        <div class="popup-close"><i class="material-icons" style="color:rgba(0,0,0,0.50)">close</i></div>
+                    </div>
+                    <div class="popup-body">
+                        <h3>You must be authenticated to use this feature</h3>
+                    </div>
+                    <div class="pop-up-action">
+                        <div class="signin-act"><p>Sign In</p></div>
+                        <div class="signup-act"><p>Sign Up</p></div>
+                    </div>
+                </div>
                 <div class="post-feed-w">
                     <div class="post-feed">
                         <div class="tab-switch" style="width:100%;">
-                            <div class="tab-public">
+                            <div class="tab-public" style="width:110px">
                                 <div class="tab-icon"><i class="material-icons" style="color:rgba(0,0,0,0.50)">public</i></div>
-                                <div class="tab-text"><p>Public</p></div>
+                                <div class="tab-text"><p>Discover</p></div>
                             </div>
                             <div class="tab-inbox">
                                 <div class="tab-icon"><i class="material-icons" style="color:rgba(0,0,0,0.50)">inbox</i></div>
                                 <div class="tab-text"><p>Local</p></div>
                             </div>
+                        </div>
+                        <div class="nodiscoveries">
+                            <lottie-player src="{%  static  'disc.json'  %}" background="transparent" speed="1.5" style="" loop autoplay>
+    	
+                            </lottie-player>
                         </div>
                         <div class="inbox-wrap" style="background-color: aqua;">
                             <div class="table-head">
@@ -216,8 +314,6 @@
                                 </table>
                             </div>
                         </div>
-
-
                     </div>
                 </div>
 
@@ -226,20 +322,17 @@
         </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js" integrity="sha512-L03kznCrNOfVxOUovR6ESfCz9Gfny7gihUX/huVbQB9zjODtYpxaVtIaAkpetoiyV2eqWbvxMH9fiSv5enX7bw==" crossorigin="anonymous"></script>
+        <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
         <script src="{% static 'common.js' %}"></script>
         <script>
-
             const host_url = '{{ host_url }}';
-
             // grabbing credentials from localStorage
             const username = localStorage.getItem("username");
             const password = localStorage.getItem("pwd");
             const uuid  = localStorage.getItem("uuid");
-
             followerArray = [];
             var displayName_cur;
             var github_cur;
-
             const dname = localStorage.getItem('displayName');
             $('.username p').append(dname);
 
@@ -251,6 +344,7 @@
                 .done(function(data){
                     console.log("USER CREDENTIALS");
                     console.log(data)
+
                     displayName_cur = data.displayName;
                     github_cur = data.github;
                 });
@@ -258,13 +352,13 @@
             }
 
             if(localStorage.getItem('uuid') == null){
-                //just view public post
-                console.log("this is meee"+localStorage.getItem('uuid'));
-                fetchPublicPost(0);
+                //just view public post from rest of the
+                console.log("this is meee "+localStorage.getItem('uuid'));
+                
             }else{
                 //retrieve signed in users post and assign authenticated user priviledges
                 getLoginUser();
-                fetchFollowers();
+                //fetchFollowers();
             }
             $('.check-visibility,.vis-dropdown').mouseenter(function(){
                 $('.vis-dropdown').show();
@@ -290,20 +384,34 @@
                 document.getElementsByClassName('vis-authors')[0].style.display = "block";
 
             })
+            $('.signin-act').click(function() {
+                document.getElementsByClassName('popup-auth')[0].style.display = "none";
+                window.location.href = host_url;
+
+            })
+            $('.signup-act').click(function() {
+                document.getElementsByClassName('popup-auth')[0].style.display = "none";
+                window.location.href = host_url+"register";
+
+            })
             document.getElementsByClassName('tab-public')[0].classList.add("current-tab");
             $('.tab-public').click(function() {
                 $('.posted-wrap').remove();
+                document.getElementsByClassName('nodiscoveries')[0].style.display = "block";
                 document.getElementsByClassName('inbox-wrap')[0].style.display = "none";
                 document.getElementsByClassName('tab-public')[0].classList.add("current-tab");
                 document.getElementsByClassName('tab-inbox')[0].classList.remove("current-tab");
-                fetchPublicPost(0);
-                <!-- fetchRemotePublicPost(); -->
+                //fetchPublicPost(0);
+                //fetchRemotePublicPost();
+
+                //only need to fetch for rest of the world
 
             })
             $('.tab-inbox').click(function() {
                 $('.posted-wrap').remove();
                 document.getElementsByClassName('tab-public')[0].classList.remove("current-tab");
                 document.getElementsByClassName('tab-inbox')[0].classList.add("current-tab");
+                document.getElementsByClassName('nodiscoveries')[0].style.display = "none";
                 fetchInboxMessages();
             })
 
@@ -456,7 +564,8 @@
                     });
                 }else{
                     //display pop up asking to sign in or sign up;
-                    alert("sign in or sign up to make a post")
+                    alert("sign in or sign up to make a post");
+                    document.getElementsByClassName('popup-auth')[0].style.display = "block";
                 }
                 
             });
@@ -547,14 +656,11 @@
 
             function FillDOM(data,flag,deleteFlag,editFlag,newflag){
                 var like_c;
-                console.log("I AM IN FILL DOM NOWWW CURENT")
                 if(newflag == 1){
                     //newly added post
                     like_c = 0;
                     addnewpost(data,flag,deleteFlag,editFlag,like_c)
-
                 }else{
-                    console.log("I AM IN FILL DOM ESLE ")
                     persistLikes(data.author.id,data.post_id,data,flag,deleteFlag,editFlag);
                 }
 
@@ -602,7 +708,8 @@
                     })
 
                 }else{
-                    alert("sign in or sign up to like a post")
+                    //alert("sign in or sign up to like a post");
+                    document.getElementsByClassName('popup-auth')[0].style.display = "block";
                 }
 
             }
@@ -625,8 +732,6 @@
                     }else{
                         insertPost("Follow",data,flag,deleteFlag,editFlag,like_c);
                     }
-                    
-
                 });
 
             }
@@ -718,7 +823,8 @@
                     console.log(fid);
                     followRequest(fid,curTag)
                 }else{
-                    alert("sign in or sign up to send a friend request")
+                    //alert("sign in or sign up to send a friend request")
+                    document.getElementsByClassName('popup-auth')[0].style.display = "block";
                 }
 
             }
@@ -894,10 +1000,11 @@
                             'url':host_url+"author/"+localStorage.getItem('uuid'),
                             'github':github_cur
                         },
-                        "contentType":"text",
+                        "contentType":"text/plain",
                         "comment":textfield
                     }
-                    console.log(host_url)
+                    console.log(host_url);
+                    console.log("uuid is : "+localStorage.getItem('uuid'));
                     $.ajax({
                         type:"POST",
                         headers: {
@@ -929,7 +1036,8 @@
 
                     });
                 }else{
-                    alert("sign in or sign up to comment on a post")
+                    //alert("sign in or sign up to comment on a post");
+                    document.getElementsByClassName('popup-auth')[0].style.display = "block";
                 }
             
             }
@@ -944,6 +1052,7 @@
                     //MANIPULATE DOM
                     console.log(data.items);
                     for(i=0;i<data.items.length;i++){
+                        console.log(data)
                         console.log(data.items[i].comment)
                         var comment = data.items[i].comment;
 
