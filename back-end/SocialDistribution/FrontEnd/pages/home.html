@@ -122,6 +122,11 @@
                         </div>
                     </div>
 
+                    <!-- Markdown Preview -->
+                    <div class="preview-body">
+
+                    </div>
+
                     <div class="post-body">
                       <div class="post-main" style="text-align:center">
                         <div class="p-content-title">
@@ -146,9 +151,6 @@
                             <select  id="content_type">
                                <option value="text/plain">Plain text</option>
                                <option value="text/markdown">Markdown</option>
-                               <option value="image/png;base64">Image</option>
-                               <option value="image/jpeg;base64">Text+image</option>
-                               <option value="application/base64">Application</option>
                              </select>
                           </div>
                           <div class="sel">
@@ -176,10 +178,13 @@
 
                       </div>
 
-                      <div class="post-preview"></div>
-
                       <div class="post-img">
-                        <p>image will be here</p>
+                        <div class="post-img-h">
+                          <img id="img-preview">
+                        </div>
+                        <div class="p-close-img">
+                          <i class="material-icons" style="color:black">close</i>
+                        </div>
                       </div>
                     </div>
 
@@ -255,9 +260,6 @@
                                     <select  id="e-content_type">
                                        <option value="text/plain">Plain text</option>
                                        <option value="text/markdown">Markdown</option>
-                                       <option value="image/png;base64">Image</option>
-                                       <option value="image/jpeg;base64">Text+image</option>
-                                       <option value="application/base64">Application</option>
                                      </select>
                                   </div>
                                   <div class="e-sel">
@@ -286,8 +288,6 @@
                                 </div>
 
                               </div>
-
-                              <div class="e-post-preview"></div>
 
                               <div class="e-post-img">
                                 <p>image will be here</p>
@@ -339,15 +339,15 @@
             }
 
 
-            if(localStorage.getItem('uuid') == null){
-                //just view public post
-                console.log("this is meee"+localStorage.getItem('uuid'));
-                fetchPublicPost(0);
-            }else{
-                //retrieve signed in users post and assign authenticated user priviledges
-                getLoginUser();
-                fetchFollowers();
-            }
+            // if(localStorage.getItem('uuid') == null){
+            //     //just view public post
+            //     console.log("this is meee"+localStorage.getItem('uuid'));
+            //     fetchPublicPost(0);
+            // }else{
+            //     //retrieve signed in users post and assign authenticated user priviledges
+            //     getLoginUser();
+            //     fetchFollowers();
+            // }
 
             // Added jquery for top container(new post)
 
@@ -363,10 +363,11 @@
               $("#post-container").hide();
             });
 
+            // Fetch all public posts
+            // 0 meaning freshly pulled from db
+            fetchPublicPost(0);
 
-            // End of added container
-
-            // GET
+            // Fetch user's followers
             fetchFollowers();
 
 
@@ -401,7 +402,7 @@
                 document.getElementsByClassName('tab-public')[0].classList.add("current-tab");
                 document.getElementsByClassName('tab-inbox')[0].classList.remove("current-tab");
                 fetchPublicPost(0);
-                <!-- fetchRemotePublicPost(); -->
+                // fetchRemotePublicPost();
 
             })
             $('.tab-inbox').click(function() {
@@ -411,43 +412,30 @@
                 fetchInboxMessages();
             })
 
+            // Markdown preview
             $('.post-preview').click(function() {
-                document.getElementsByClassName("preview-body")[0].style.display = "inline-block";
-                document.getElementsByClassName("initial-body")[0].style.display = "none";
-                document.getElementsByClassName("post-preview")[0].style.background = "white";
-                document.getElementsByClassName("post-raw")[0].style.background = "rgba(0,0,0,0)";
-                document.getElementsByClassName("post-preview")[0].style.color = "rgba(0, 0, 0, 0.45)";
-                document.getElementsByClassName("post-raw")[0].style.color = "cornflowerblue";
+                $('.preview-body').empty();
+                document.getElementsByClassName("post-body")[0].style.display = "none"; // hide other tab
+                document.getElementsByClassName("preview-body")[0].style.display = "block"; // show current preview tab
                 var text = document.getElementById('p-r-text-input').value;
                 //convert markdown to html
                 var converter = new showdown.Converter();
-                var md = '[**Showdown**](http://www.showdownjs.com) is *great*\n' +
-                         'because:\n\n' +
-                         ' - it\'s easy to use\n' +
-                         ' - it\'s extensible\n' +
-                         ' - works in the server and in the browser';
-                var html = converter.makeHtml(text);
-                document.getElementsByClassName('preview-body')[0].innerHTML += html;
+                var out = converter.makeHtml(text);
+                document.getElementsByClassName('preview-body')[0].innerHTML += out;
 
             });
+
             $('.post-raw').click(function() {
                 $('.preview-body').empty();
-                document.getElementsByClassName("preview-body")[0].style.display = "none";
-                document.getElementsByClassName("initial-body")[0].style.display = "inline-block";
-                document.getElementsByClassName("post-preview")[0].style.background = "rgba(0,0,0,0)";
-                document.getElementsByClassName("post-raw")[0].style.background = "white";
-                document.getElementsByClassName("post-preview")[0].style.color = "cornflowerblue";
-                document.getElementsByClassName("post-raw")[0].style.color = "rgba(0, 0, 0, 0.45)";
+                $('.preview-body').hide();
+                $('.post-body').show();
+
             });
             // $('.close').click(function() {
             //     document.getElementsByClassName('post-format')[0].style.display = "none";
             //     document.getElementsByClassName("tab-switch")[0].style.visibility = "visible";
             // });
-            $('.p-close-img').click(function() {
-                document.getElementsByClassName('p-close-img')[0].style.display = "none";
-                $('#proimage').attr('src',"preview.png");
 
-            });
             var openedcomments = [];
             function toggleComments(element){
                 console.log(element)
@@ -504,7 +492,10 @@
                 }
             });
 
-            var base64;
+
+            // Adding image
+            var base64 = '';
+            var imgType;
             $('#img-input').change(function () {
                 selectedFile = event.target.files[0];
                 console.log(selectedFile)
@@ -512,15 +503,22 @@
                 if (selectedFile.type.match(imageType)) {
                     var reader = new FileReader();
                     reader.onload = function (e) {
-                        console.log(e.target.result)
                         base64 = e.target.result;
-                        $('#proimage').attr('src', e.target.result);
-                        document.getElementsByClassName('p-close-img')[0].style.display = "flex";
-                        $('form input').val("");
-                };
+                        imgType = selectedFile.type;
+                        $('.p-close-img').css("display", "inline-block"); // shows closing button
+                        $('#img-preview').attr('src', e.target.result);// shows image preview
+                    };
                     reader.readAsDataURL(this.files[0]);
 
                 }
+            });
+
+            // Removing image
+            $('.p-close-img').click(function() {
+                $('.p-close-img').css("display", "none"); // hide closing button
+                $('#img-preview').attr('src', "");// hide image preview
+                base64 = '';
+                imgType = '';
             });
 
              // Creating new post
@@ -529,62 +527,110 @@
                 var description = document.getElementById("p-description").value;
                 var text = document.getElementById("p-r-text-input").value;
                 var listed_unlisted = document.getElementById("unlisted_listed").value;
-                // var cttn = base64 ? text : base64;
-                var cttn = text;
 
                 const data = {
                     'title':title,
                     'description':description,
                     'contentType':$('#content_type').val(),
-                    'content':cttn,
+                    'content':'',
                     'categories':["web","tutorial"],
                     'pageSize':1,
                     'visibility':$('#visibility_choice').val(),
                     'unlisted': listed_unlisted == "Unlisted"  // needs a js boolean
                 };
 
-                $.ajax({
-                type: 'POST',
-                headers: {
-                    'Authorization': 'Basic ' + btoa(username+':'+password),
-                    'Content-Type': 'application/json',
-                },
-                url: host_url + 'author/'+localStorage.getItem('uuid')+'/posts/', // TODO: should point to current user url
-                data: JSON.stringify(data),
-                })
-                .done(function(data){
-                  // hidind
-                  $("#post-input-w").show();
-                  $("#post-container").hide();
+                // just text
+                console.log(imgType);
+                if (!base64){
+                  console.log('just text');
+                  data.content = text;
+                  makeReq(data);
+                }
 
-                  //insert post data to DOM
-                  FillDOM(data,"hideFollow","unhideDel","unhideEdit",1);
-                });
+                // just image
+                else if (base64 && !text.length){
+                  console.log('just image');
+                  data.content = base64;
+                  data.contentType = "application/base64";
+                  makeReq(data);
+                }
+
+                // image + text
+                // 2 posts requests
+                else if(base64  && text.length){
+                  console.log('text+image')
+                  // send text
+                  data.content = text;
+                  makeReq(data);
+
+                  // send image
+                  data.content = base64;
+                  data.contentType = imgType + ";base64";
+                  makeReq(data);
+                }
+
+                function makeReq(data){
+                  console.log(data);
+                  $.ajax({
+                  type: 'POST',
+                  headers: {
+                      'Authorization': 'Basic ' + btoa(username+':'+password),
+                      'Content-Type': 'application/json',
+                  },
+                  url: host_url + 'author/'+localStorage.getItem('uuid')+'/posts/', // TODO: should point to current user url
+                  data: JSON.stringify(data),
+                  })
+                  .done(function(data){
+                    // hidind
+                    $("#post-input-w").show();
+                    $("#post-container").hide();
+
+                    //insert post data to DOM
+                    FillDOM(data,"hideFollow","unhideDel","unhideEdit",1);
+                  });
+                }
             });
 
+            function fetchFollowers(){
+                //fetch followers of user and cross check with post in order to add "follow" feature to post
+                $.ajax({
+                    type: 'GET',
+                    url: host_url + 'author/'+localStorage.getItem('uuid')+'/followers/'
+                })
+                .done(function(data){
+                    const followersRes =  data.items;
+                    for(i=0;i < followersRes.length; i++){
+                        followerArray.push(followersRes[0].id)
+                    }
+                });
+            }
+
             function fetchPublicPost(newflag){
+              // TODO: sort posts here
 
                 $.ajax({
                     type: 'GET',
                     url: host_url + 'posts/'
                 })
                 .done(function(data){
-
-                    console.log(data.items); // UUID of post
+                    console.log('fetching public-posts');
+                    console.log(data.items); // posts
                     var posts = data.items;
                     if(posts.length != 0){
                         for ( i = 0 ; i < posts.length; i++){
                             var data = posts[i];
-                            var flag;
+                            var followFlag;
                             var delFlag;
                             var editFlag;
+
+                            // if post belongs to a follower
                             if(followerArray.includes(data.author.id)){
-                                flag="hideFollow"
+                                followFlag="hideFollow"
                             }else{
-                                flag="showFollow"
-                                //set a flag to handle follower logic
+                                followFlag="showFollow"
                             }
 
+                            // if post belongs to logged in user
                             if(data.author.id == localStorage.getItem('uuid')){
                                 flag="hideFollow";
                                 delFlag = "unhideDel";
@@ -595,33 +641,19 @@
                             }
 
                             //insert post data to DOM
-                            FillDOM(data,flag,delFlag,editFlag,newflag)
-
+                            console.log('filling dom');
+                            FillDOM(data,followFlag,delFlag,editFlag,newflag)
                         }
                     }else{
                         //no public data exist
-
+                        // show maybe design
                     }
                 });
 
             }
 
-            function fetchFollowers(){
-                //fetch followers of user and cross check with post in order to add "follow" feature to post
-                $.ajax({
-                    type: 'GET',
-                    url: host_url + 'author/'+localStorage.getItem('uuid')+'/followers/'
-                })
-                .done(function(data){
-                    console.log(data.items);
-                    const followersRes =  data.items;
-                    for(i=0;i < followersRes.length; i++){
-                        followerArray.push(followersRes[0].id)
-                    }
-                    fetchPublicPost(0);
-                    <!-- fetchRemotePublicPost(); -->
-                });
-            }
+
+
             var arrayOfRequests = [];
             function checkFollowrequest(){
                 $.ajax({
@@ -653,8 +685,10 @@
                     like_c = 0;
                     addnewpost(data,flag,deleteFlag,editFlag,like_c)
 
+                // newFlag 0
+                // public posts straight from db
                 }else{
-                    persistLikes(data.author.id,data.post_id,data,flag,deleteFlag,editFlag);
+                    persistLikes(data.author.id, data.post_id, data,flag,deleteFlag,editFlag);
                 }
 
 
@@ -700,18 +734,16 @@
                 })
 
             }
-            //persist likes
+
+            // get number of likes of a post
             function persistLikes(author_id,post_id,data,flag,deleteFlag,editFlag){
-                console.log("THIS IS AUTHOR ID " + author_id);
-                console.log("THIS IS POST ID " + post_id);
                 var res_like_count;
                 $.ajax({
                     type: 'GET',
                     url: 'author/'+author_id+'/posts/'+post_id +"/likes"
                 })
                 .done(function(d){
-                    console.log("billion dollar coins")
-                    console.log(d.items.length);
+                    // console.log(d.items.length);
                     var like_c = d.items.length;
                     persistFollowStats(localStorage.getItem('uuid'),data,flag,deleteFlag,editFlag,like_c);
 
@@ -720,6 +752,7 @@
             }
 
             function addnewpost(data,flag,deleteFlag,editFlag,like_c){
+              console.log('addnewpost')
                 const postHTML =  `<div class="posted-wrap">
                     <div class="posted-w-h" >
                         <div class="p-w-h-details" style="width:calc(100%-160px)">
@@ -748,12 +781,17 @@
                     <div class="p-title-wrap">
                         <p>${data.title}</p>
                     </div>
+
                     <div class="post-text">
                         <p>${data.content}</p>
                     </div>
+
+                    <!--
                     <div class="posted-img-wrap">
                         <img src="{%  static  'assets/preview.png'  %}" id="proimage">
                     </div>
+                    -->
+
                     <div class="like-count-w">
                         <p id="like-count" class="${"like_row"+data.post_id}">${like_c + " likes"}</p><p id="${"comment-count_"+data.post_id}">${data.commentCount} comments</p">
                     </div>
@@ -846,18 +884,21 @@
                     obj.innerHTML = "Request Sent";
                 });
             }
-            //persist follow status on each public post
+
+            // persist follow status on each public post
+            // and appendws to DOM
             function persistFollowStats(fid,data,flag,deleteFlag,editFlag,like_c){
+              console.log(data.contentType == "text/plain" || data.contentType == "text/markdown");
+              var image = '';
+              var content = '';
+              // console.log(data)
                 //to do:
                 $.ajax({
                     type: 'GET',
                     url: host_url + 'author/'+data.author.id+'/followers/'+fid
                 })
                 .done(function(dd){
-                    console.log("IN persistent follow stats");
-                    console.log(dd);
                     var requestnotaccepted = dd.accepted;
-                    console.log(requestnotaccepted);
                     var followstats;
                     if(requestnotaccepted == true){
                         followstats="accepted";
@@ -865,6 +906,31 @@
                         followstats="Request Sent";
                     }else{
                         followstats="Follow";
+                    }
+
+                    // only text
+                    // TODO: Markdown
+                    if(data.contentType == "text/plain" || data.contentType == "text/markdown"){
+                      content = data.content;
+                    }
+
+                    // one image
+                    if(data.contentType == "application/base64"){
+                      image = `
+                        <div class="posted-img-wrap">
+                            <img src="${data.content}" id="proimage">
+                        </div>
+                      `;
+                    }
+
+                    // text + image
+                    if(data.contentType == "image/png;base64" || data.contentType == "image/jpeg;base64"){
+                      content = 'TODO: FIND CONTENT';
+                      image = `
+                        <div class="posted-img-wrap">
+                            <img src="${data.content}" id="proimage">
+                        </div>
+                      `;
                     }
 
                     const postHTML =  `<div class="posted-wrap">
@@ -890,12 +956,15 @@
                         <div class="p-title-wrap">
                             <p>${data.title}</p>
                         </div>
+
                         <div class="post-text">
-                            <p>${data.content}</p>
+                            <p>${content}</p>
                         </div>
+
                         <div class="posted-img-wrap">
-                            <img src="{%  static  'assets/preview.png'  %}" id="proimage">
+                          ${image}
                         </div>
+
                         <div class="like-count-w">
                             <p id="like-count" class="${"like_row"+data.post_id}">${like_c + " likes"}</p><p id="${"comment-count_"+data.post_id}">${data.commentCount} comments</p">
                         </div>
@@ -937,7 +1006,9 @@
                             </div>
                         </div>
                     </div>`;
+
                     $(".post-feed").append(postHTML);
+
                 });
             }
 
@@ -949,7 +1020,8 @@
                     },
                     url: host_url + 'author/'+localStorage.getItem('uuid')+'/posts/'+curDel.id+'/',
                 }).done(function(data){
-                    $('#'+curDel.id).parents('[class]:eq(1)').remove(); //get the first parent div wrapping the delete button
+                    // $('#'+curDel.id).parents('[class]:eq(1)').remove(); //get the first parent div wrapping the delete button
+                    location.reload();
                     console.log('deleted');
                 });
             }

@@ -49,7 +49,6 @@
                             </div>
                         </div>
                         <div class="friends-w-body">
-
                                 <table id="friends-table">
                                     <tbody class="f-body">
                                         <tr>
@@ -69,7 +68,7 @@
                                 <i class="material-icons" style="color:rgba(0,0,0,0.50)">arrow_downward</i>
                             </div>
                         </div>
-                        <div class="friends-w-body">
+                        <div class="friends-ww-body">
 
                                 <table id="followers-table">
                                     <tbody class="followers-body">
@@ -97,47 +96,30 @@
         const uuid  = localStorage.getItem("uuid");
 
         // Opens/Closes 'Friend request' tab
-        var toggle_f_r = 0;
         $('#request-arrow').click(function() {
-            if(toggle_f_r == 0){
+            if( $('.friend-r-body').css("display") == "none" ){
                 document.getElementsByClassName('friend-r-body')[0].style.display = "inline-block";
-                document.getElementsByClassName('friend-request-wrap')[0].classList.add("open");
-                document.getElementsByClassName('friend-r-inner')[0].classList.add("open");
-                toggle_f_r = 1;
-            }else{
+            }else
                 document.getElementsByClassName('friend-r-body')[0].style.display = "none";
-                document.getElementsByClassName('friend-request-wrap')[0].classList.remove("open");
-                document.getElementsByClassName('friend-r-inner')[0].classList.remove("open");
-                toggle_f_r = 0;
-            }
 
         });
 
         // Opens/Closes 'Friend' tab
-        var toggle_f = 0;
         $('#friends-arrow').click(function() {
-            if(toggle_f == 0){
+          console.log($('.friends-w-body').css("display"));
+            if($('.friends-w-body').css("display") == "none" ){
                 document.getElementsByClassName('friends-w-body')[0].style.display = "inline-block";
-                document.getElementsByClassName('friends-wrap')[0].classList.add("open-f");
-                toggle_f = 1;
             }else{
                 document.getElementsByClassName('friends-w-body')[0].style.display = "none";
-                document.getElementsByClassName('friends-wrap')[0].classList.remove("open-f");
-                toggle_f = 0;
             }
         });
 
         // Opens/Closes 'Followers' tab
-        var toggle_ff = 0;
         $('.foll-w').click(function() {
-            if(toggle_ff == 0){
-                document.getElementsByClassName('friends-w-body')[1].style.display = "inline-block";
-                document.getElementsByClassName('friends-wrap')[1].classList.add("open-f");
-                toggle_ff = 1;
+            if($('.friends-ww-body').css("display") == "none" ){
+                document.getElementsByClassName('friends-ww-body')[0].style.display = "inline-block";
             }else{
-                document.getElementsByClassName('friends-w-body')[1].style.display = "none";
-                document.getElementsByClassName('friends-wrap')[1].classList.remove("open-f");
-                toggle_ff = 0;
+                document.getElementsByClassName('friends-ww-body')[0].style.display = "none";
             }
         });
 
