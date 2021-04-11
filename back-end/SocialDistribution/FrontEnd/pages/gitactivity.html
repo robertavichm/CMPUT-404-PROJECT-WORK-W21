@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" /><link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" />
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet"  href="{%  static  '/src/github-activity.css'  %}">
+    <title>Github Activity</title>
+    <style>
+        html,body{
+            margin:0;
+            width:100%;
+            height:100%;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            flex-direction:column;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .nav{
+            width:100%;
+            height:39px;
+            border-bottom:1px solid rgba(0,0,0,0.05);
+        }
+        .git-content{
+            height:calc(100% - 40px);
+            width:100%;
+            max-width:1200px;
+            background-color:#f4f5f9;
+        }
+        .git-head{
+            height:49px;
+            line-height:50px;
+            border-bottom:1px solid rgba(0,0,0,0.05);
+        }
+        .git-head h3{
+            margin:0;
+            margin-left:20px;
+            font-weight:400;
+            color:rgba(0,0,0,0.65)
+        }
+        .git-body{
+            height:calc(100% - 50px);
+            overflow-y:auto;
+        }
+    </style>
+</head>
+    <body>
+      <div class="">
+        <p><a href="{% url 'home' %}"><i class="material-icons" style="color:chocolate; font-size:2em;">arrow_circle_up</i></a> </p>
+      </div>
+        <div class="git-content">
+            <div class="git-head"><h3>My Github Activity Stream</h3></div>
+            <div class="git-body">
+                <div id="feed"></div>
+            </div>
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/mustache.js/0.7.2/mustache.min.js"></script>
+        <script src="{% static '/src/github-activity.js' %}"></script>
+
+        <script>
+
+        const host_url = '{{ host_url }}';
+        // GET User data
+        $.ajax({
+          type: 'GET',
+          // headers: {
+          //     'Authorization': 'Basic ' + btoa(username+':'+password),
+          // },
+          url: host_url + 'author/'+ localStorage.getItem('uuid'),
+          dataType: 'json',
+        })
+          .done(function(data){
+            console.log(data.github);
+              GitHubActivity.feed({ username: data.github, selector: "#feed" });
+          });
+
+        </script>
+
+    </body>
+
+
+</html>

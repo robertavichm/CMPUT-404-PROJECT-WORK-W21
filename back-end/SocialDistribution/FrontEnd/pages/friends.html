@@ -240,7 +240,7 @@
                   headers: {
                       'Authorization': 'Basic ' + btoa(username+':'+password),
                   },
-                  url: host_url + 'author/'+ localStorage.getItem('uuid') +'/followers/'+ follower_id,
+                  url: host_url + 'author/'+ localStorage.getItem('uuid') +'/followers/'+ follower_id + '/',
                 })
                   .done(function(data){
                     // TODO: Not working
@@ -253,15 +253,17 @@
             // 2. Check if request was accepted
             function getFriends(followers){
               // for every follower,
-              // check if other author also follows
+              // check if author also follows
               for(f of followers){
+                console.log(f, f.id);
                 $.ajax({
                   type: 'GET',
+                  async: false, // because we're in a  loop
                   url: host_url + 'author/'+ localStorage.getItem('uuid') + '/followers/' + f.id,
                   dataType: 'json',
                 })
                   .done(function(data){
-                    console.log(f.displayName, data.friends)
+                    console.log(f);
                     if(data.friends){
                       $('.f-body').append(`
                         <tr>
@@ -270,6 +272,7 @@
                         `);
                     }
                   });
+                  console.log('next');
               }
             }
 

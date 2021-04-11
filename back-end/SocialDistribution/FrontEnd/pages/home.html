@@ -160,9 +160,8 @@
                              </select>
                           </div>
                           <div class="sel">
-                            <select id="one_friend">
-                              <option value=""></option>
-                              <option value="FRIENDS">Friends</option>
+                            <select id="whichFriend" disabled>
+                              <option value="ALL">All</option>
                              </select>
                           </div>
                           <div class="sel">
@@ -270,7 +269,6 @@
                                   </div>
                                   <div class="e-sel">
                                     <select id="e-one_friend">
-                                      <option value=""></option>
                                       <option value="FRIENDS">Friends</option>
                                      </select>
                                   </div>
@@ -290,8 +288,14 @@
                               </div>
 
                               <div class="e-post-img">
-                                <p>image will be here</p>
+                                <div class="e-post-img-h">
+                                  <img id="e-img-preview">
+                                </div>
+                                <div class="e-p-close-img">
+                                  <i class="material-icons" style="color:black">close</i>
+                                </div>
                               </div>
+
                             </div>
                           </div>
                         </div>
@@ -317,7 +321,8 @@
             const password = localStorage.getItem("pwd");
             const uuid  = localStorage.getItem("uuid");
 
-            followerArray = [];
+            var followerArray = []; // uuid
+            var friendsArray = []; // uuid
             var displayName_cur;
             var github_cur;
 
@@ -335,8 +340,10 @@
                     displayName_cur = data.displayName;
                     github_cur = data.github;
                 });
-
             }
+
+            getLoginUser();
+
 
 
             // if(localStorage.getItem('uuid') == null){
@@ -353,6 +360,7 @@
 
             // hide top input bar
             $("#post-input").click(function(){
+              loadFriendsToSelect();
               $("#post-input-w").hide();
               $("#post-container").show();
             });
@@ -368,8 +376,11 @@
             fetchPublicPost(0);
 
             // Fetch user's followers
-            fetchFollowers();
+            // with callback to fetchFriends
+            fetchFollowers(fetchFriends);
 
+            // used for sending posts to 1 friend
+            // fetchFriends();
 
             $('.check-visibility,.vis-dropdown').mouseenter(function(){
                 $('.vis-dropdown').show();
@@ -492,6 +503,25 @@
                 }
             });
 
+            // called when create post div opens
+            function loadFriendsToSelect(){
+              console.log('fA', friendsArray);
+              for (id of friendsArray){
+                $.ajax({
+                type: 'GET',
+                async: false,
+                url: host_url + 'author/'+ id,
+                })
+                .done(function(data){
+                  // Adding friends to select
+                  $('#whichFriend').append(`<option value="${data.id}">
+                                             ${data.displayName}
+                                            </option>`);
+                });
+              }
+            }
+
+
 
             // Adding image
             var base64 = '';
@@ -521,12 +551,23 @@
                 imgType = '';
             });
 
+            // Making sure we can select All or friend iff FRIENDS
+            $("#visibility_choice").change(function() {
+              if(document.getElementById("visibility_choice").value == "FRIENDS")
+                $('#whichFriend').removeAttr('disabled');
+              else{
+                $('#whichFriend').attr('disabled', 'disabled');
+                $('#whichFriend').val('ALL');
+                }
+            })
+
              // Creating new post
              $('.create-post').click(function() {
                 var title = document.getElementById("p-title").value;
                 var description = document.getElementById("p-description").value;
                 var text = document.getElementById("p-r-text-input").value;
                 var listed_unlisted = document.getElementById("unlisted_listed").value;
+                const whichFriend = document.getElementById("whichFriend").value;
 
                 const data = {
                     'title':title,
@@ -542,9 +583,10 @@
                 // just text
                 console.log(imgType);
                 if (!base64){
-                  console.log('just text');
                   data.content = text;
-                  makeReq(data);
+                  makeReq(data); // post to user
+                  if (data.visibility == "FRIENDS")
+                    makeReqInbox(data, whichFriend)
                 }
 
                 // just image
@@ -553,6 +595,8 @@
                   data.content = base64;
                   data.contentType = "application/base64";
                   makeReq(data);
+                  if (data.visibility == "FRIENDS")
+                    makeReqInbox(data, whichFriend)
                 }
 
                 // image + text
@@ -562,11 +606,15 @@
                   // send text
                   data.content = text;
                   makeReq(data);
+                  if (data.visibility == "FRIENDS")
+                    makeReqInbox(data, whichFriend)
 
                   // send image
                   data.content = base64;
                   data.contentType = imgType + ";base64";
                   makeReq(data);
+                  if (data.visibility == "FRIENDS")
+                    makeReqInbox(data, whichFriend)
                 }
 
                 function makeReq(data){
@@ -589,10 +637,67 @@
                     FillDOM(data,"hideFollow","unhideDel","unhideEdit",1);
                   });
                 }
+
+                // whichFriend can be "ALL" or uuid of user
+                function makeReqInbox(data, whichFriend){
+                  // send only to Friends
+                  if(whichFriend == "ALL"){
+                    for(id of friendsArray)
+                      makeReqInboxOne(id);
+                  }
+
+                  // send only to 1 Friend
+                  else
+                    makeReqInboxOne(whichFriend);
+                }
+
+                // sending post to id's inbox(1)
+                function makeReqInboxOne(id){
+                  const one_data = {
+                     "type":                  "post",
+                     "title":                 data.title,
+                     "description":           data.description,
+                     "source":                host_url,
+                     "origin":                host_url,
+                     "contentType":           data.contentType,
+                     "content":               data.content,
+                     "categories" :           data.categories,
+                     "commentLink":           host_url,
+                     "commentCount":          "0",
+                     "pageSize":              "5",
+                     "visibility":            data.visibility,
+                     "unlisted":              data.unlisted,
+                     "author":{
+                       "author_id":           localStorage.getItem('uuid'),
+                       "type":                "author",
+                       "host":                host_url,
+                       "displayName":         displayName_cur,
+                       "url":                 host_url+'/author/'+localStorage.getItem('uuid'),
+                       "github":              github_cur,
+                       }
+                  };
+
+                  console.log('to inbox', one_data);
+                  $.ajax({
+                  type: 'POST',
+                  headers: {
+                      'Authorization': 'Basic ' + btoa(username+':'+password),
+                      'Content-Type': 'application/json',
+                  },
+                  url: host_url + 'author/'+ id +'/inbox/',
+                  data: JSON.stringify(one_data),
+                  })
+                  .done(function(data){
+                    console.log('done');
+                  });
+                }
+
             });
 
-            function fetchFollowers(){
+            // callback to fetchFriends
+            function fetchFollowers(ff){
                 //fetch followers of user and cross check with post in order to add "follow" feature to post
+                // also used to send post to Friends
                 $.ajax({
                     type: 'GET',
                     url: host_url + 'author/'+localStorage.getItem('uuid')+'/followers/'
@@ -600,25 +705,51 @@
                 .done(function(data){
                     const followersRes =  data.items;
                     for(i=0;i < followersRes.length; i++){
-                        followerArray.push(followersRes[0].id)
+                        followerArray.push(followersRes[i].id)
                     }
+
+                    // used for sending posts to 1 friend
+                    ff(followerArray);
                 });
             }
 
-            function fetchPublicPost(newflag){
-              // TODO: sort posts here
+            function fetchFriends(followerArray){
+              for(f_id of followerArray){
+                $.ajax({
+                type: 'GET',
+                async: false,
+                headers: {
+                    'Authorization': 'Basic ' + btoa(username+':'+password),
+                    'Content-Type': 'application/json',
+                },
+                url: host_url + 'author/'+localStorage.getItem('uuid')+'/followers/'+f_id+'/',
+                })
+                .done(function(data){
+                  if(data.friends){
+                    console.log('friend found');
+                    friendsArray.push(f_id);
+                  }
+                });
+              }
+            }
 
+            function fetchPublicPost(newflag){
                 $.ajax({
                     type: 'GET',
                     url: host_url + 'posts/'
                 })
                 .done(function(data){
-                    console.log('fetching public-posts');
-                    console.log(data.items); // posts
+                    // console.log('fetching public-posts');
+                    // console.log(data.items); // posts
+
+                    const allPublicPostsSorted = data.items;
+                    // allPublicPostsSorted.sort((a, b) => a.published - b.published )
+                    console.log(x= allPublicPostsSorted);
+
                     var posts = data.items;
                     if(posts.length != 0){
                         for ( i = 0 ; i < posts.length; i++){
-                            var data = posts[i];
+                            var data = allPublicPostsSorted[i];
                             var followFlag;
                             var delFlag;
                             var editFlag;
@@ -858,7 +989,7 @@
                     }
 
                 }
-                console.log(host_url)
+                console.log(data)
                 $.ajax({
                     type:"POST",
                     contentType: "application/json",
@@ -888,7 +1019,6 @@
             // persist follow status on each public post
             // and appendws to DOM
             function persistFollowStats(fid,data,flag,deleteFlag,editFlag,like_c){
-              console.log(data.contentType == "text/plain" || data.contentType == "text/markdown");
               var image = '';
               var content = '';
               // console.log(data)
@@ -915,7 +1045,7 @@
                     }
 
                     // one image
-                    if(data.contentType == "application/base64"){
+                    else if(data.contentType == "application/base64"){
                       image = `
                         <div class="posted-img-wrap">
                             <img src="${data.content}" id="proimage">
@@ -924,13 +1054,19 @@
                     }
 
                     // text + image
-                    if(data.contentType == "image/png;base64" || data.contentType == "image/jpeg;base64"){
+                    else if(data.contentType == "image/png;base64" || data.contentType == "image/jpeg;base64"){
                       content = 'TODO: FIND CONTENT';
                       image = `
                         <div class="posted-img-wrap">
                             <img src="${data.content}" id="proimage">
                         </div>
                       `;
+                    }
+
+                    // use appropirate format for markdown
+                    if(data.contentType == "text/markdown"){
+                      var converter = new showdown.Converter();
+                      content = converter.makeHtml(data.content);
                     }
 
                     const postHTML =  `<div class="posted-wrap">
