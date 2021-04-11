@@ -9,4 +9,5 @@ urlpatterns = [
     path('friends',views.friends,name='friends'),
     path('profile',views.profile,name='profile'),
     path('inbox',views.inbox,name='inbox'),
+    path('gitactivity',views.gitactivity,name='gitactivity'),
 ]
