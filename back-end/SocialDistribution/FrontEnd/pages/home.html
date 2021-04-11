@@ -1016,8 +1016,9 @@
                 });
             }
 
+            // TODO: break this into components
             // persist follow status on each public post
-            // and appendws to DOM
+            // and appends to DOM
             function persistFollowStats(fid,data,flag,deleteFlag,editFlag,like_c){
               var image = '';
               var content = '';
@@ -1118,12 +1119,30 @@
                                 </div>
                                 <p>Comment</p>
                             </div>
+
                             <div class="share-w">
-                                <div class="s-c-img">
-                                    <i class="material-icons">share</i>
+                              <div  onclick="sharePost(this)" data-id=${data.post_id}>
+                                  <div class="s-c-img">
+                                      <i class="material-icons">share</i>
+                                  </div>
+                                  <p>Share</p>
+                              </div>
+                              <div id="shareOptions">
+                                <div class="share-sel-w">
+                                   <select  id="share-o-visibility">
+                                      <option value="PUBLIC">Public</option>
+                                      <option value="FRIENDS">Friends</option>
+                                    </select>
                                 </div>
-                                <p>Share</p>
-                            </div>
+                                <div class="share-sel-w">
+                                  <select disabled id="share-o-whichFriend">
+                                     <option value="ALL">ALL</option>
+                                   </select>
+                                </div
+                                <div class="share-sel-w"><button class="share-btn">Share</button></div>
+                              </div>
+                            </div
+
                         </div>
                         <div class="o-comments" id="${"o-comment_"+data.post_id}">
                             <div class="o-c-cell">
@@ -1146,6 +1165,27 @@
                     $(".post-feed").append(postHTML);
 
                 });
+            }
+
+            function sharePost(e){
+              // showShareOptions(e)
+              console.log($(this))
+
+            }
+
+            // shows popup asking the user who to share it with
+            function showShareOptions(){
+              $("this #shareOptions").show();
+              // closing popup if click is outside
+              $(document).mouseup(function(e){
+                console.log('clicked');
+                var container = $("#shareOptions");
+                // if the target of the click isn't the container nor a descendant of the container
+                if (!container.is(e.target) && container.has(e.target).length === 0){
+                  container.hide();
+                  $(document).off('mouseup'); //remove listener
+                }
+              });
             }
 
             function deletePost(curDel){
