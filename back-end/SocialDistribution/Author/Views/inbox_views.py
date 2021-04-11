@@ -71,11 +71,11 @@ def handle_type(post_type,data,author):
         new_notification.items = data
         new_notification.save()
     if post_type=="follow" or post_type == "Follow":
-        if("object" in data):
-            requestor_data = data["object"]
+        if("actor" in data):
+            requestor_data = data["actor"]
             ser = AuthorSerializer(author, many=False)
-            data["summary"] = data["object"]["displayName"]+ " wants to be "+author.displayName+"'s friend"
-            if(FriendShip.objects.filter(author_local=author, author_remote__id__icontains=data["object"]["id"])):
+            data["summary"] = data["actor"]["displayName"]+ " wants to be "+author.displayName+"'s friend"
+            if(FriendShip.objects.filter(author_local=author, author_remote__id__icontains=data["actor"]["id"])):
                 return HttpResponseBadRequest("request already sent")
             new_friendship = FriendShip(author_local=author,author_remote=requestor_data)
             new_friendship.save()
