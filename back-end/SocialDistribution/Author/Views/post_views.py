@@ -142,7 +142,7 @@ def get_post_likes(request, author_id, post_id):
         author = get_object_or_404(Author,pk=author_id)
         new_like = Like(author_id=author)
         new_like.object_id = object_id
-        existing = Like.objects.filter(author_id=author,liker_id=request.data["author_id"],object_id=object_id)
+        existing = Like.objects.filter(author_id=author,liker_id=request.data["author"],object_id=object_id)
         #return JsonResponse(LikeSerializer(existing[0],many=False).data,safe=False)
         if(existing.count() > 0):
             return HttpResponseBadRequest("like with this data already exists")
@@ -203,8 +203,8 @@ def general_comments(request, author_id, post_id):
     elif(request.method == "POST"):
         
         json_data = request.data
-        commenter_data = json_data["author_id"]
-        json_data.pop("author_id")
+        commenter_data = json_data["author"]
+        json_data.pop("author")
         
         post = get_object_or_404(Post,pk=post_id)
         new_comment = Comment(author_id=commenter_data,post_id=post)
