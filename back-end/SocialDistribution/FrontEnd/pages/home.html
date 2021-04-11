@@ -414,44 +414,51 @@
                         $('form input').val("");
                 };
                     reader.readAsDataURL(this.files[0]);
-
                 }
             });
              // Creating new post
              $('.create-post').click(function() {
-                var title = document.getElementById("p-title").value;
-                var description = document.getElementById("p-description").value;
-                var text = document.getElementById("p-r-text-input").value;
-                var checked = document.getElementById("l-ul").checked ? "False" : "True";
-                // var cttn = base64 ? text : base64;
-                var cttn = text;
+                
+                if (is_auth_user() == true){
+                    //user is signed in
+                    var title = document.getElementById("p-title").value;
+                    var description = document.getElementById("p-description").value;
+                    var text = document.getElementById("p-r-text-input").value;
+                    var checked = document.getElementById("l-ul").checked ? "False" : "True";
+                    // var cttn = base64 ? text : base64;
+                    var cttn = text;
 
-                const data = {
-                    'title':title,
-                    'description':description,
-                    'contentType':$('#content_type').val(),
-                    'content':cttn,
-                    'categories':["web","tutorial"],
-                    'pageSize':1,
-                    'visibility':$('#visibility_choice').val(),
-                    'unlisted': checked
-                };
+                    const data = {
+                        'title':title,
+                        'description':description,
+                        'contentType':$('#content_type').val(),
+                        'content':cttn,
+                        'categories':["web","tutorial"],
+                        'pageSize':1,
+                        'visibility':$('#visibility_choice').val(),
+                        'unlisted': checked
+                    };
 
-                $.ajax({
-                type: 'POST',
-                headers: {
-                    'Authorization': 'Basic ' + btoa(username+':'+password),
-                    'Content-Type': 'application/json',
-                },
-                url: host_url + 'author/'+localStorage.getItem('uuid')+'/posts/', // TODO: should point to current user url
-                data: JSON.stringify(data),
-                })
-                .done(function(data){
-                    document.getElementsByClassName('post-format')[0].style.display = "none";
-                    console.log(data); // UUID of post
-                    //insert post data to DOM
-                    FillDOM(data,"hideFollow","unhideDel","unhideEdit",1);
-                });
+                    $.ajax({
+                    type: 'POST',
+                    headers: {
+                        'Authorization': 'Basic ' + btoa(username+':'+password),
+                        'Content-Type': 'application/json',
+                    },
+                    url: host_url + 'author/'+localStorage.getItem('uuid')+'/posts/', // TODO: should point to current user url
+                    data: JSON.stringify(data),
+                    })
+                    .done(function(data){
+                        document.getElementsByClassName('post-format')[0].style.display = "none";
+                        console.log(data); // UUID of post
+                        //insert post data to DOM
+                        FillDOM(data,"hideFollow","unhideDel","unhideEdit",1);
+                    });
+                }else{
+                    //display pop up asking to sign in or sign up;
+                    alert("sign in or sign up to make a post")
+                }
+                
             });
 
             function fetchPublicPost(newflag){
@@ -553,43 +560,48 @@
             }
             //likepost
             function likepost(element){
-                console.log(element.id)
-                var postid= (element.id).slice(6);
+                if (is_auth_user() == true){
+                    console.log(element.id)
+                    var postid= (element.id).slice(6);
 
-                ////get author id
-                var arr = (element.className).split(' ');
-                var extract = arr[1];
-                fid = extract.slice(6);
-                console.log("------")
-                console.log(fid);
-                console.log(postid);
-                data = {
-                    "type":"like",
-                    "author_id":{
-                        'author_id':localStorage.getItem('uuid'),
-                        'type':'author',
-                        'host':host_url,
-                        'displayName':displayName_cur,
-                        'url':host_url+"author/"+localStorage.getItem('uuid'),
-                        'github':github_cur
-                    },
-                    "object_id":host_url+"author/"+fid+"/posts/"+postid
+                    ////get author id
+                    var arr = (element.className).split(' ');
+                    var extract = arr[1];
+                    fid = extract.slice(6);
+                    console.log("------")
+                    console.log(fid);
+                    console.log(postid);
+                    data = {
+                        "type":"like",
+                        "author_id":{
+                            'author_id':localStorage.getItem('uuid'),
+                            'type':'author',
+                            'host':host_url,
+                            'displayName':displayName_cur,
+                            'url':host_url+"author/"+localStorage.getItem('uuid'),
+                            'github':github_cur
+                        },
+                        "object_id":host_url+"author/"+fid+"/posts/"+postid
+                    }
+                    $.ajax({
+                        type:"POST",
+                        contentType: "application/json",
+                        data:JSON.stringify(data),
+                        url: host_url + 'author/'+fid+'/inbox/'
+                    })
+                    .done(function(data){
+                        //MANIPULATE DOM
+                        console.log(data);
+                        //increment count
+                        var countvaljunk = document.getElementsByClassName("like_row"+postid)[0].innerHTML += 1;
+                        var countval = + countvaljunk.slice(0, -6)
+                        countval+=1;
+                        document.getElementsByClassName("like_row"+postid)[0].innerHTML = countval + " likes";
+                    })
+
+                }else{
+                    alert("sign in or sign up to like a post")
                 }
-                $.ajax({
-                    type:"POST",
-                    contentType: "application/json",
-                    data:JSON.stringify(data),
-                    url: host_url + 'author/'+fid+'/inbox/'
-                })
-                .done(function(data){
-                    //MANIPULATE DOM
-                    console.log(data);
-                    //increment count
-                    var countvaljunk = document.getElementsByClassName("like_row"+postid)[0].innerHTML += 1;
-                    var countval = + countvaljunk.slice(0, -6)
-                    countval+=1;
-                    document.getElementsByClassName("like_row"+postid)[0].innerHTML = countval + " likes";
-                })
 
             }
             //persist likes
@@ -691,6 +703,7 @@
             };
 
             function followUser(curTag){
+                if (is_auth_user() == true){}
                 console.log("tapped follower tag")
                 var arr = (curTag.className).split(' ');
                 fid = arr[1];
@@ -929,6 +942,15 @@
 
 
                 });
+            }
+            function is_auth_user(){
+                if(localStorage.getItem('uuid') == null){
+                    //just view public post
+                    //window.location.href = host_url;
+                    return false;
+                }else{
+                    return true;
+                }
             }
 
 
