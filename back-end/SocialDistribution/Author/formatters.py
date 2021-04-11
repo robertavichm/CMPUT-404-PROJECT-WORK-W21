@@ -83,9 +83,12 @@ def comment_formatter(comment):
 def like_formatter(like):
     ser = {}
     
-        
-    ser["summary"] = like.liker_id["displayName"]+ " liked "+like.author_id.displayName+" activity"
-    ser["object_id"] = like.object_id
+    if("displayName" in like.liker_id):
+        if(like.liker_id["displayName"]):
+            ser["summary"] = like.liker_id["displayName"]+" liked "+like.author_id.displayName+" activity"
+        else:
+            ser["summary"] =  " liked "+like.author_id.displayName+" activity"
+    ser["object"] = like.object_id
     ser["author"] =  like.liker_id
     return ser
     # else:
