@@ -14,7 +14,6 @@
         .inbox-wrap{
             display:none;
         }
-
         .send-comment{
             width:50px;
             height:40px;
@@ -171,16 +170,25 @@
         }
         .signin-act p,.signup-act p{
             margin:0;
-            text-align:center;  
+            text-align:center;
+        }
+        #show_img_block{
+            display:flex;
+        }
+        #hide_img_block{
+            display:none;
+        }
+        #show_post_text{
+            display:block;
+        }
+        #hide_post_text{
+            display:none;
         }
     </style>
 </head>
 <body>
     <body>
-        <div class="navb">
-
-        </div>
-      {% include "components/topnav.html" %};
+      {% include "components/topnav.html" %}
         <div class="main-body">
               {% include "components/leftnav.html" %}
             <div class="content">
@@ -324,6 +332,7 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js" integrity="sha512-L03kznCrNOfVxOUovR6ESfCz9Gfny7gihUX/huVbQB9zjODtYpxaVtIaAkpetoiyV2eqWbvxMH9fiSv5enX7bw==" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
         <script src="{% static 'common.js' %}"></script>
+        <script src="{% static 'otherserver.js' %}"></script>
         <script>
             const host_url = '{{ host_url }}';
             // grabbing credentials from localStorage
@@ -344,7 +353,6 @@
                 .done(function(data){
                     console.log("USER CREDENTIALS");
                     console.log(data)
-
                     displayName_cur = data.displayName;
                     github_cur = data.github;
                 });
@@ -407,6 +415,7 @@
                 //only need to fetch for rest of the world
 
             })
+
             $('.tab-inbox').click(function() {
                 $('.posted-wrap').remove();
                 document.getElementsByClassName('tab-public')[0].classList.remove("current-tab");
@@ -577,7 +586,6 @@
                     url: host_url + 'posts/'
                 })
                 .done(function(data){
-
                     console.log(data.items); // UUID of post
                     var posts = data.items;
                     if(posts.length != 0){
@@ -669,16 +677,12 @@
             //likepost
             function likepost(element){
                 if (is_auth_user() == true){
-                    console.log(element.id)
                     var postid= (element.id).slice(6);
 
-                    ////get author id
+                    //get author id
                     var arr = (element.className).split(' ');
                     var extract = arr[1];
                     fid = extract.slice(6);
-                    console.log("------")
-                    console.log(fid);
-                    console.log(postid);
                     data = {
                         "type":"like",
                         "author_id":{
@@ -698,8 +702,6 @@
                         url: host_url + 'author/'+fid+'/inbox/'
                     })
                     .done(function(data){
-                        //MANIPULATE DOM
-                        console.log(data);
                         //increment count
                         var countvaljunk = document.getElementsByClassName("like_row"+postid)[0].innerHTML += 1;
                         var countval = + countvaljunk.slice(0, -6)
@@ -715,18 +717,13 @@
             }
             //persist likes
             function persistLikes(author_id,post_id,data,flag,deleteFlag,editFlag){
-                console.log("THIS IS AUTHOR ID " + author_id);
-                console.log("THIS IS POST ID " + post_id);
                 var res_like_count;
                 $.ajax({
                     type: 'GET',
                     url: 'author/'+author_id+'/posts/'+post_id +"/likes"
                 })
                 .done(function(d){
-                    console.log("billion dollar coins")
-                    console.log(d.items.length);
                     var like_c = d.items.length;
-                    console.log("I AM IN PERSIST FOLLOW STATS DOM ESLE ")
                     if(localStorage.getItem('uuid') != null){
                         persistFollowStats(localStorage.getItem('uuid'),data,flag,deleteFlag,editFlag,like_c);
                     }else{
@@ -1077,6 +1074,8 @@
                     return true;
                 }
             }
+            
+
 
 
 

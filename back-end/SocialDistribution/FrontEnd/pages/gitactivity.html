@@ -47,10 +47,22 @@
             height:calc(100% - 50px);
             overflow-y:auto;
         }
+        .back_arrow{
+            height:100%;
+            width:60px;
+            float:left;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            margin-left:10px;
+            cursor:pointer;
+        }
+        
     </style>
 </head>
     <body>
         <div class="nav">
+            <div class="back_arrow"><i class="material-icons" style="margin:0">arrow_back_ios</i></div>
         </div>
         <div class="git-content">
             <div class="git-head"><h3>My Github Activity Stream</h3></div>
@@ -65,7 +77,6 @@
         <script>
             GitHubActivity.feed({ username: "robertavichm", selector: "#feed" });
         </script>
-
     </body>
     
 
