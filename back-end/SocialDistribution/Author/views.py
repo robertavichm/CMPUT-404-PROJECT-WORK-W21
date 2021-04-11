@@ -123,8 +123,9 @@ def handle_follow(request,author_id,follow_id):
     """
     if request.method == "GET":
         response = {}
-        data = FriendShip.objects.filter(author_local=author_id,author_remote__id=follow_id)
-        recipricol = FriendShip.objects.filter(author_local=follow_id,author_remote__id=author_id)
+
+        data = FriendShip.objects.filter(author_local=author_id,author_remote__id__icontains=follow_id)
+        recipricol = FriendShip.objects.filter(author_local=follow_id,author_remote__id__icontains=author_id)
         first = False
         second = False
         for i in range(0,len(data)):    
@@ -142,19 +143,19 @@ def handle_follow(request,author_id,follow_id):
     #kinda bad form probably should be a POST but oh well.
     if request.method == "PUT":
         # data = get_object_or_404(FriendShip, author_local=author_id, author_remote=follow_id)
-        data = FriendShip.objects.filter(author_local=author_id, author_remote__id=follow_id)
+        data = FriendShip.objects.filter(author_local=author_id, author_remote__id__icontains=follow_id)
         if(data.count() > 0):
             
-            instance = FriendShip.objects.get(author_local=author_id, author_remote__id=follow_id)
+            instance = FriendShip.objects.get(author_local=author_id, author_remote__id__icontains=follow_id)
             instance.accepted = True
             instance.save()
             return HttpResponse("request accepted: ",data[0].FriendShipId)
         return HttpResponseBadRequest()
     if request.method == "DELETE":
-        data = get_object_or_404(FriendShip, author_local=author_id, author_remote=follow_id)
-        data = FriendShip.objects.filter(author_local=author_id, author_remote=follow_id)
+        #data = get_object_or_404(FriendShip, author_local=author_id, author_remote__id__icontains=follow_id)
+        data = FriendShip.objects.filter(author_local=author_id, author_remote__id__icontains=follow_id)
         if(data.count() > 0):
-            instance = FriendShip.objects.get(author_local=author_id, author_remote=follow_id)
+            instance = FriendShip.objects.get(author_local=author_id, author_remote__id__icontains=follow_id)
             instance.delete()
             return HttpResponse("friendship over")
             
