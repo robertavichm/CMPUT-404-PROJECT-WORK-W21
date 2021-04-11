@@ -95,9 +95,13 @@
           justify-content: center;
         }
         .nodiscoveries{
-            width:100%;
-            height:200px;
+            width:calc(100% - 10px);
+            margin-left:5px;
+            margin-top:10px;
+            margin-bottom:10px;
+            height:120px;
             background-color: antiquewhite;
+
         }
         .popup-auth{
             width:400px;
@@ -183,6 +187,12 @@
         }
         #hide_post_text{
             display:none;
+        }
+        .p-title-wrap h3{
+            font-size:18px;
+            font-weight:600;
+            margin-left:10px;
+            color:rgba(0,0,0,0.75);
         }
     </style>
 </head>
@@ -409,10 +419,8 @@
                 document.getElementsByClassName('inbox-wrap')[0].style.display = "none";
                 document.getElementsByClassName('tab-public')[0].classList.add("current-tab");
                 document.getElementsByClassName('tab-inbox')[0].classList.remove("current-tab");
-                //fetchPublicPost(0);
-                //fetchRemotePublicPost();
-
                 //only need to fetch for rest of the world
+                outsideserver();
 
             })
 
@@ -760,7 +768,7 @@
                         </div>
                     </div>
                     <div class="p-title-wrap">
-                        <p>${data.title}</p>
+                        <h3>${data.title}</h3>
                     </div>
                     <div class="post-text">
                         <p>${data.content}</p>
@@ -908,7 +916,7 @@
                         </div>
                     </div>
                     <div class="p-title-wrap">
-                        <p>${data.title}</p>
+                        <h3>${data.title}</h3>
                     </div>
                     <div class="post-text">
                         <p>${data.content}</p>
@@ -1036,7 +1044,6 @@
                     //alert("sign in or sign up to comment on a post");
                     document.getElementsByClassName('popup-auth')[0].style.display = "block";
                 }
-            
             }
 
             function fetchcomment(element){
@@ -1061,8 +1068,6 @@
                         </div>`
                         $("#comment_cell"+pid).append(c_cell);
                     }
-
-
                 });
             }
             function is_auth_user(){

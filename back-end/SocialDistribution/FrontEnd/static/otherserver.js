@@ -1,6 +1,6 @@
 discover_url = "https://nofun.herokuapp.com/";
 var discover_token = "bc994a0507e90138def54fb44629df983d35fd4a";
-outsideserver()
+outsideserver();
 function outsideserver(){
   
     $.ajax({
@@ -15,7 +15,6 @@ function outsideserver(){
         if(posts.length != 0){
             for ( i = 0 ; i < posts.length; i++){
                 var data = posts[i];
-                console.log(data);
                 //insert post data to DOM
                 Fill_Discover_DOM(data,"showFollow","hideDel","hideEdit",1);
             }
@@ -33,8 +32,6 @@ function persist_Discover_Likes(author_id,post_id,data,flag,deleteFlag,editFlag)
     var author_id = author_id.split("https://nofun.herokuapp.com/author/")[1];
     var post_id = post_id.split("/");
     post_id = post_id[post_id.length - 1];
-    console.log("THIS IS AUTHOR ID " + author_id);
-    console.log("THIS IS POST ID " + post_id);
     $.ajax({
         headers: {Authorization:'Token '+discover_token},
         type: 'GET',
@@ -44,7 +41,6 @@ function persist_Discover_Likes(author_id,post_id,data,flag,deleteFlag,editFlag)
         var like_c = d.length;
         var toggle_post_img;
         var toggle_post_text;
-        console.log("Persist for foreign server");
         if(data.contentType == "image"){
             console.log("I AM AN IMAGE")
             toggle_post_img = "show_img_block";
@@ -58,15 +54,23 @@ function persist_Discover_Likes(author_id,post_id,data,flag,deleteFlag,editFlag)
             toggle_post_img = "hide_img_block";
             toggle_post_text = "show_post_text";
         }
+        // if(localStorage.getItem('uuid') != null){
+        //     persistFollowStats_discover(localStorage.getItem('uuid'),data,flag,deleteFlag,editFlag,like_c);
+        // }else{
+            insert_discovery_Post("Follow",data,flag,deleteFlag,editFlag,like_c,toggle_post_img,toggle_post_text);
+        // }
     
-        insert_discovery_Post("Follow",data,flag,deleteFlag,editFlag,like_c,toggle_post_img,toggle_post_text);
     });
 }
 function insert_discovery_Post(fs,data,flag,deleteFlag,editFlag,like_c,toggle_post_img,toggle_post_text){
     var followstats = fs;
     var pid_unclean = (data.id).split("/");
     var pid_clean = pid_unclean[pid_unclean.length - 1];
-     console.log(pid_clean);
+
+
+    var authorid_unclean = (data.author.id).split("/");
+    var authorid_clean = authorid_unclean[authorid_unclean.length - 1];
+    console.log(authorid_clean);
     const postHTML =  `<div class="posted-wrap">
         <div class="posted-w-h" >
             <div class="p-w-h-details">
@@ -77,7 +81,7 @@ function insert_discovery_Post(fs,data,flag,deleteFlag,editFlag,like_c,toggle_po
                 <div class="p-user-wrap">
                     <p>${data.author.displayName}</p>
                 </div>
-                <p class="follow-user ${data.author.id}" id="${flag}" onclick="followUser(this)">${followstats}</p>
+                <p class="follow-user ${authorid_clean}" id="${flag}" onclick="follow_discover_User(this)">${followstats}</p>
             </div>
             <div class="del-post ${deleteFlag}"  id="${pid_clean}" onclick="deletePost(this)">
                 <i class="material-icons" style="color:rgba(0,0,0,0.45)">delete_outline</i>
@@ -87,7 +91,7 @@ function insert_discovery_Post(fs,data,flag,deleteFlag,editFlag,like_c,toggle_po
             </div>
         </div>
         <div class="p-title-wrap">
-            <p>${data.title}</p>
+            <h3>${data.title}</h3>
         </div>
         <div class="post-text" id="${toggle_post_text}">
             <p>${data.content}</p>
@@ -100,13 +104,13 @@ function insert_discovery_Post(fs,data,flag,deleteFlag,editFlag,like_c,toggle_po
         </div>
         <div class="social-controls">
 
-            <div class="like-w ${"thumb_"+data.author.id}" onclick="likepost(this)" id="${"thumb_"+pid_clean}">
+            <div class="like-w ${"thumb_"+authorid_clean}" onclick="likepost(this)" id="${"thumb_"+pid_clean}">
                 <div class="s-c-img">
                     <i class="material-icons">thumb_up</i>
                 </div>
                 <p>Like</p>
             </div>
-            <div class="comment-w ${data.author.id}" onclick="toggle_discovery_Comments(this)" id="${pid_clean}">
+            <div class="comment-w ${authorid_clean}" onclick="toggle_discovery_Comments(this)" id="${pid_clean}">
                 <div class="s-c-img">
                     <i class="material-icons">comment</i>
                 </div>
@@ -162,14 +166,10 @@ function toggle_discovery_Comments(element){
 }
 
 function fetch_discover_comment(element){
-    // var pid_unclean = (element.id).split("/");
-    // var pid_clean = pid_unclean[pid_unclean.length - 1];
-    //  console.log(pid_clean);
-
     var userid_unclean = element.className.split(" ");
-    var userid_unclean2 = element.className.split("/");
-    var userid_clean = userid_unclean2[userid_unclean2.length - 1];
-    console.log(userid_clean);
+    var userid_clean = userid_unclean[userid_unclean.length - 1];
+    console.log("------")
+    console.log(userid_clean)
     $.ajax({
         headers: {Authorization:'Token '+discover_token},
         type:"GET",
@@ -191,3 +191,68 @@ function fetch_discover_comment(element){
         }
     });
 }
+
+
+ function follow_discover_User(curTag){
+    if (is_auth_user() == true){
+        console.log("tapped follower tag")
+        var arr = (curTag.className).split(' ');
+        fid = arr[1];
+        follow_discover_Request(fid,curTag)
+    }else{
+        //alert("sign in or sign up to send a friend request")
+        document.getElementsByClassName('popup-auth')[0].style.display = "block";
+    }
+
+}
+
+function follow_discover_Request(fid,curTag){
+    data = {
+        "actor":host_url + 'author/'+localStorage.getItem('uuid'),
+        "object":discover_url+"author/"+fid 
+    }
+    $.ajax({
+        headers: {Authorization:'Token '+discover_token},
+        type:"POST",
+        contentType: "application/json",
+        data:JSON.stringify(data),
+        url:discover_url+"friendrequest/"
+    })
+    .done(function(data){
+        //MANIPULATE DOM
+        console.log(data);
+        curTag.innerHTML = "Request Sent";
+        replaceall_discover(fid);
+    });
+}
+
+//replaces all follow request links of a particular user to "request sent"
+function replaceall_discover(fid){
+    $('.'+fid).each(function(i, obj) {
+        obj.innerHTML = "Request Sent";
+    });
+}
+
+// //persist follow status on each public post
+// function persistFollowStats_discover(fid,data,flag,deleteFlag,editFlag,like_c){
+
+//     $.ajax({
+//         type: 'GET',
+//         url: host_url + 'author/'+data.author.id+'/followers/'+fid
+//     })
+//     .done(function(dd){
+//         console.log("IN persistent follow stats");
+//         console.log(dd);
+//         var requestnotaccepted = dd.accepted;
+//         console.log(requestnotaccepted);
+//         var followstats;
+//         if(requestnotaccepted == true){
+//             followstats="accepted";
+//         }else if (requestnotaccepted == false){
+//             followstats="Request Sent";
+//         }else{
+//             followstats="Follow";
+//         }
+//         insertPost(followstats,data,flag,deleteFlag,editFlag,like_c);
+//     });
+// }
