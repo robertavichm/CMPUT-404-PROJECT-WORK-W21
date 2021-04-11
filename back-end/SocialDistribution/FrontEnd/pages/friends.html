@@ -106,7 +106,6 @@
 
         // Opens/Closes 'Friend' tab
         $('#friends-arrow').click(function() {
-          console.log($('.friends-w-body').css("display"));
             if($('.friends-w-body').css("display") == "none" ){
                 document.getElementsByClassName('friends-w-body')[0].style.display = "inline-block";
             }else{
@@ -133,15 +132,14 @@
           dataType: 'json',
         })
           .done(function(data){
-            console.log(data.items)
+            console.log('data',data.items);
             var fr_req = []; // IDs and dname of requesters
 
             for(el of data['items']){
-
-              if(el.type === "follow"){
+              if(el.type === "Follow"){
                 var d = {
-                  'id': el.author_id.id,
-                  'displayName': el.author_id.displayName,
+                  'id': el.actor.id.split('/')[4],
+                  'displayName': el.actor.displayName,
                   'notif_id': el.notif_id, // used to delete item from inbox once approved
                 }
                 fr_req.push(d);
@@ -203,17 +201,18 @@
                 const follower_id = $(this).data("id");
                 const notif_id  = $(this).data("notif-id");
 
+                console.log(follower_id);
+
                 $.ajax({
                   type: 'PUT',
                   headers: {
                       'Authorization': 'Basic ' + btoa(username+':'+password),
                   },
                   url: host_url + 'author/'+ localStorage.getItem('uuid') +'/followers/'+ follower_id + '/',
-                  // dataType: 'json',
                 })
                   .done(function(data){
                     // remove notification from inbox
-                    console.log('inside first layer');
+                    // console.log('inside first layer');
                     $.ajax({
                       type: 'DELETE',
                       headers: {
@@ -248,7 +247,7 @@
                   });
             });
 
-            // GET Friends
+            // GET Local Friends
             // 1. Get all followers
             // 2. Check if request was accepted
             function getFriends(followers){
@@ -263,7 +262,7 @@
                   dataType: 'json',
                 })
                   .done(function(data){
-                    console.log(f);
+                    // console.log(f);
                     if(data.friends){
                       $('.f-body').append(`
                         <tr>
@@ -272,7 +271,7 @@
                         `);
                     }
                   });
-                  console.log('next');
+                  // console.log('next');
               }
             }
 

@@ -837,9 +837,9 @@
                 console.log(fid);
                 console.log(postid);
                 data = {
-                    "type":"like",
-                    "author_id":{
-                        'author_id':localStorage.getItem('uuid'),
+                    "type":"Like",
+                    "author":{
+                        'id':host_url+"author/"+localStorage.getItem('uuid'),
                         'type':'author',
                         'host':host_url,
                         'displayName':displayName_cur,
@@ -978,9 +978,9 @@
 
             function followRequest(fid,curTag){
                 data = {
-                    "type":"follow",
-                    "author_id":{
-                        'id':localStorage.getItem('uuid'),
+                    "type":"Follow",
+                    "actor":{
+                        'id':host_url+"author/"+localStorage.getItem('uuid'),
                         'type':'author',
                         'host':host_url,
                         'displayName':displayName_cur,
@@ -1011,7 +1011,6 @@
             function replaceall(fid,curTag){
                 $('.'+fid).each(function(i, obj) {
                     //test
-                    console.log(obj)
                     obj.innerHTML = "Request Sent";
                 });
             }
