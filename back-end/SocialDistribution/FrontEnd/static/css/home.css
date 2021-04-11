@@ -217,12 +217,12 @@ body,html{
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
     display:none;
 }
-.p-f-h{
+.p-f-h, .e-p-f-h{
     height:50px;
     width:100%;
     background-color:#F4F5F9;
 }
-.close{
+.close, .e-close{
     width:50px;
     height:100%;
     float:right;
@@ -232,7 +232,7 @@ body,html{
     cursor:pointer;
     background-color: rgba(0, 0, 0, 0.10);
 }
-.tab-control{
+.tab-control, .e-tab-control{
     float:left;
     width:150px;
     height:40px;
@@ -240,10 +240,10 @@ body,html{
     margin-top:10px;
     margin-left:20px;
 }
-.tab-control p{
+.tab-control p, .e-tab-control p{
     margin:0;
 }
-.post-raw{
+.post-raw, .e-post-raw{
     width:50%;
     height:100%;
     float:left;
@@ -251,7 +251,7 @@ body,html{
     cursor:pointer;
     background-color:white;
 }
-.post-preview{
+.post-preview, .e-post-preview{
     width:50%;
     height:100%;
     float:right;
@@ -275,7 +275,7 @@ body,html{
     margin-top:5px;
     color:red;
 }
-.create-post{
+.create-post, .e-create-post{
     width:80px;
     height:30px;
     float:right;
@@ -285,8 +285,9 @@ body,html{
     color:white;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
     background-color:cornflowerblue;
+    cursor: pointer;
 }
-.create-post p{
+.create-post p, .e-create-post p{
     margin:0;
 }
 .p-content-area{
@@ -295,12 +296,12 @@ body,html{
     background-color:white;
 }
 
-.p-content-title, .p-content-desc {
+.p-content-title, .p-content-desc, .e-p-content-title, .e-p-content-desc {
   text-align: center;
   margin: 10px 0;
 }
 
-.p-content-title input, .p-content-desc input{
+.p-content-title input, .p-content-desc input, .e-p-content-title input, .e-p-content-desc input{
   width: 95%;
   height: 15px;
   padding: 20px;
@@ -327,7 +328,7 @@ body,html{
     max-height:140px;
 }
 
-.post-images{
+.post-images, .e-post-images{
     width:100px;
     height:40px;
     float:left;
@@ -336,7 +337,7 @@ body,html{
     overflow: hidden;
 }
 
-#img-input {
+#img-input, #e-img-input {
     font-size: 100px;
     border-radius:0;
     position: absolute;
@@ -849,13 +850,13 @@ body,html{
     color:red;
 }
 
-.sel {
+.sel, .e-sel{
     float: left;
     margin-top:5px;
     margin-left: 20px;
 }
 
-.sel select {
+.sel select , .e-sel select{
     appearance: none;
     background: white;
     border: 1px solid rgb(185, 183, 240);
@@ -866,14 +867,61 @@ body,html{
     cursor: pointer;
 }
 
+/* =========== Edit post Popup ===========*/
+
+/* .e-editPostPopup {
+  position: relative;
+  text-align: center;
+  width: 100%;
+} */
+.e-editPostPopup  {
+  display: none;
+  position: fixed;
+  width: 50%;
+  margin-top: 25px;
+  background-color: #9d9d9dd9;
+  left: 50%;
+  transform: translate(-29%, 0);
+}
+
+.e-w-popup {
+  z-index: 9;
+}
+
+.formContainer {
+ max-width: 300px;
+ padding: 20px;
+ background-color: #fff;
+}
+
+.formContainer .btn {
+ padding: 12px 20px;
+ border: none;
+ background-color: #8ebf42;
+ color: #fff;
+ cursor: pointer;
+ width: 100%;
+ margin-bottom: 15px;
+ opacity: 0.8;
+}
+.formContainer .cancel {
+ background-color: #cc0000;
+}
+.formContainer .btn:hover,
+.openButton:hover {
+ opacity: 1;
+}
+
+/* =========== End Edit post Popup ===========*/
+
 /* New css */
-#post-top-container{
+#post-top-container, #e-post-top-container{
   width: 100%;
   max-width: 800px;
   margin: 20px auto;
 }
 
-#post-input {
+#post-input, #e-post-input {
   width:100%;
   height:100%;
   border-radius:25px;
@@ -885,16 +933,16 @@ body,html{
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
 }
 
-#post-input-w {
+#post-input-w , #e-post-input-w{
   height: 55px;
 }
 
-#post-container{
+#post-container, #e-post-container{
   display: none;
   border: 1px solid black;
 }
 
-#p-r-text-input{
+#p-r-text-input, #e-p-r-text-input{
     font-size:16px;
     padding:20px;
     outline:none;

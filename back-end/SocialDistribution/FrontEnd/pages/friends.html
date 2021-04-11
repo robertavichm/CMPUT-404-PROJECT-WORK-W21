@@ -231,19 +231,15 @@
                 })
                   .done(function(data){
                     // remove notification from inbox
-                    // TODO: ask Oran to add notif_if for inbox type "follow"
-                    console.log('inside ajax');
+                    console.log('inside first layer');
                     $.ajax({
                       type: 'DELETE',
                       headers: {
                           'Authorization': 'Basic ' + btoa(username+':'+password),
                       },
                       url: host_url + 'author/'+ localStorage.getItem('uuid') +'/inbox/'+ notif_id + '/',
-                      dataType: 'json',
                     })
                       .done(function(data){
-
-                        console.log('request accepted')
                         location.reload();
                       });
                   });
@@ -265,10 +261,8 @@
                   url: host_url + 'author/'+ localStorage.getItem('uuid') +'/followers/'+ follower_id,
                 })
                   .done(function(data){
-                    // TODO: reload?
+                    // TODO: Not working
                     location.reload();
-
-                    console.log('follower deleted');
                   });
             });
 
@@ -276,17 +270,18 @@
             // 1. Get all followers
             // 2. Check if request was accepted
             function getFriends(followers){
-              // for every follower, check if friend request was accepted
+              // for every follower,
+              // check if other author also follows
               for(f of followers){
-
                 $.ajax({
                   type: 'GET',
                   url: host_url + 'author/'+ localStorage.getItem('uuid') + '/followers/' + f.id,
                   dataType: 'json',
                 })
                   .done(function(data){
+                    console.log(f.displayName, data.friends)
                     if(data.friends){
-                      $('.f-table').append(`
+                      $('.f-body').append(`
                         <tr>
                             <td>${f.displayName}</td>
                         </tr>

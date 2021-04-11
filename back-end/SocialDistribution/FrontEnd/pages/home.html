@@ -212,6 +212,91 @@
                             </div>
                         </div>
 
+                        <!-- =============================== Editing Post Block =============================== -->
+
+                        <div class="e-editPostPopup" style="border: 1px solid chocolate">
+                          <div class="e-w-popup">
+
+                            <div class="e-p-f-h">
+                                <div class="e-close" onclick="closeEditFormPopup()">
+                                    <i class="material-icons">close</i>
+                                </div>
+                                <div class="e-tab-control">
+                                    <div class="e-post-raw">
+                                        <p>Write</p>
+                                    </div>
+                                    <div class="e-post-preview">
+                                        <p>Preview</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="e-post-body">
+                              <div class="e-post-main" style="text-align:center">
+                                <div class="e-p-content-title">
+                                    <input type="text" placeholder="title..." id="e-p-title">
+                                </div>
+                                <div class="e-p-content-desc">
+                                    <input type="text" placeholder="decription..." id="e-p-description">
+                                </div>
+                                <textarea id="e-p-r-text-input" cols="30" rows="5" placeholder="Start a conversation ..."></textarea>
+
+                                <div class="e-post-main-bot">
+                                  <div class="e-post-images">
+                                      <input type="file" id="e-img-input"/>
+                                      <div class="e-img-logo-wrap">
+                                          <i class="material-icons">wallpaper</i>
+                                      </div>
+                                      <p class="e-img-logo-text" style="margin:0;margin-top:12.5px;float:left">Photo</p>
+                                  </div>
+
+
+                                  <div class="e-sel">
+                                    <select  id="e-content_type">
+                                       <option value="text/plain">Plain text</option>
+                                       <option value="text/markdown">Markdown</option>
+                                       <option value="image/png;base64">Image</option>
+                                       <option value="image/jpeg;base64">Text+image</option>
+                                       <option value="application/base64">Application</option>
+                                     </select>
+                                  </div>
+                                  <div class="e-sel">
+                                    <select id="e-visibility_choice">
+                                      <option value="PUBLIC">Public</option>
+                                      <option value="FRIENDS">Friends</option>
+                                     </select>
+                                  </div>
+                                  <div class="e-sel">
+                                    <select id="e-one_friend">
+                                      <option value=""></option>
+                                      <option value="FRIENDS">Friends</option>
+                                     </select>
+                                  </div>
+                                  <div class="e-sel">
+                                    <select id="e-unlisted_listed">
+                                      <option value="Listed">Listed</option>
+                                      <option value="Unlisted">Unlisted</option>
+                                     </select>
+                                  </div>
+                                  <div class="e-create-post">
+                                      <!-- We send over some data. Avoids making a second call to author/{author_id}/posts/{post_id}/  -->
+                                      <input id="e-data-holder" type="hidden" data-id="" data-source="" data-origin="" data-commentLink="" data-commentCount="">
+                                      <p>Post</p>
+                                  </div>
+                                </div>
+
+                              </div>
+
+                              <div class="e-post-preview"></div>
+
+                              <div class="e-post-img">
+                                <p>image will be here</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- =============================== Editing Post =============================== -->
 
                     </div>
                 </div>
@@ -221,6 +306,7 @@
         </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.1/showdown.min.js" integrity="sha512-L03kznCrNOfVxOUovR6ESfCz9Gfny7gihUX/huVbQB9zjODtYpxaVtIaAkpetoiyV2eqWbvxMH9fiSv5enX7bw==" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script> <!-- To convert js time into djangotime-->
         <script src="{% static 'common.js' %}"></script>
         <script>
 
@@ -430,7 +516,7 @@
                 var title = document.getElementById("p-title").value;
                 var description = document.getElementById("p-description").value;
                 var text = document.getElementById("p-r-text-input").value;
-                var checked = document.getElementById("l-ul").checked ? "False" : "True";
+                var listed_unlisted = document.getElementById("unlisted_listed").value;
                 // var cttn = base64 ? text : base64;
                 var cttn = text;
 
@@ -442,7 +528,7 @@
                     'categories':["web","tutorial"],
                     'pageSize':1,
                     'visibility':$('#visibility_choice').val(),
-                    'unlisted': checked
+                    'unlisted': listed_unlisted == "Unlisted"  // needs a js boolean
                 };
 
                 $.ajax({
@@ -455,10 +541,12 @@
                 data: JSON.stringify(data),
                 })
                 .done(function(data){
-                    document.getElementsByClassName('post-format')[0].style.display = "none";
-                    console.log(data); // UUID of post
-                    //insert post data to DOM
-                    FillDOM(data,"hideFollow","unhideDel","unhideEdit",1);
+                  // hidind
+                  $("#post-input-w").show();
+                  $("#post-container").hide();
+
+                  //insert post data to DOM
+                  FillDOM(data,"hideFollow","unhideDel","unhideEdit",1);
                 });
             });
 
@@ -715,7 +803,7 @@
                         <div class="del-post ${deleteFlag}"  id="${data.post_id}" onclick="deletePost(this)">
                             <i class="material-icons" style="color:rgba(0,0,0,0.45)">delete_outline</i>
                         </div>
-                        <div class="edit-post ${editFlag}">
+                        <div class="edit-post ${editFlag}" data-id="${data.post_id}"onclick="openEditPostPopup(this)">
                             <i class="material-icons" style="color:rgba(0,0,0,0.45)">mode</i>
                         </div>
                         <div class="outside-post">
@@ -801,6 +889,9 @@
                 $.ajax({
                     type:"POST",
                     contentType: "application/json",
+                    headers: {
+                        'Authorization': 'Basic ' + btoa(username+':'+password),
+                    },
                     data:JSON.stringify(data),
                     url: host_url + 'author/'+fid+'/inbox/'
                 })
@@ -857,7 +948,7 @@
                             <div class="del-post ${deleteFlag}"  id="${data.post_id}" onclick="deletePost(this)">
                                 <i class="material-icons" style="color:rgba(0,0,0,0.45)">delete_outline</i>
                             </div>
-                            <div class="edit-post ${editFlag}">
+                            <div class="edit-post ${editFlag}" data-id="${data.post_id}" onclick="openEditPostPopup(this)">
                                 <i class="material-icons" style="color:rgba(0,0,0,0.45)">mode</i>
                             </div>
                         </div>
@@ -916,9 +1007,6 @@
             }
 
             function deletePost(curDel){
-                console.log(curDel.id)
-                console.log($('#'+curDel.id).parents('[class]:eq(1)'));
-                //get the first parent div wrapping the delete button
                 $.ajax({
                     type: 'DELETE',
                     headers: {
@@ -926,12 +1014,105 @@
                     },
                     url: host_url + 'author/'+localStorage.getItem('uuid')+'/posts/'+curDel.id+'/',
                 }).done(function(data){
-                    $('#'+curDel.id).parents('[class]:eq(1)').remove();
+                    $('#'+curDel.id).parents('[class]:eq(1)').remove(); //get the first parent div wrapping the delete button
                     console.log('deleted');
                 });
-
             }
 
+            // Opens popup and fills data
+            function openEditPostPopup(e){
+
+              // closing popup if click is outside
+              $(document).mouseup(function(e){
+                console.log('clicked');
+                var container = $(".e-editPostPopup");
+                // if the target of the click isn't the container nor a descendant of the container
+                if (!container.is(e.target) && container.has(e.target).length === 0){
+                  container.hide();
+                  $(document).off('mouseup'); //remove listener
+                }
+              });
+
+              // open popup
+              $(".e-editPostPopup").show();
+
+              $.ajax({
+                  type: 'GET',
+                  headers: {
+                      'Authorization': 'Basic ' + btoa(username+':'+password),
+                  },
+                  url: host_url + 'author/'+localStorage.getItem('uuid')+'/posts/'+e.dataset.id,
+              })
+              .done(function(d){
+                console.log(d)
+                $("#e-p-title").val(d.title);
+                $("#e-p-description").val(d.description);
+                $("#e-p-r-text-input").val(d.content);
+                $("#e-content_type").val(d.contentType);
+                $("#e-visibility_choice").val(d.visibility);
+                if(d.unlisted)
+                  $("#e-unlisted_listed").val("Unlisted");
+                else
+                  $("#e-unlisted_listed").val("Listed");
+                $("#e-data-holder").data('source', d.source);
+                $("#e-data-holder").data('origin', d.origin);
+                $("#e-data-holder").data('commentLink', d.commentLink);
+                $("#e-data-holder").data('commentCount', d.commentCount);
+                $("#e-data-holder").data('id', d.post_id);
+
+                // $("#").val(d.);
+                // $("#e-one_friend").val(d.);
+              });
+            }
+
+            $('.e-create-post').click(function() {
+              var title = document.getElementById("e-p-title").value;
+              var description = document.getElementById("e-p-description").value;
+              var text = document.getElementById("e-p-r-text-input").value;
+              var listed_unlisted = document.getElementById("e-unlisted_listed").value;
+              // var cttn = base64 ? text : base64;
+              var cttn = text;
+              const postid = $("#e-data-holder").data('id');
+
+              const data = {
+                  'title':title,
+                  'type': "post",
+                  'description':description,
+                  'contentType':$('#e-content_type').val(),
+                  'content':cttn,
+                  'categories':["web","tutorial"],
+                  'pageSize':1,
+                  'visibility':$('#e-visibility_choice').val(),
+                  'unlisted': listed_unlisted == "Unlisted",  // needs a js boolean
+                  'published': moment(Date()).format('YYYY-MM-DD HH:mm'),
+                  'source': $("#e-data-holder").data('source'),
+                  'origin': $("#e-data-holder").data('origin'),
+                  'commentLink': $("#e-data-holder").data('commentLink'),
+                  'commentCount': $("#e-data-holder").data('commentCount'),
+              };
+              console.log(data);
+
+              $.ajax({
+                  type: 'POST',
+                  headers: {
+                      'Authorization': 'Basic ' + btoa(username+':'+password),
+                      'Content-Type': 'application/json',
+                  },
+                  url: host_url + 'author/'+localStorage.getItem('uuid')+'/posts/'+postid+'/',
+                  data: JSON.stringify(data),
+              })
+              .done(function(d){
+                $(".e-editPostPopup").hide();
+                $(document).off('mouseup');
+                location.reload();
+              });
+
+            });
+
+            function closeEditFormPopup(){
+              $(".e-editPostPopup").hide();
+              $(document).off('mouseup');
+            }
 
 
             //handlinf comments
