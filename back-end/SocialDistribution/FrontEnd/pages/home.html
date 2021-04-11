@@ -518,7 +518,7 @@
                         followerArray.push(followersRes[0].id)
                     }
                     fetchPublicPost(0);
-                    <!-- fetchRemotePublicPost(); -->
+                   
                 });
             }
             var arrayOfRequests = [];
@@ -547,12 +547,14 @@
 
             function FillDOM(data,flag,deleteFlag,editFlag,newflag){
                 var like_c;
+                console.log("I AM IN FILL DOM NOWWW CURENT")
                 if(newflag == 1){
                     //newly added post
                     like_c = 0;
                     addnewpost(data,flag,deleteFlag,editFlag,like_c)
 
                 }else{
+                    console.log("I AM IN FILL DOM ESLE ")
                     persistLikes(data.author.id,data.post_id,data,flag,deleteFlag,editFlag);
                 }
 
@@ -617,6 +619,7 @@
                     console.log("billion dollar coins")
                     console.log(d.items.length);
                     var like_c = d.items.length;
+                    console.log("I AM IN PERSIST FOLLOW STATS DOM ESLE ")
                     persistFollowStats(localStorage.getItem('uuid'),data,flag,deleteFlag,editFlag,like_c);
 
                 });
