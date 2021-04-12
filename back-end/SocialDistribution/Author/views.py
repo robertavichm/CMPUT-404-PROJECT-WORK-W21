@@ -201,11 +201,12 @@ def get_node(request,node_url):
         return JsonResponse(ser.data, safe=False)
 
     if(request.method == "DELETE"):
-        node = get_object_or_404(Node, pk=node_url)
+        host = request.data["host"]
+        node = get_object_or_404(Node, pk=host)
         node.delete()
         return HttpResponse("node deleted")
 
-@api_view(["GET","POST"])
+@api_view(["GET","POST","DELETE"])
 @permission_classes([IsAuthenticated])
 def get_all_nodes(request):
     if(request.method== "GET"):
@@ -217,6 +218,11 @@ def get_all_nodes(request):
             ser = NodeSerializer(node,many=False)
             response["items"].append(ser.data)
         return JsonResponse(response, safe=False)
+    if(request.method == "DELETE"):
+        host = request.data["host"]
+        node = get_object_or_404(Node, pk=host)
+        node.delete()
+        return HttpResponse("node deleted")
 
     else:
         if(request.method == "POST"):
