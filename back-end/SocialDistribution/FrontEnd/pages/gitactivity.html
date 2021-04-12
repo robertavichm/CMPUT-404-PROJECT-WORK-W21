@@ -97,18 +97,30 @@
         <script src="{% static '/src/github-activity.js' %}"></script>
         <script>
             const host_url = '{{ host_url }}';
-            if(localStorage.getItem("git") != "" && localStorage.getItem("git") != null){
-                console.log("git present");
-                console.log(localStorage.getItem("git"))
-                GitHubActivity.feed({ username:localStorage.getItem("git"), selector: "#feed" });
-                document.getElementsByClassName('gna')[0].style.display = "none";
-                document.getElementsByClassName('git-body')[0].style.display = "block";
-            }else{
-                console.log("git NOT present");
-                console.log(localStorage.getItem("git"))
-                document.getElementsByClassName('git-body')[0].style.display = "none";
-                document.getElementsByClassName('gna')[0].style.display = "block";
-            }
+            var git_username = "";
+
+            // Grab git username
+            $.ajax({
+              type: 'GET',
+              url: host_url + 'author/'+ localStorage.getItem('uuid'),
+              dataType: 'json',
+            })
+              .done(function(data){
+                // console.log(f);
+
+                git_username = data.github;
+                if(git_username != "" && git_username != null){
+                    GitHubActivity.feed({username:git_username, selector: "#feed"} );
+                    document.getElementsByClassName('gna')[0].style.display = "none";
+                    document.getElementsByClassName('git-body')[0].style.display = "block";
+                }else{
+                    document.getElementsByClassName('git-body')[0].style.display = "none";
+                    document.getElementsByClassName('gna')[0].style.display = "block";
+                }
+
+              });
+
+
             $('.back_arrow').click(function() {
                 window.location.href = host_url+"home";
 
