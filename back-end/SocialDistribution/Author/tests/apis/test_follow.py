@@ -51,7 +51,7 @@ class FollowGetTest(TestCase):
 
     def test_get_follow_unsuccessful(self):
         response = self.client.get(
-            f'/author/{self.test_receiver.id}/followers/xdthisisnotarealid/',
+            f'/author/{self.test_receiver.id}/followers/{invalid_uuid}/',
             **self.headers
         )
         # Test request exists
@@ -129,6 +129,6 @@ class FollowDeleteTest(TestCase):
             **self.headers
         )
         # Test request DNE since deleted
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
     
     

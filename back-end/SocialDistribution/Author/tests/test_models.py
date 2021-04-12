@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.core import serializers
 from Author.models import *
+from Author.author_serializer import *
 from Author.tests.dummy_model_fields import *
 import json
 
@@ -21,26 +22,26 @@ class AuthorModelsTestCase(TestCase):
                                                    **get_test_credentials(1))
                                                    
         self.friendship = FriendShip.objects.create(author_local=self.author, 
-                                                    author_remote=serializers.serialize('json', [self.author_friend]),
+                                                    author_remote=AuthorSerializer(self.author_friend).data,
                                                     accepted=True)
         
         # Create and initialize test Comment model
         self.test_comment_fields = get_comment_fields()
         self.comment = Comment.objects.create(**self.test_comment_fields,
                                                post_id=self.post, 
-                                               author_id=serializers.serialize('json', [self.author]))
+                                               author_id=AuthorSerializer(self.author_friend).data)
 
         # Create and initialize Like model
         self.test_like_fields = get_like_fields()
         self.like = Like.objects.create(**self.test_like_fields,
                                         author_id=self.author,
-                                        liker_id=serializers.serialize('json', [self.author_friend]))
+                                        liker_id= AuthorSerializer(self.author_friend).data)
+                                        # liker_id=serializers.serialize('json', [self.author_friend]))
 
         # Create and initialize Notification model
         self.notification = Notification.objects.create(author_id=self.author)
-        self.notification.items.append(serializers.serialize('json', [self.author_friend]))
-        self.notification.items.append(serializers.serialize('json', [self.comment]))
-        self.notification.items.append(serializers.serialize('json', [self.post]))
+        self.notification.items.append(AuthorSerializer(self.author_friend).data)
+        self.notification.items.append(PostSerializer(self.post).data)
         self.notification.save()
         
     def test_create_author(self):

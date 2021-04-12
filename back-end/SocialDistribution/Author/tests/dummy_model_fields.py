@@ -42,7 +42,7 @@ def get_comment_fields():
         "comment": "hello I am comment"
     }
 
-def get_like_fields():
+def get_like_fields(id=0):
     return {
-        "object_id": "http://somelink.xyz"
+        "object_id": f"{id}"
     }

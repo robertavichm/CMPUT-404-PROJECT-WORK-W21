@@ -170,6 +170,7 @@ def get_likes(request,author_id):
         handles paths authors/{author_id}/liked
     """
     if request.method == "GET":
+        get_object_or_404(Author, pk=author_id)
         response = {}
         response["type"] = "liked"
         response["items"] = []
