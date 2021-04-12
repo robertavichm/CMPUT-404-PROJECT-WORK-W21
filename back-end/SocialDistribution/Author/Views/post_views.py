@@ -129,7 +129,7 @@ def get_post_likes(request, author_id, post_id):
         response["items"] = []
         post = get_object_or_404(Post,pk=post_id)
         object_id = post.id 
-        likes = Like.objects.filter(author_id=author_id,object_id__icontains=object_id)
+        likes = Like.objects.filter(object_id=object_id)
         #likes = Like.objects.filter(author_id=author_id,post_id=post_id,comment_id=None)
 
         for i in range(0,len(likes)):
