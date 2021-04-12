@@ -295,7 +295,6 @@ function addcomment_discover(element){
             console.log(commentlabel);
             document.getElementById("comment_input"+pid).value = ""
             document.getElementById("comment-count_"+pid).innerHTML = countval + "comments";
-
         });
     }else{
         //alert("sign in or sign up to comment on a post");
@@ -465,13 +464,9 @@ function like_comment_discover(element){
         var commentID = element.className.split(" ")[2];
         var postID = element.className.split(" ")[3];
 
-
-
-
         console.log("commenter id : "+post_owner_id);
         console.log("comment id : "+commentID);
         console.log("post id : "+postID);
-
 
         data = {
             "author":localStorage.getItem('uuid')
@@ -491,10 +486,8 @@ function like_comment_discover(element){
             countval+=1;
             document.getElementById("com-like_"+commentID).innerHTML = countval;
         })
-
     }else{
         //alert("sign in or sign up to like a post");
         document.getElementsByClassName('popup-auth')[0].style.display = "block";
     }
-
 }
