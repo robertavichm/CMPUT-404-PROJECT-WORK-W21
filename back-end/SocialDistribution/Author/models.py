@@ -15,9 +15,7 @@ class Author(AbstractUser):
     github = models.TextField(null=True)
     
 
-
 class Post(models.Model):
-
     class ContentTypeChoice(models.TextChoices):
         choice1 = "text/plain"
         choice2 = "text/markdown"
@@ -50,7 +48,8 @@ class FriendShip(models.Model):
     author_remote = models.JSONField()  # one author has to be local & another CAN be remote, hence the JSONFeild. 
     accepted = models.BooleanField(default=False)
     #author_friend = models.ForeignKey(Author, on_delete=models.CASCADE,related_name="friend")    
- 
+
+
 #good?
 class Comment(models.Model):
     class comment_choices(models.TextChoices):
@@ -81,6 +80,7 @@ class Like(models.Model):
     object_id = models.TextField(null=False)
     #type = "likes"
 
+
 #general inbox check
 class Notification(models.Model):
     #unique id
@@ -96,6 +96,7 @@ class Notification(models.Model):
     # post_id = models.ForeignKey(Post, on_delete=models.SET_NULL, null=True)
     items = models.JSONField(default=list)
 
+
 #data to connect to another server
 class Node(models.Model):
     #host of server
@@ -104,6 +105,7 @@ class Node(models.Model):
     username = models.TextField(null=True)
     password = models.TextField(null=True)
     token = models.TextField(null=True)
+    recieve = models.BooleanField(default=False)
 #if we send like objects to foreign servers we cant look them up locally in author/{author_id}/liked
 #hence we need a custom api to store where those foreign likes are stored.
 # class ForeginLike(models.Model):

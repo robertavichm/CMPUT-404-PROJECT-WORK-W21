@@ -67,15 +67,15 @@ def handle_inbox(request,author_id):
 def handle_type(post_type,data,author):
     new_notification = Notification(author_id=author)
     #new_notification.items = data
-    if post_type == "post":
+    if post_type == "post" or post_type == "Post":
         new_notification.items = data
         new_notification.save()
-    if post_type=="follow":
-        if("author_id" in data):
-            requestor_data = data["author_id"]
+    if post_type=="follow" or post_type == "Follow":
+        if("actor" in data):
+            requestor_data = data["actor"]
             ser = AuthorSerializer(author, many=False)
-            data["summary"] = data["author_id"]["displayName"]+ " wants to be "+author.displayName+"'s friend"
-            if(FriendShip.objects.filter(author_local=author, author_remote__id=data["author_id"]["id"])):
+            data["summary"] = data["actor"]["displayName"]+ " wants to be "+author.displayName+"'s friend"
+            if(FriendShip.objects.filter(author_local=author, author_remote__id__icontains=data["actor"]["id"])):
                 return HttpResponseBadRequest("request already sent")
             new_friendship = FriendShip(author_local=author,author_remote=requestor_data)
             new_friendship.save()
@@ -83,24 +83,23 @@ def handle_type(post_type,data,author):
             new_notification.items = data 
             new_notification.save()
             return HttpResponse("follow request sent")
-    if post_type=="like":
+    if post_type=="Like" or post_type == "like":
         existing = Like.objects.filter(author_id=author)
-        if "author_id" in data:
+        if "author" in data:
             new_like = Like(author_id=author)
-            if("author_id" in data):
-
-                data["summary"] = data["author_id"]["displayName"]," likes your activity"
-                new_like.liker_id  = data["author_id"]
-            else:
-                return HttpResponseBadRequest("need to specify author_id")
-
             
-            
-            if("object_id" in data):
-                new_like.object_id = data["object_id"]
+            if("displayName" in data["author"]):
+                if(data["author"]["displayName"]):
+                    data["summary"] = data["author"]["displayName"]+" liked "+author.displayName+" activity"
+                else:
+                    data["summary"] =  " liked "+author.displayName+" activity"
+            #data["summary"] = data["author"]["displayName"]+" likes your activity"
+            new_like.liker_id  = data["author"]
+            if("object" in data):
+                new_like.object_id = data["object"]
             else:
                 return HttpResponseBadRequest("need to specify object_id")
-            existing = Like.objects.filter(author_id=author,liker_id=data["author_id"],object_id=data["object_id"])
+            existing = Like.objects.filter(author_id=author,liker_id=data["author"],object_id=data["object"])
             if(existing.count() == 0):
                 #return HttpResponseBadRequest("like with this data already exists")
                 new_like.save()
