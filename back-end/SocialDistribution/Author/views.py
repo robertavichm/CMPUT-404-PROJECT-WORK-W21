@@ -21,8 +21,11 @@ from SocialDistribution.settings import HOST_URL
 @api_view(["GET"])
 def login(request):
     if(request.user.is_authenticated):
-        ser = AuthorSerializer(request.user,many=False)
-        return JsonResponse(ser.data,safe=False)
+        if(request.user.is_active):
+            ser = AuthorSerializer(request.user,many=False)
+            return JsonResponse(ser.data,safe=False)
+        else:
+            return HttpResponseBadRequest("not active account")
 
 @api_view(["POST","GET"])
 @authentication_classes([BasicAuthentication])
@@ -33,9 +36,9 @@ def open_path(request):
     """
     if(request.method == "POST"):
         json_data = request.data
-        new_author = Author()
+        #new_author = Author()
         #uncomment line 38 when we actually are done with the program. Confroms with requirement better
-        #new_author = Author(is_active=False)
+        new_author = Author(is_active=False)
         # Creating new user login information
         if "password" in json_data:
             password = json_data["password"]
@@ -167,6 +170,7 @@ def get_likes(request,author_id):
         handles paths authors/{author_id}/liked
     """
     if request.method == "GET":
+        get_object_or_404(Author, pk=author_id)
         response = {}
         response["type"] = "liked"
         response["items"] = []

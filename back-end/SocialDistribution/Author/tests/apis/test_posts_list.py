@@ -46,7 +46,7 @@ class PostListGetTest(TestCase):
         response = self.client.get(
             f'/author/{self.test_author.id}/posts/'
         )
-        print(f'a = {len(response.json()["items"])}')
+        # print(f'a = {len(response.json()["items"])}')
         self.assertIsNotNone(response.json())
         self.assertEqual(2, len(response.json()["items"]))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -59,7 +59,7 @@ class PostListGetTest(TestCase):
         )
         # print(f'a = {len(response.json()["items"])}')
         self.assertIsNotNone(response.json())
-        # self.assertEqual(3, len(response.json()["items"])
+        # self.assertEqual(3, len(response.json()["items"]))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     """ Test unsuccessful GET on non-existing posts /author/authorID/posts/ """
@@ -73,7 +73,7 @@ class PostListGetTest(TestCase):
 """
 Testing POST on /author/{author_ID}/posts/
 """
-class PostListGetTest(TestCase):
+class PostListPostTest(TestCase):
     def setUp(self):
         self.client = Client()
         self.headers = {
