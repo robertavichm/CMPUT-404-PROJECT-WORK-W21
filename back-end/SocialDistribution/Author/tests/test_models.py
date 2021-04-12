@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.core import serializers
 from Author.models import *
+from Author.author_serializer import *
 from Author.tests.dummy_model_fields import *
 import json
 
@@ -28,13 +29,14 @@ class AuthorModelsTestCase(TestCase):
         self.test_comment_fields = get_comment_fields()
         self.comment = Comment.objects.create(**self.test_comment_fields,
                                                post_id=self.post, 
-                                               author_id=serializers.serialize('json', [self.author]))
+                                               liker_id= AuthorSerializer(self.author_friend).data)
 
         # Create and initialize Like model
         self.test_like_fields = get_like_fields()
         self.like = Like.objects.create(**self.test_like_fields,
                                         author_id=self.author,
-                                        liker_id=serializers.serialize('json', [self.author_friend]))
+                                        liker_id= AuthorSerializer(self.author_friend).data)
+                                        # liker_id=serializers.serialize('json', [self.author_friend]))
 
         # Create and initialize Notification model
         self.notification = Notification.objects.create(author_id=self.author)
