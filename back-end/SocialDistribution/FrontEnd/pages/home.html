@@ -724,15 +724,15 @@
                     fid = extract.slice(6);
                     data = {
                         "type":"like",
-                        "author_id":{
-                            'author_id':localStorage.getItem('uuid'),
+                        "author":{
+                            'id':host_url+"author/"+localStorage.getItem('uuid'),
                             'type':'author',
                             'host':host_url,
                             'displayName':displayName_cur,
                             'url':host_url+"author/"+localStorage.getItem('uuid'),
                             'github':github_cur
                         },
-                        "object_id":host_url+"author/"+fid+"/posts/"+postid
+                        "object":host_url+"author/"+fid+"/posts/"+postid
                     }
                     $.ajax({
                         type:"POST",
@@ -1136,38 +1136,45 @@
             //likepost
             function like_comment_local(element){
                 
-                if (is_auth_user() == true){
-                    console.log("like_post func called")
-                    var post_owner_id = element.className.split(" ")[1];
-                    var commentID = element.className.split(" ")[2];
-                    var postID = element.className.split(" ")[3];
+                    if (is_auth_user() == true){
+                        console.log("like_post func called")
+                        var post_owner_id = element.className.split(" ")[1];
+                        var commentID = element.className.split(" ")[2];
+                        var postID = element.className.split(" ")[3];
 
-                    console.log("commenter id : "+post_owner_id);
-                    console.log("comment id : "+commentID);
-                    console.log("post id : "+postID);
+                        console.log("commenter id : "+post_owner_id);
+                        console.log("comment id : "+commentID);
+                        console.log("post id : "+postID);
                     
-                    data = {
-                        "author_id":{"author_id":post_owner_id}
-                    }
-                    $.ajax({
-                        type:"POST",
-                        contentType: "application/json",
-                        data:JSON.stringify(data),
-                        url:host_url+"author/"+post_owner_id+"/posts/"+postID+"/comments/"+commentID+"/likes/"
-                    })
-                    .done(function(data){
-                        //increment count
-                        console.log(data);
-                        var countvaljunk = document.getElementById("com-like_"+commentID).innerHTML;
-                        var countval = + countvaljunk;
-                        countval+=1;
-                        document.getElementById("com-like_"+commentID).innerHTML = countval;
-                    })
+                        data = {
+                            "author_id":
+                            {
+                                "author_id":localStorage.getItem('uuid'), 
+                                "host":host_url,
+                                "displayName":displayName_cur,
+                                "url":host_url+"author/"+localStorage.getItem('uuid'),
+                                "github":github_cur
+                            }
+                        }
+                        $.ajax({
+                            type:"POST",
+                            contentType: "application/json",
+                            data:JSON.stringify(data),
+                            url:host_url+"author/"+post_owner_id+"/posts/"+postID+"/comments/"+commentID+"/likes/"
+                        })
+                        .done(function(data){
+                            //increment count
+                            console.log(data);
+                            var countvaljunk = document.getElementById("com-like_"+commentID).innerHTML;
+                            var countval = + countvaljunk;
+                            countval+=1;
+                            document.getElementById("com-like_"+commentID).innerHTML = countval;
+                        })
 
-                }else{
-                    //alert("sign in or sign up to like a post");
-                    document.getElementsByClassName('popup-auth')[0].style.display = "block";
-                }
+                    }else{
+                        //alert("sign in or sign up to like a post");
+                        document.getElementsByClassName('popup-auth')[0].style.display = "block";
+                    }
 
             }
                         
