@@ -52,8 +52,8 @@ def open_path(request):
         new_author.host = HOST_URL
         url = new_author.host+"author/"+str(new_author.id)
         new_author.url = url
-        
-        # Try creating user, 
+
+        # Try creating user,
         # if duplicate user, return Bad Request
         try:
             new_author.save()
@@ -63,7 +63,7 @@ def open_path(request):
         return HttpResponse(str(new_author.id), status=status.HTTP_200_OK)
 
     if(request.method == "GET"):
-        
+
         data = Author.objects.all()
         ser = AuthorSerializer(data,many=True)
         return JsonResponse(ser.data, safe=False)
@@ -80,8 +80,8 @@ def author_operation(request,pk):
         instance = get_object_or_404(Author, pk=pk)
         ser = AuthorSerializer(instance, many=False)
         #response["github"] = data.github
-        
-        
+
+
         return JsonResponse(ser.data,safe=False)
     if(request.method == "POST"):
         json_data = request.data
@@ -95,7 +95,7 @@ def author_operation(request,pk):
         for k, v in json_data.items():
             setattr(author, k, v)
         author.save()
-        return HttpResponse(status=status.HTTP_200_OK)  
+        return HttpResponse(status=status.HTTP_200_OK)
     return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
@@ -108,14 +108,14 @@ def get_followers(request,author_id):
     response["type"] = "followers"
     response["items"] = []
     #where author_id is local
-    friend_local = FriendShip.objects.filter(author_local=author_id, accepted=True)    
-    
+    friend_local = FriendShip.objects.filter(author_local=author_id, accepted=True)
+
     for i in range(0,len(friend_local)):
         #little bit of response cooking
-        
+
         response["items"].append(friend_local[i].author_remote)
-    
-    
+
+
     return JsonResponse(response, safe=False)
 
 
@@ -131,11 +131,11 @@ def handle_follow(request,author_id,follow_id):
         recipricol = FriendShip.objects.filter(author_local=follow_id,author_remote__id__icontains=author_id)
         first = False
         second = False
-        for i in range(0,len(data)):    
+        for i in range(0,len(data)):
             response["accepted"] = data[i].accepted
             if data[i].accepted:
                 first = True
-        for i in range(0,len(recipricol)):    
+        for i in range(0,len(recipricol)):
             if recipricol[i].accepted:
                 second = True
         if(second == True and first == True):
@@ -148,7 +148,7 @@ def handle_follow(request,author_id,follow_id):
         # data = get_object_or_404(FriendShip, author_local=author_id, author_remote=follow_id)
         data = FriendShip.objects.filter(author_local=author_id, author_remote__id__icontains=follow_id)
         if(data.count() > 0):
-            
+
             instance = FriendShip.objects.get(author_local=author_id, author_remote__id__icontains=follow_id)
             instance.accepted = True
             instance.save()
@@ -161,7 +161,7 @@ def handle_follow(request,author_id,follow_id):
             instance = FriendShip.objects.get(author_local=author_id, author_remote__id__icontains=follow_id)
             instance.delete()
             return HttpResponse("friendship over")
-            
+
 
 
 @api_view(["GET","POST"])
@@ -199,7 +199,7 @@ def get_node(request,node_url):
         node = get_object_or_404(Node, pk=node_url)
         ser = NodeSerializer(node, many=False)
         return JsonResponse(ser.data, safe=False)
-    
+
     if(request.method == "DELETE"):
         host = request.data["host"]
         node = get_object_or_404(Node, pk=host)

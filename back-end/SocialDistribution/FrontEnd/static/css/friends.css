@@ -39,11 +39,9 @@
 .friend-r-body{
     height:calc(100% - 60px);
     width:100%;
-    display: none;
 }
-.friends-w-body{
+.friends-w-body, .friends-ww-body{
     width:100%;
-    display: none;
 }
 
 .arrow-down{

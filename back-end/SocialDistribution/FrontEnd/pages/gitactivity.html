@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" /><link href = "https://fonts.googleapis.com/css?family=Roboto+Mono|Roboto+Slab|Roboto:300,400,500,700" rel = "stylesheet" />
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet"  href="{%  static  '/src/github-activity.css'  %}">
+    <title>Github Activity</title>
+    <style>
+        html,body{
+            margin:0;
+            width:100%;
+            height:100%;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            flex-direction:column;
+            overflow-y:hidden;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .nav{
+            width:100%;
+            height:39px;
+            border-bottom:1px solid rgba(0,0,0,0.05);
+        }
+        .git-content{
+            height:calc(100% - 40px);
+            width:100%;
+            max-width:1200px;
+            background-color:#f4f5f9;
+        }
+        .git-head{
+            height:49px;
+            line-height:50px;
+            border-bottom:1px solid rgba(0,0,0,0.05);
+        }
+        .git-head h3{
+            margin:0;
+            margin-left:20px;
+            font-weight:400;
+            color:rgba(0,0,0,0.65)
+        }
+        .git-body{
+            height:calc(100% - 50px);
+            overflow-y:auto;
+        }
+        .back_arrow{
+            height:100%;
+            width:60px;
+            float:left;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            margin-left:10px;
+            cursor:pointer;
+        }
+        .gna{
+            width:calc(100% - 10px);
+            margin-top:10px;
+            margin-left:5px;
+            height:200px;
+            display:none;
+            background-color:white;
+        }
+        .gna h3{
+            text-align:center;
+            font-weight:600;
+            color:rgba(0,0,0,0.65)
+        }
+
+    </style>
+</head>
+    <body>
+        <div class="nav">
+            <div class="back_arrow"><i class="material-icons" style="margin:0">arrow_back_ios</i></div>
+        </div>
+        <div class="git-content">
+            <div class="git-head"><h3>My Github Activity Stream</h3></div>
+            <div class="git-body">
+                <div id="feed"></div>
+            </div>
+            <div class="gna">
+                <lottie-player src="{%  static  'git.json'  %}" background="transparent" speed="1.5" loop autoplay style="height:150px;margin:0;">
+
+                </lottie-player>
+                <h3>You currently do not have github linked to your account</h3>
+            </div>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/mustache.js/0.7.2/mustache.min.js"></script>
+        <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+        <script src="{% static '/src/github-activity.js' %}"></script>
+        <script>
+            const host_url = '{{ host_url }}';
+            var git_username = "";
+
+            // Grab git username
+            $.ajax({
+              type: 'GET',
+              url: host_url + 'author/'+ localStorage.getItem('uuid'),
+              dataType: 'json',
+            })
+              .done(function(data){
+                // console.log(f);
+
+                git_username = data.github;
+                if(git_username != "" && git_username != null){
+                    GitHubActivity.feed({username:git_username, selector: "#feed"} );
+                    document.getElementsByClassName('gna')[0].style.display = "none";
+                    document.getElementsByClassName('git-body')[0].style.display = "block";
+                }else{
+                    document.getElementsByClassName('git-body')[0].style.display = "none";
+                    document.getElementsByClassName('gna')[0].style.display = "block";
+                }
+
+              });
+
+
+            $('.back_arrow').click(function() {
+                window.location.href = host_url+"home";
+
+            })
+
+        </script>
+    </body>
+
+
+</html>

@@ -22,6 +22,11 @@ def friends(request):
 def profile(request):
     return render(request,'profile.html', {'host_url': host_url})
 
-
 def inbox(request):
     return render(request,'inbox.html', {'host_url': host_url})
+
+def gitactivity(request):
+    return render(request,'gitactivity.html', {'host_url': host_url})
+
+def ty(request):
+    return render(request,'thankyou.html', {'host_url': host_url})

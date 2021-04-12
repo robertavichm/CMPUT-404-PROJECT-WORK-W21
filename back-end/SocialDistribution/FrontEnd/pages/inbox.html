@@ -57,10 +57,17 @@
             console.log(data);
 
             for(el of data['items']){
-              $('.ins_container').append(`
-                <div class="inb_wrap">
-                  ${el.type} from ${el.author_id.displayName}
-                </div>`);
+              if (el.type == "post" || el.type  == "Like"){
+                $('.ins_container').append(`
+                  <div class="inb_wrap">
+                    ${el.type} from ${el.author.displayName}
+                  </div>`)
+              } else  {
+                $('.ins_container').append(`
+                  <div class="inb_wrap">
+                    ${el.type} from ${el.actor.displayName}
+                  </div>`);
+              }
             }
 
           });

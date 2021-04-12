@@ -16,7 +16,7 @@ $(document).ready(function(){
   // username on the topnav
   $('.tn_username').append(localStorage.getItem("username"));
 
-  // Logout
+  // Logouts
   $('.logout_btn').click(function(e) {
     console.log('logging out!')
     e.preventDefault();
@@ -28,3 +28,4 @@ $(document).ready(function(){
     window.location.href = host_url ;
   });
 });
+
