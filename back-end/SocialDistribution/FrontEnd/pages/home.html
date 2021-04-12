@@ -1101,8 +1101,15 @@
             async function getCommentlikes_local(data,element){
                 for(i=0;i<data.length;i++){ 
                    var clean_comment_id = data[i].comment_id;
-                   var userid_clean = (data[i].author_id.url).split("/");
-                   userid_clean = userid_clean[userid_clean.length - 1];
+                   var userid_clean;
+                   if(data[i].author_id.host == "https://socialdistributionproject.herokuapp.com/"){
+                        userid_clean = (data[i].author_id.url).split("/");
+                        userid_clean = userid_clean[userid_clean.length - 2];
+                   }else{
+                        userid_clean = (data[i].author_id.url).split("/");
+                        userid_clean = userid_clean[userid_clean.length - 1];
+                   }
+                   
                    console.log("--------");
                    console.log(clean_comment_id);
                    console.log(userid_clean);
