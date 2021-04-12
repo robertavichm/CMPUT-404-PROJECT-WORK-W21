@@ -57,7 +57,7 @@
             console.log(data);
 
             for(el of data['items']){
-              if (el.type == "post"){
+              if (el.type == "post" || el.type  == "Like"){
                 $('.ins_container').append(`
                   <div class="inb_wrap">
                     ${el.type} from ${el.author.displayName}
@@ -65,7 +65,7 @@
               } else  {
                 $('.ins_container').append(`
                   <div class="inb_wrap">
-                    ${el.type} from ${el.author.displayName}
+                    ${el.type} from ${el.actor.displayName}
                   </div>`);
               }
             }

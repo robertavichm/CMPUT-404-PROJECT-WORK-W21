@@ -120,6 +120,7 @@
           justify-content: center;
         }
         .nodiscoveries{
+            display: none;
             width:calc(100% - 10px);
             margin-left:5px;
             margin-top:10px;
@@ -339,11 +340,11 @@
                         <div class="tab-switch" style="width:100%;">
                             <div class="tab-public" style="width:110px;">
                                 <div class="tab-icon"><i class="material-icons" style="color:rgba(0,0,0,0.50)">public</i></div>
-                                <div class="tab-text"><p>Discover</p></div>
+                                <div class="tab-text"><p>Local</p></div>
                             </div>
                             <div class="tab-inbox">
                                 <div class="tab-icon"><i class="material-icons" style="color:rgba(0,0,0,0.50)">inbox</i></div>
-                                <div class="tab-text"><p>Local</p></div>
+                                <div class="tab-text"><p>Foreign</p></div>
                             </div>
                         </div>
                         <div class="nodiscoveries">
@@ -389,7 +390,7 @@
                                 <div class="e-p-content-title">
                                     <input type="text" placeholder="title..." id="e-p-title">
                                 </div>
-                                <div class="e-p-content-desc">
+                                <div class="e-p-content-desc" style="display:none">
                                     <input type="text" placeholder="decription..." id="e-p-description">
                                 </div>
                                 <textarea id="e-p-r-text-input" cols="30" rows="5" placeholder="Start a conversation ..."></textarea>
@@ -493,18 +494,6 @@
 
             getLoginUser();
 
-
-
-            // if(localStorage.getItem('uuid') == null){
-            //     //just view public post
-            //     console.log("this is meee"+localStorage.getItem('uuid'));
-            //     fetchPublicPost(0);
-            // }else{
-            //     //retrieve signed in users post and assign authenticated user priviledges
-            //     getLoginUser();
-            //     fetchFollowers();
-            // }
-
             // Added jquery for top container(new post)
 
             // hide top input bar
@@ -512,6 +501,8 @@
               loadFriendsToSelect();
               $("#post-input-w").hide();
               $("#post-container").show();
+
+              // can only post if 'title' and 'content' have something
             });
 
 
@@ -522,35 +513,16 @@
 
             // Fetch all public posts
             // 0 meaning freshly pulled from db
-            fetchPublicPost();
+            fetchMyPosts();
 
             // Fetch user's followers
             // with callback to fetchFriends
             fetchFollowers(fetchFriends);
 
-            // used for sending posts to 1 friend
-            // fetchFriends();
-
-            $('.check-visibility,.vis-dropdown').mouseenter(function(){
-                $('.vis-dropdown').show();
-            });
-
-            $('.check-visibility,.vis-dropdown').mouseleave(function(){
-                $('.vis-dropdown').hide();
-                document.getElementsByClassName('vis-authors')[0].style.display = "none";
-            });
-
-
-            $('.post-type-wrap,.post_type').mouseenter(function(){
-                $('.post_type').show();
-            });
-            $('.post-type-wrap,.post_type').mouseleave(function(){
-                $('.post_type').hide();
-            });
-            $('#post-input').click(function() {
-                document.getElementsByClassName("tab-switch")[0].style.visibility = "hidden";
-                document.getElementsByClassName('post-format')[0].style.display = "block";
-            })
+            // $('#post-input').click(function() {
+            //     document.getElementsByClassName("tab-switch")[0].style.visibility = "hidden";
+            //     document.getElementsByClassName('post-format')[0].style.display = "block";
+            // })
             $('#vis-input').click(function() {
                 document.getElementsByClassName('vis-authors')[0].style.display = "block";
 
@@ -566,25 +538,26 @@
             //
             // })
 
+            // Local ONLY
             document.getElementsByClassName('tab-public')[0].classList.add("current-tab");
             $('.tab-public').click(function() {
                 $('.posted-wrap').remove();
-                document.getElementsByClassName('nodiscoveries')[0].style.display = "block";
-                document.getElementsByClassName('inbox-wrap')[0].style.display = "none";
-                document.getElementsByClassName('tab-public')[0].classList.add("current-tab");
                 document.getElementsByClassName('tab-inbox')[0].classList.remove("current-tab");
-                fetchPublicPost();
-                outsideserver();
-                // fetchRemotePublicPost();
-
+                document.getElementsByClassName('tab-public')[0].classList.add("current-tab");
+                document.getElementsByClassName('nodiscoveries')[0].style.display = "none";
+                fetchMyPosts();
+                fetchFollowers(fetchFriends);
             })
 
+            // FOREIGN ONLY
             $('.tab-inbox').click(function() {
-                $('.posted-wrap').remove();
-                document.getElementsByClassName('tab-public')[0].classList.remove("current-tab");
-                document.getElementsByClassName('tab-inbox')[0].classList.add("current-tab");
-                document.getElementsByClassName('nodiscoveries')[0].style.display = "none";
-                fetchInboxMessages();
+              $('.posted-wrap').remove();
+              document.getElementsByClassName('tab-public')[0].classList.remove("current-tab");
+              document.getElementsByClassName('tab-inbox')[0].classList.add("current-tab");
+
+              document.getElementsByClassName('nodiscoveries')[0].style.display = "block";
+              document.getElementsByClassName('inbox-wrap')[0].style.display = "none";
+              fetchFromOutsideServer();
             })
 
             // Markdown preview
@@ -875,7 +848,7 @@
                 .done(function(data){
                     const followersRes =  data.items;
                     for(i=0;i < followersRes.length; i++){
-                        followerArray.push(followersRes[i].id)
+                        followerArray.push(followersRes[i].id.split('/')[4])
                     }
                     // used for sending posts to 1 friend
                     ff(followerArray);
@@ -902,82 +875,107 @@
               }
             }
 
-            function fetchPublicPost(){
-                $.ajax({
-                    type: 'GET',
-                    url: host_url + 'posts/',
-                })
-                .done(function(data){
-                    var posts = data.items;
-                    console.log('data', posts);
+            async function fetchMyPosts(){
+              let response = await fetch(host_url + 'posts/',{
+                  method: 'GET', // *GET, POST, PUT, DELETE, etc.
+                  });
 
-                    // Find img+text posts
-                    // loop through posts array and remove pairs
-                    // we ASSUME that data comes sorted by published date
-                    // so img+text posts will be next to each other
-                    let t = [{"description": "", "title":"", "author":{"id":""}}]; // checking that description, title, author.id match
-                    var img_text_posts = [];
+              let posts = await response.json();
 
-                    // if a the other half is there pop and push to img_text
-                    // else replace by current
-                    for(p in posts){
-                      // console.log(posts[p].description.startsWith("img+text"), posts[p].description);
-                      if(posts[p].description.startsWith("img+text") && t[0]['description'].startsWith("img+text")){
-                        // console.log('found', posts[p].description);
-                        t.push(posts[p]) // img+text are consecutive
-                        img_text_posts.push(t); // pair of img+text
-                        t = [{"description": "", "title":"", "author":{"id":""}}]; // reset
-                      } else{
-                        // console.log('no', posts[p].title, posts[p].description)
-                        t[0] = posts[p];
-                      }
-                    }
+              let iposts_res = await fetch(host_url + 'author/'+ uuid +'/inbox/',{
+                  method: 'GET', // *GET, POST, PUT, DELETE, etc.
+                  // credentials: 'same-origin', // include, *same-origin, omit
+                  headers: {
+                      'Authorization': 'Basic ' + btoa(username+':'+password),
+                  },
+                  // body: JSON.stringify(data) // body data type must match "Content-Type" header
+                  });
 
-                    // console.log('s_posts', posts);
-                    // console.log('img+text', img_text_posts);
-                    // console.log(posts);
-                    if(posts.length != 0){
-                        for ( i = 0 ; i < posts.length; i++){
-                            var data = posts[i];
-                            var followFlag;
-                            var delFlag;
-                            var editFlag;
+              let iposts = await iposts_res.json();
 
-                            // if post belongs to a follower
-                            if(followerArray.includes(data.author.id)){
-                                followFlag="hideFollow"
-                            }else{
-                                followFlag="showFollow"
-                            }
+              // get just the elements
+              posts = posts.items ;
 
-                            // if post belongs to logged in user
-                            if(data.author.id == localStorage.getItem('uuid')){
-                                flag="hideFollow";
-                                delFlag = "unhideDel";
-                                editFlag="unhideEdit";
-                            }else{
-                                delFlag= "hideDel";
-                                editFlag="hideEdit";
-                            }
+              // concatenate
+              for(p of iposts.items){
+                if(p.type == "post")
+                  posts.push(p)
+              }
+
+              // sorting
+              console.log(posts)
+              for(i of posts) console.log(i.published)
+              posts = posts.sort((a, b) => a.published + b.published)
+
+              console.log("by FETCH", posts)
+
+              for ( i = 0 ; i < posts.length; i++){
+                  var data = posts[i];
+                  var followFlag;
+                  var delFlag;
+                  var editFlag;
+
+                  // if post belongs to a follower
+                  if(followerArray.includes(data.author.id)){
+                      followFlag="hideFollow"
+                  }else{
+                      followFlag="showFollow"
+                  }
+
+                  // if post belongs to logged in user
+                  if(data.author.id == localStorage.getItem('uuid')){
+                      flag="hideFollow";
+                      delFlag = "unhideDel";
+                      editFlag="unhideEdit";
+                  }else{
+                      delFlag= "hideDel";
+                      editFlag="hideEdit";
+                  }
 
 
-                            var followstats = "nothing";
-                            var like_c = 0;
-                            // get number of likes
-                            // var like_c = persistLikes(data.author.id, data.post_id);
+                  var followstats = "nothing";
+                  var like_c = 0;
 
-                            // get follow status
-                            // var followstats = persistFollowStats(localStorage.getItem('uuid'), data.author.id);
-                            // console.log('here', followstats)
+                  // getting like count
+                  let likes_res;
+                  if(data.visibility == "PUBLIC"){
+                    likes_res = await fetch('author/'+data.author_id+'/posts/'+data.post_id +"/likes",{
+                        method: 'GET', // *GET, POST, PUT, DELETE, etc.
+                        });
+                    like_c = await likes_res.json();
 
-                            //insert post data to DOM
-                            FillDOM(data,followFlag,delFlag,editFlag, like_c, followstats);
-                        }
-                    }else{
-                        //no public data exist
-                        // show maybe design
-                    }
-                });
+                  } else {
+                    // likes_res = await fetch('author/'+data.author.author_id+'/posts/'+data.notif_id +"/likes",{
+                    //     method: 'GET', // *GET, POST, PUT, DELETE, etc.
+                    //     });
+                    like_c = {"type": "liked", "items":[]}; // TODO: dummy
+                  }
+
+                  console.log(like_c);
+                  like_c = like_c.items.length;
+
+                  // getting followstats
+
+                  // console.log(data);
+                  let followstats_res = await fetch(host_url + 'author/'+localStorage.getItem('uuid')+'/followers/'+data.author.id,{
+                      method: 'GET', // *GET, POST, PUT, DELETE, etc.
+                      });
+
+                  // console.log(data.author.id == localStorage.getItem('uuid'))
+                  followstats = await followstats_res.json();
+                  followstats = followstats.accepted;
+                  if(followstats == true){
+                      followstats=""; // show nothing
+                  }else if (followstats == false){
+                      followstats="Request Sent";
+                  }else if (data.author_id == localStorage.getItem('uuid')){ // current author
+                      followstats="";
+                  }else{
+                      followstats="Follow";
+                  }
+
+                  FillDOM(data,followFlag,delFlag,editFlag, like_c, followstats);
+                }
 
             }
 
@@ -996,14 +994,6 @@
                     }
                 });
             }
-
-            // only fetches local posts
-            // TODO: change names later
-            function fetchInboxMessages(){
-                $('#sum-body').empty();
-                fetchPublicPost();
-            }
-
 
             // Append posts to DOM
             function FillDOM(data,flag,deleteFlag,editFlag, like_c, followstats){
@@ -1030,7 +1020,7 @@
 
               // text + image
               else if(data.contentType == "image/png;base64" || data.contentType == "image/jpeg;base64"){
-                content = 'TODO: FIND CONTENT';
+                content = '';
                 image = `
                   <div class="posted-img-wrap">
                       <img src="${data.content}" id="proimage">
@@ -1044,7 +1034,6 @@
                 content = converter.makeHtml(data.content);
               }
 
-
               const postHTML =  `<div class="posted-wrap">
                   <div class="posted-w-h" >
                       <div class="p-w-h-details">
@@ -1056,7 +1045,7 @@
                           <div class="p-user-wrap">
                               <p>${data.author.displayName}</p>
                           </div>
-                          <p class="follow-user ${data.author.id}" id="${flag}" onclick="followUser(this)">${followstats}</p>
+                          <p class="follow-user ${data.author.id}" id="${flag}" onclick="followUser(this)">${followstats}</p> <p class="post-type">${data.visibility}</p>
                       </div>
                       <div class="del-post ${deleteFlag}"  id="${data.post_id}" onclick="deletePost(this)">
                           <i class="material-icons" style="color:rgba(0,0,0,0.45)">delete_outline</i>
@@ -1232,17 +1221,19 @@
 
 
             // get number of likes of a post
-            function persistLikes(author_id,post_id,data,flag,deleteFlag,editFlag){
+            function persistLikes( author_id,post_id){
                 // get a list of likes from other authors on current author’s post_id
+                var dd = 0;
                 $.ajax({
                     type: 'GET',
+                    async: false,
                     url: 'author/'+author_id+'/posts/'+post_id +"/likes"
                 })
                 .done(function(d){
                     // console.log(d.items.length);
-                    return d.items.length;
+                    dd = d;
                 });
-
+                  return dd.items.length;
             }
 
             function persistFollowStats(authorId, fId){
@@ -1363,7 +1354,7 @@
                   // creating a new post
                   const data = {
                       'title':  d.title,
-                      'description': d.description,
+                      'description': 'shared',
                       'contentType': d.contentType,
                       'content': d.content,
                       'categories': d.categories,
@@ -1481,7 +1472,8 @@
 
                     "contentType":"text/plain",
                     "comment":textfield
-                }
+                };
+
                 $.ajax({
                     type:"POST",
                     headers: {
@@ -1495,27 +1487,24 @@
                     //MANIPULATE DOM
                     console.log(data);
 
-                        var c_cell = `<div class="o-r-details">
-                            <p>${textfield}</p>
-                            <div class="c-p-wrap">
-                                <div class="comment-profile"> <i class="material-icons" style="color:cornflowerblue;">sentiment_satisfied_alt</i></div><p><span>${displayName_cur}</span></p>
-                            </div>
-                        </div>`
-                        $("#comment_cell"+pid).append(c_cell);
-                        var commentlabel = document.getElementById("comment-count_"+pid).innerHTML;
-                        var countvalarr = commentlabel.split(" ");
-                        var countval;
-                        countval = + countvalarr[0];
-                        countval+=1;
-                        console.log(commentlabel);
-                        document.getElementById("comment_input"+pid).value = ""
-                        document.getElementById("comment-count_"+pid).innerHTML = countval + " comments";
+                    var c_cell = `<div class="o-r-details">
+                        <p>${textfield}</p>
+                        <div class="c-p-wrap">
+                            <div class="comment-profile"> <i class="material-icons" style="color:cornflowerblue;">sentiment_satisfied_alt</i></div><p><span>${displayName_cur}</span></p>
+                        </div>
+                    </div>`;
+
+                    $("#comment_cell"+pid).append(c_cell);
+                    var commentlabel = document.getElementById("comment-count_"+pid).innerHTML;
+                    var countvalarr = commentlabel.split(" ");
+                    var countval;
+                    countval = + countvalarr[0];
+                    countval+=1;
+                    console.log(commentlabel);
+                    document.getElementById("comment_input"+pid).value = ""
+                    document.getElementById("comment-count_"+pid).innerHTML = countval + " comments";
 
                     });
-                }else{
-                    //alert("sign in or sign up to comment on a post");
-                    document.getElementsByClassName('popup-auth')[0].style.display = "block";
-                }
             }
 
             function fetchcomment(element){

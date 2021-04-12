@@ -1,8 +1,29 @@
-discover_url = "https://nofun.herokuapp.com/";
-var discover_token = "1e2f83dc7c4e929464ae4e8d5c42f69b7983ceee";
-outsideserver();
+var discover_url = "";
+var discover_token = ""
+
+function fetchFromOutsideServer() {
+  $.ajax({
+    type: 'GET',
+    headers: {
+        'Authorization': 'Basic ' + btoa(username+':'+password),
+    },
+    url: host_url + 'nodes/'
+  })
+    .done(function(data){
+      console.log(data.oite);
+      // we are only connecting with one group
+      //  sending hostname and token
+      discover_url =  data.items[0].host;
+      discover_token = data.items[0].password;
+      outsideserver();
+    });
+}
+
+
+// outsideserver();
 function outsideserver(){
-  
+  console.log('yooo', discover_token);
+  console.log(discover_url);
     $.ajax({
         headers: {Authorization:'Token '+discover_token},
         type: 'GET',
@@ -71,7 +92,7 @@ function persist_Discover_Likes(author_id,post_id,data,flag,deleteFlag,editFlag)
         }else{
             insert_discovery_Post("Follow",data,flag,deleteFlag,editFlag,like_c,toggle_post_img,toggle_post_text);
         }
-    
+
     });
 }
 function insert_discovery_Post(fs,data,flag,deleteFlag,editFlag,like_c,toggle_post_img,toggle_post_text){
@@ -126,7 +147,12 @@ function insert_discovery_Post(fs,data,flag,deleteFlag,editFlag,like_c,toggle_po
                 </div>
                 <p>Comment</p>
             </div>
-            <div class="share-w">
+            <div class="share-w" style="  float:right;
+              width:100px;
+              padding-right:15px;
+              height:100%;
+              margin-right:10px;
+              cursor:pointer;">
                 <div class="s-c-img">
                     <i class="material-icons">share</i>
                 </div>
@@ -191,7 +217,7 @@ function follow_discover_Request(fid,curTag){
     console.log(curTag)
     data = {
         "actor":host_url + 'author/'+localStorage.getItem('uuid'),
-        "object":discover_url+"author/"+fid 
+        "object":discover_url+"author/"+fid
     }
     $.ajax({
         headers: {Authorization:'Token '+discover_token},
@@ -209,7 +235,7 @@ function follow_discover_Request(fid,curTag){
 }
 
 //replaces all follow request links of a particular user to "request sent"
-function replaceall_discover(curtag){ 
+function replaceall_discover(curtag){
     var cn = curtag.className.split(" ")[1];
     console.log("replace all is : "+cn)
     $('.'+cn).each(function(i, obj) {
@@ -243,7 +269,7 @@ function persistFollowStats_discover(fid,data,flag,deleteFlag,editFlag,like_c,to
             followstats="Follow";
         }
         insert_discovery_Post(followstats,data,flag,deleteFlag,editFlag,like_c,toggle_post_img,toggle_post_text);
-        
+
     });
 }
 
@@ -304,7 +330,7 @@ function addcomment_discover(element){
 
  //likepost
 function likepost_discover(element){
-    
+
     if (is_auth_user() == true){
         console.log("like_post func called")
         var authorid = element.className.split(" ")[1].slice(6);
@@ -358,7 +384,7 @@ function fetch_discover_comment(element){
 
 
 async function getCommentlikes(data,element,userid_clean){
-     for(i=0;i<data.length;i++){ 
+     for(i=0;i<data.length;i++){
         var clean_comment_id = data[i].id.split("/");
         console.log(data[i].id)
         clean_comment_id = clean_comment_id[clean_comment_id.length - 1];
@@ -369,13 +395,13 @@ async function getCommentlikes(data,element,userid_clean){
                 url: discover_url+ 'author/'+userid_clean+'/posts/'+element.id+"/comments/"+clean_comment_id+"/likes/"
             })
             .done(function(commentarray){
-                //get username of commenter 
+                //get username of commenter
                 // GET  /author/<str:author_uuid>/
-                fetchcommenter(commentarray,data,element,userid_clean,i,clean_comment_id)                
+                fetchcommenter(commentarray,data,element,userid_clean,i,clean_comment_id)
             });
         }catch{
 
-        }     
+        }
      }
 }
 
@@ -408,7 +434,7 @@ async function fetchcommenter(commentarray,data,element,userid_clean,i,clean_com
             </div>`;
             $("#comment_cell"+element.id).append(c_cell);
         });
-        
+
     }catch(error){
         console.log(error);
         //based on how group 20 handled their get request , we need to call another ajax in the error block to fetch from our server
@@ -450,14 +476,14 @@ async function fetchcommenter(commentarray,data,element,userid_clean,i,clean_com
             </div>`;
             $("#comment_cell"+element.id).append(c_cell);
         }
-        
+
     }
 
 }
 
 //likepost
 function like_comment_discover(element){
-    
+
     if (is_auth_user() == true){
         console.log("like_post func called")
         var post_owner_id = element.className.split(" ")[1];
