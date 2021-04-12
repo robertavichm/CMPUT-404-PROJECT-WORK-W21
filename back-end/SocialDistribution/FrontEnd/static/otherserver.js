@@ -62,27 +62,17 @@ function persist_Discover_Likes(author_id,post_id,data,flag,deleteFlag,editFlag)
         var like_c = d.length;
         var toggle_post_img;
         var toggle_post_text;
-        if(data.contentType == "image"){
+
+        if(data.contentType.includes("image")){
             console.log("I AM AN IMAGE")
             toggle_post_img = "show_img_block";
             toggle_post_text =  "hide_post_text";
-        }
-        else if(data.contentType == "text/image"){
-            toggle_post_img = "show_img_block";
-            toggle_post_text =  "hide_post_text";
-        }
-        else if(data.contentType == "text/plain"){
-            toggle_post_img = "hide_img_block";
-            toggle_post_text = "show_post_text";
-        }
-        else if(data.contentType == "text/markdown"){
-            toggle_post_img = "hide_img_block";
-            toggle_post_text = "show_post_text";
         }
         else{
             toggle_post_img = "hide_img_block";
             toggle_post_text = "show_post_text";
         }
+      
         console.log("-------===--------");
         console.log(toggle_post_img);
         console.log(toggle_post_text);
