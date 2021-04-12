@@ -14,6 +14,7 @@
         .inbox-wrap{
             display:none;
         }
+        
         .send-comment{
             width:50px;
             height:40px;
@@ -35,8 +36,13 @@
             background-color:white;
         }
         .o-r-details{
-            border-radius:5px;
-            background-color:rgba(0,0,0,0.05);
+            word-wrap:break-word;
+            padding-bottom:5px;
+            background-color:rgba(0,0,0,0.02);
+            border-bottom:1px solid rgba(0,0,0,0.03);
+        }
+        .o-r-details span{
+            color:cornflowerblue;
         }
         .o-r-details p{
             width:100%;
@@ -44,13 +50,11 @@
             padding-right:10px;
             padding-top:5px;
             box-sizing: border-box;
+            color:rgba(0,0,0,0.75);
         }
         .c-p-wrap{
-
             line-height:20px;
             height:25px;
-            padding-bottom:5px;
-            padding-top:5px;
         }
         .c-p-wrap p{
             font-size:14px;
@@ -60,14 +64,32 @@
             text-align:left;
         }
         .comment-profile{
-            width:25px;
-            height:25px;
+            width:20px;
+            height:20px;
             float:left;
+            display:flex;
+            justify-content: center;
+            align-items: center;
+            margin-top:2.5px;
             margin-left:10px;
-            margin-right:15px;
-            border-radius:12.5px;
-            background-color:white;
+            margin-right:5px;
+            border-radius:10px;
+            background-color:cornflowerblue;
         }
+       
+        .comment-like-wrap{
+            height:100%;
+            float:left;
+            width:45px;
+        }
+        .comment-like-wrap:hover{
+            background-color:rgba(0,0,0,0.25);
+        }
+        .comment-like-num{
+            height:100%;
+            float:left;
+        }
+        
         .comment-time{
             height:30px;
             margin-top:-45px;
@@ -79,6 +101,9 @@
             margin-top:5px;
 
         }
+        #com-like{
+            padding-left:0;
+         }
         .unhideDel,.unhideEdit{
 
         }
@@ -194,6 +219,11 @@
             margin-left:10px;
             color:rgba(0,0,0,0.75);
         }
+        .comment-tzone{
+            height:100%;
+            float:right;
+            margin-right:10px;
+        }
     </style>
 </head>
 <body>
@@ -305,7 +335,7 @@
                 <div class="post-feed-w">
                     <div class="post-feed">
                         <div class="tab-switch" style="width:100%;">
-                            <div class="tab-public" style="width:110px">
+                            <div class="tab-public" style="width:110px;">
                                 <div class="tab-icon"><i class="material-icons" style="color:rgba(0,0,0,0.50)">public</i></div>
                                 <div class="tab-text"><p>Discover</p></div>
                             </div>
@@ -315,7 +345,7 @@
                             </div>
                         </div>
                         <div class="nodiscoveries">
-                            <lottie-player src="{%  static  'disc.json'  %}" background="transparent" speed="1.5" style="" loop autoplay>
+                            <lottie-player src="{%  static  'disc.json'  %}" background="transparent" speed="1.5" loop autoplay>
     	
                             </lottie-player>
                         </div>
@@ -365,6 +395,7 @@
                     console.log(data)
                     displayName_cur = data.displayName;
                     github_cur = data.github;
+                    localStorage.setItem("git",github_cur);
                 });
 
             }
@@ -721,7 +752,6 @@
                     //alert("sign in or sign up to like a post");
                     document.getElementsByClassName('popup-auth')[0].style.display = "block";
                 }
-
             }
             //persist likes
             function persistLikes(author_id,post_id,data,flag,deleteFlag,editFlag){
@@ -1056,16 +1086,15 @@
                     //MANIPULATE DOM
                     console.log(data.items);
                     for(i=0;i<data.items.length;i++){
-                        console.log(data)
-                        console.log(data.items[i].comment)
+                        console.log(data);
+                        console.log(data.items[i].comment);
                         var comment = data.items[i].comment;
-
-                        var c_cell = `<div class="o-r-details">
-                            <p>${comment}</p>
+                        var c_cell =  `<div class="o-r-details">
+                            <p><span>${data.items[i].author_id.displayName}</span> ${comment}</p>
                             <div class="c-p-wrap">
-                                <div class="comment-profile"> <i class="material-icons" style="color:cornflowerblue">sentiment_satisfied_alt</i></div><p><span>${data.items[i].author_id.displayName}</span></p><div class="comment-time"><p>${data.items[i].published.split("T")[0]}</p><div/>
+                                <div class="comment-like-wrap"><p>Like</p></div><div class="comment-profile"> <i class="material-icons" style="color:white;font-size:12px;">thumb_up</i></div><div class="comment-like-num"><p id="com-like">15</p></div><div class="comment-tzone"><p>${data.items[i].published.split("T")[0]}</p></div></div>
                             </div>
-                        </div>`
+                        </div>`;
                         $("#comment_cell"+pid).append(c_cell);
                     }
                 });
@@ -1073,7 +1102,6 @@
             function is_auth_user(){
                 if(localStorage.getItem('uuid') == null){
                     //just view public post
-                    //window.location.href = host_url;
                     return false;
                 }else{
                     return true;

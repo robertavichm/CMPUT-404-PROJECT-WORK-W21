@@ -19,6 +19,7 @@
             justify-content:center;
             align-items:center;
             flex-direction:column;
+            overflow-y:hidden;
             font-family: Arial, Helvetica, sans-serif;
         }
         .nav{
@@ -57,6 +58,19 @@
             margin-left:10px;
             cursor:pointer;
         }
+        .gna{
+            width:calc(100% - 10px);
+            margin-top:10px;
+            margin-left:5px;
+            height:200px;
+            display:none;
+            background-color:white;
+        }
+        .gna h3{
+            text-align:center;
+            font-weight:600;
+            color:rgba(0,0,0,0.65)
+        }
         
     </style>
 </head>
@@ -69,13 +83,37 @@
             <div class="git-body">
                 <div id="feed"></div>
             </div>
+            <div class="gna">
+                <lottie-player src="{%  static  'git.json'  %}" background="transparent" speed="1.5" loop autoplay style="height:150px;margin:0;">
+    	
+                </lottie-player>
+                <h3>You currently do not have github linked to your account</h3>
+            </div>
         </div>
+        
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/mustache.js/0.7.2/mustache.min.js"></script>
+        <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
         <script src="{% static '/src/github-activity.js' %}"></script>  
-        
         <script>
-            GitHubActivity.feed({ username: "robertavichm", selector: "#feed" });
+            const host_url = '{{ host_url }}';
+            if(localStorage.getItem("git") != "" && localStorage.getItem("git") != null){
+                console.log("git present");
+                console.log(localStorage.getItem("git"))
+                GitHubActivity.feed({ username:localStorage.getItem("git"), selector: "#feed" });
+                document.getElementsByClassName('gna')[0].style.display = "none";
+                document.getElementsByClassName('git-body')[0].style.display = "block";
+            }else{
+                console.log("git NOT present"); 
+                console.log(localStorage.getItem("git"))
+                document.getElementsByClassName('git-body')[0].style.display = "none";
+                document.getElementsByClassName('gna')[0].style.display = "block";
+            }
+            $('.back_arrow').click(function() {
+                window.location.href = host_url+"home";
+
+            })
+
         </script>
     </body>
     

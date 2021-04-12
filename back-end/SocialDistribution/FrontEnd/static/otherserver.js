@@ -1,5 +1,5 @@
 discover_url = "https://nofun.herokuapp.com/";
-var discover_token = "bc994a0507e90138def54fb44629df983d35fd4a";
+var discover_token = "1e2f83dc7c4e929464ae4e8d5c42f69b7983ceee";
 outsideserver();
 function outsideserver(){
   
@@ -46,19 +46,31 @@ function persist_Discover_Likes(author_id,post_id,data,flag,deleteFlag,editFlag)
             toggle_post_img = "show_img_block";
             toggle_post_text =  "hide_post_text";
         }
-        if(data.contentType == "text/image"){
+        else if(data.contentType == "text/image"){
             toggle_post_img = "show_img_block";
             toggle_post_text =  "hide_post_text";
         }
-        if(data.contentType == "text/plain"){
+        else if(data.contentType == "text/plain"){
             toggle_post_img = "hide_img_block";
             toggle_post_text = "show_post_text";
         }
-        // if(localStorage.getItem('uuid') != null){
-        //     persistFollowStats_discover(localStorage.getItem('uuid'),data,flag,deleteFlag,editFlag,like_c);
-        // }else{
+        else if(data.contentType == "text/markdown"){
+            toggle_post_img = "hide_img_block";
+            toggle_post_text = "show_post_text";
+        }
+        else{
+            toggle_post_img = "hide_img_block";
+            toggle_post_text = "show_post_text";
+        }
+        console.log("-------===--------");
+        console.log(toggle_post_img);
+        console.log(toggle_post_text);
+        console.log("-------===--------");
+        if(localStorage.getItem('uuid') != null){
+            persistFollowStats_discover(localStorage.getItem('uuid'),data,flag,deleteFlag,editFlag,like_c,toggle_post_img,toggle_post_text);
+        }else{
             insert_discovery_Post("Follow",data,flag,deleteFlag,editFlag,like_c,toggle_post_img,toggle_post_text);
-        // }
+        }
     
     });
 }
@@ -66,8 +78,6 @@ function insert_discovery_Post(fs,data,flag,deleteFlag,editFlag,like_c,toggle_po
     var followstats = fs;
     var pid_unclean = (data.id).split("/");
     var pid_clean = pid_unclean[pid_unclean.length - 1];
-
-
     var authorid_unclean = (data.author.id).split("/");
     var authorid_clean = authorid_unclean[authorid_unclean.length - 1];
     console.log(authorid_clean);
@@ -81,7 +91,7 @@ function insert_discovery_Post(fs,data,flag,deleteFlag,editFlag,like_c,toggle_po
                 <div class="p-user-wrap">
                     <p>${data.author.displayName}</p>
                 </div>
-                <p class="follow-user ${authorid_clean}" id="${flag}" onclick="follow_discover_User(this)">${followstats}</p>
+                <p class="follow-user ${"ftag_"+authorid_clean}" id="${flag}" onclick="follow_discover_User(this)">${followstats}</p>
             </div>
             <div class="del-post ${deleteFlag}"  id="${pid_clean}" onclick="deletePost(this)">
                 <i class="material-icons" style="color:rgba(0,0,0,0.45)">delete_outline</i>
@@ -100,11 +110,11 @@ function insert_discovery_Post(fs,data,flag,deleteFlag,editFlag,like_c,toggle_po
             <img src="${data.content}" id="proimage">
         </div>
         <div class="like-count-w">
-            <p id="like-count" class="${"like_row"+pid_clean}">${like_c + " likes"}</p><p id="${"comment-count_"+pid_clean}">${2} comments</p">
+            <p id="like-count" class="${"like_row"+pid_clean}">${like_c + " likes"}</p><p id="${"comment-count_"+pid_clean}">${data.count} comments</p">
         </div>
         <div class="social-controls">
 
-            <div class="like-w ${"thumb_"+authorid_clean}" onclick="likepost(this)" id="${"thumb_"+pid_clean}">
+            <div class="like-w ${"thumb_"+authorid_clean}" onclick="likepost_discover(this)" id="${"thumb_"+pid_clean}">
                 <div class="s-c-img">
                     <i class="material-icons">thumb_up</i>
                 </div>
@@ -131,7 +141,7 @@ function insert_discovery_Post(fs,data,flag,deleteFlag,editFlag,like_c,toggle_po
                 <div class="o-type-comment">
                     <input type="text" placeholder="Type your comments here" id="${"comment_input"+pid_clean}">
                 </div>
-                <div class="send-comment" onclick="addcomment(this)" id="${pid_clean}">
+                <div class="send-comment ${authorid_clean}" onclick="addcomment_discover(this)" id="${pid_clean}">
                     <i class="material-icons" style="color:white">send</i>
                 </div>
             </div>
@@ -165,35 +175,7 @@ function toggle_discovery_Comments(element){
     }
 }
 
-function fetch_discover_comment(element){
-    var userid_unclean = element.className.split(" ");
-    var userid_clean = userid_unclean[userid_unclean.length - 1];
-    console.log("------")
-    console.log(userid_clean)
-    $.ajax({
-        headers: {Authorization:'Token '+discover_token},
-        type:"GET",
-        url:discover_url+"author/"+userid_clean+"/posts/"+element.id+"/comments/"
-    })
-    .done(function(data){
-        //MANIPULATE DOM
-        console.log(data);
-        for(i=0;i<data.length;i++){
-            console.log(data[i].comment)
-            var comment = data[i].comment;
-            var c_cell = `<div class="o-r-details">
-                <p>${comment}</p>
-                <div class="c-p-wrap">
-                    <div class="comment-profile"> <i class="material-icons" style="color:cornflowerblue">sentiment_satisfied_alt</i></div><p><span>${"Hard coded author name"}</span></p><div class="comment-time"><p>${data[i].published.split("T")[0]}</p><div/>
-                </div>
-            </div>`
-            $("#comment_cell"+element.id).append(c_cell);
-        }
-    });
-}
-
-
- function follow_discover_User(curTag){
+function follow_discover_User(curTag){
     if (is_auth_user() == true){
         console.log("tapped follower tag")
         var arr = (curTag.className).split(' ');
@@ -203,10 +185,10 @@ function fetch_discover_comment(element){
         //alert("sign in or sign up to send a friend request")
         document.getElementsByClassName('popup-auth')[0].style.display = "block";
     }
-
 }
 
 function follow_discover_Request(fid,curTag){
+    console.log(curTag)
     data = {
         "actor":host_url + 'author/'+localStorage.getItem('uuid'),
         "object":discover_url+"author/"+fid 
@@ -222,37 +204,297 @@ function follow_discover_Request(fid,curTag){
         //MANIPULATE DOM
         console.log(data);
         curTag.innerHTML = "Request Sent";
-        replaceall_discover(fid);
+        replaceall_discover(curTag);
     });
 }
 
 //replaces all follow request links of a particular user to "request sent"
-function replaceall_discover(fid){
-    $('.'+fid).each(function(i, obj) {
+function replaceall_discover(curtag){ 
+    var cn = curtag.className.split(" ")[1];
+    console.log("replace all is : "+cn)
+    $('.'+cn).each(function(i, obj) {
         obj.innerHTML = "Request Sent";
     });
 }
 
-// //persist follow status on each public post
-// function persistFollowStats_discover(fid,data,flag,deleteFlag,editFlag,like_c){
+//persist follow status on each public post
+function persistFollowStats_discover(fid,data,flag,deleteFlag,editFlag,like_c,toggle_post_img,toggle_post_text){
+    var authorid_unclean = (data.author.id).split("/");
+    var authorid_clean = authorid_unclean[authorid_unclean.length - 1];
+    $.ajax({
+        headers: {Authorization:'Token '+discover_token},
+        type: 'GET',
+        url: discover_url+ 'author/'+authorid_clean+'/followers/'+localStorage.getItem("uuid")
+    })
+    .done(function(dd){
+        console.log("IN persistent follow stats");
+        console.log(dd);
+        var followstats;
+        if(dd.status == "R"){
+            followstats="Request Sent";
+        }
+        else if(dd.status == "A"){
+            followstats="Friends";
+        }
+        else if(dd.status == "D"){
+            followstats="Follow";
+        }
+        else{
+            followstats="Follow";
+        }
+        insert_discovery_Post(followstats,data,flag,deleteFlag,editFlag,like_c,toggle_post_img,toggle_post_text);
+        
+    });
+}
 
-//     $.ajax({
-//         type: 'GET',
-//         url: host_url + 'author/'+data.author.id+'/followers/'+fid
-//     })
-//     .done(function(dd){
-//         console.log("IN persistent follow stats");
-//         console.log(dd);
-//         var requestnotaccepted = dd.accepted;
-//         console.log(requestnotaccepted);
-//         var followstats;
-//         if(requestnotaccepted == true){
-//             followstats="accepted";
-//         }else if (requestnotaccepted == false){
-//             followstats="Request Sent";
-//         }else{
-//             followstats="Follow";
-//         }
-//         insertPost(followstats,data,flag,deleteFlag,editFlag,like_c);
-//     });
-// }
+
+
+
+// //handling comments
+function addcomment_discover(element){
+    if (is_auth_user() == true){
+        var authorid = element.className.split(" ")[1];
+        var pid = element.id;
+        console.log("pid is : "+pid)
+        var textfield = document.getElementById("comment_input"+pid).value;
+        if(textfield == ""){
+            return
+        }
+        console.log(textfield)
+        data = {
+            "type":"comment",
+            "author":localStorage.getItem('uuid'),
+            "contentType":"contentType",
+            "comment":textfield
+        }
+        $.ajax({
+            type:"POST",
+            headers: {Authorization:'Token '+discover_token},
+            contentType: "application/json",
+            data:JSON.stringify(data),
+            url:discover_url+"author/"+authorid+"/posts/"+pid+"/comments/"
+        })
+        .done(function(data){
+            //MANIPULATE DOM
+            console.log(data);
+            var res_comment_id = data.id.split("/");
+            res_comment_id = res_comment_id[res_comment_id.length - 1];
+            var c_cell = `
+            <div class="o-r-details">
+                <p><span>${displayName_cur}</span> ${textfield}</p>
+                <div class="c-p-wrap">
+                    <div class="comment-like-wrap ${authorid} ${res_comment_id} ${pid}" onclick="like_comment_discover(this)"><p>Like</p></div><div class="comment-profile"> <i class="material-icons" style="color:white;font-size:12px;">thumb_up</i></div><div class="comment-like-num"><p id="com-like_${res_comment_id}">0</p></div><div class="comment-tzone"><p>march 15th</p></div></div>
+                </div>
+            </div>`;
+            $("#comment_cell"+pid).append(c_cell);
+            var commentlabel = document.getElementById("comment-count_"+pid).innerHTML;
+            var countvalarr = commentlabel.split(" ");
+            var countval;
+            countval = + countvalarr[0];
+            countval+=1;
+            console.log(commentlabel);
+            document.getElementById("comment_input"+pid).value = ""
+            document.getElementById("comment-count_"+pid).innerHTML = countval + "comments";
+
+        });
+    }else{
+        //alert("sign in or sign up to comment on a post");
+        document.getElementsByClassName('popup-auth')[0].style.display = "block";
+    }
+}
+
+ //likepost
+function likepost_discover(element){
+    
+    if (is_auth_user() == true){
+        console.log("like_post func called")
+        var authorid = element.className.split(" ")[1].slice(6);
+        console.log("author id : "+authorid)
+        var postid= (element.id).slice(6);
+        //get author id
+        var arr = (element.className).split(' ');
+        var extract = arr[1];
+        fid = extract.slice(6);
+        data = {
+            "author":localStorage.getItem('uuid')
+        }
+        $.ajax({
+            type:"POST",
+            headers: {Authorization:'Token '+discover_token},
+            contentType: "application/json",
+            data:JSON.stringify(data),
+            url:discover_url+"author/"+authorid+"/posts/"+postid+"/likes/"
+        })
+        .done(function(data){
+            //increment count
+            var countvaljunk = document.getElementsByClassName("like_row"+postid)[0].innerHTML += 1;
+            var countval = + countvaljunk.slice(0, -6)
+            countval+=1;
+            document.getElementsByClassName("like_row"+postid)[0].innerHTML = countval + " likes";
+        })
+
+    }else{
+        //alert("sign in or sign up to like a post");
+        document.getElementsByClassName('popup-auth')[0].style.display = "block";
+    }
+
+}
+
+function fetch_discover_comment(element){
+    var userid_unclean = element.className.split(" ");
+    var userid_clean = userid_unclean[userid_unclean.length - 1];
+    console.log("------")
+    console.log(userid_clean)
+    $.ajax({
+        headers: {Authorization:'Token '+discover_token},
+        type:"GET",
+        url:discover_url+"author/"+userid_clean+"/posts/"+element.id+"/comments/"
+    })
+    .done(function(data){
+        //MANIPULATE DOM
+        console.log(data);
+        getCommentlikes(data,element,userid_clean);
+    });
+}
+
+
+async function getCommentlikes(data,element,userid_clean){
+     for(i=0;i<data.length;i++){ 
+        var clean_comment_id = data[i].id.split("/");
+        console.log(data[i].id)
+        clean_comment_id = clean_comment_id[clean_comment_id.length - 1];
+        try{
+            await $.ajax({
+                headers: {Authorization:'Token '+discover_token},
+                type: 'GET',
+                url: discover_url+ 'author/'+userid_clean+'/posts/'+element.id+"/comments/"+clean_comment_id+"/likes/"
+            })
+            .done(function(commentarray){
+                //get username of commenter 
+                // GET  /author/<str:author_uuid>/
+                fetchcommenter(commentarray,data,element,userid_clean,i,clean_comment_id)                
+            });
+        }catch{
+
+        }     
+     }
+}
+
+async function fetchcommenter(commentarray,data,element,userid_clean,i,clean_comment_id){
+    var commenter_id = (data[i].author).split("/");
+    var commenter_id = commenter_id[commenter_id.length - 1];
+    //check where to get the user details from
+    // if()
+
+    try{
+        await $.ajax({
+            headers: {Authorization:'Token '+discover_token},
+            type: 'GET',
+            url: discover_url+ 'author/'+commenter_id+'/'
+        })
+        .done(function(commenterinfo){
+            console.log(commenterinfo)
+            // if(commenterinfo)
+            console.log(commenterinfo)
+            var commenter_dname = commenterinfo.displayName;
+            var commentlikes = commentarray.length;
+            var comment = data[i].comment;
+            console.log(data[i].comment)
+            var c_cell = `
+            <div class="o-r-details">
+                <p><span>${commenter_dname}</span> ${comment}</p>
+                <div class="c-p-wrap">
+                    <div class="comment-like-wrap ${userid_clean} ${clean_comment_id} ${element.id}" onclick="like_comment_discover(this)"><p>Like</p></div><div class="comment-profile"> <i class="material-icons" style="color:white;font-size:12px;">thumb_up</i></div><div class="comment-like-num"><p id="com-like_${clean_comment_id}">${commentlikes}</p></div><div class="comment-tzone"><p>${data[i].published.split("T")[0]}</p></div></div>
+                </div>
+            </div>`;
+            $("#comment_cell"+element.id).append(c_cell);
+        });
+        
+    }catch(error){
+        console.log(error);
+        //based on how group 20 handled their get request , we need to call another ajax in the error block to fetch from our server
+        try{
+            await $.ajax({
+                type: 'GET',
+                url: 'author/'+commenter_id+'/'
+            })
+            .done(function(localuserinfo){
+                console.log("in local call");
+                console.log(localuserinfo);
+                var commenter_dname = localuserinfo.displayName;
+                var commentlikes = commentarray.length;
+                var comment = data[i].comment;
+                console.log(data[i].comment)
+                var c_cell = `
+                <div class="o-r-details">
+                    <p><span>${commenter_dname}</span> ${comment}</p>
+                    <div class="c-p-wrap">
+                        <div class="comment-like-wrap ${userid_clean} ${clean_comment_id} ${element.id}" onclick="like_comment_discover(this)"><p>Like</p></div><div class="comment-profile"> <i class="material-icons" style="color:white;font-size:12px;">thumb_up</i></div><div class="comment-like-num"><p id="com-like_${clean_comment_id}">${commentlikes}</p></div><div class="comment-tzone"><p>${data[i].published.split("T")[0]}</p></div></div>
+                    </div>
+                </div>`;
+                $("#comment_cell"+element.id).append(c_cell);
+
+            });
+        }catch(err){
+            console.log(err)
+            console.log("in unknown(3rd group) group call");
+            var commenter_dname = "unknown user";
+            var commentlikes = commentarray.length;
+            var comment = data[i].comment;
+            console.log(data[i].comment)
+            var c_cell = `
+            <div class="o-r-details">
+                <p><span>${commenter_dname}</span> ${comment}</p>
+                <div class="c-p-wrap">
+                    <div class="comment-like-wrap ${userid_clean} ${clean_comment_id} ${element.id}" onclick="like_comment_discover(this)"><p>Like</p></div><div class="comment-profile"><i class="material-icons" style="color:white;font-size:12px;">thumb_up</i></div><div class="comment-like-num"><p id="com-like_${clean_comment_id}">${commentlikes}</p></div><div class="comment-tzone"><p>${data[i].published.split("T")[0]}</p></div></div>
+                </div>
+            </div>`;
+            $("#comment_cell"+element.id).append(c_cell);
+        }
+        
+    }
+
+}
+
+//likepost
+function like_comment_discover(element){
+    
+    if (is_auth_user() == true){
+        console.log("like_post func called")
+        var post_owner_id = element.className.split(" ")[1];
+        var commentID = element.className.split(" ")[2];
+        var postID = element.className.split(" ")[3];
+
+
+
+
+        console.log("commenter id : "+post_owner_id);
+        console.log("comment id : "+commentID);
+        console.log("post id : "+postID);
+
+
+        data = {
+            "author":localStorage.getItem('uuid')
+        }
+        $.ajax({
+            type:"POST",
+            headers: {Authorization:'Token '+discover_token},
+            contentType: "application/json",
+            data:JSON.stringify(data),
+            url:discover_url+"author/"+post_owner_id+"/posts/"+postID+"/comments/"+commentID+"/likes/"
+        })
+        .done(function(data){
+            //increment count
+            console.log(data);
+            var countvaljunk = document.getElementById("com-like_"+commentID).innerHTML;
+            var countval = + countvaljunk;
+            countval+=1;
+            document.getElementById("com-like_"+commentID).innerHTML = countval;
+        })
+
+    }else{
+        //alert("sign in or sign up to like a post");
+        document.getElementsByClassName('popup-auth')[0].style.display = "block";
+    }
+
+}
