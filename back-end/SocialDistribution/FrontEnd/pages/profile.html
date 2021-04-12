@@ -105,8 +105,6 @@
                     <div class="wrap-button">
                       <button type="submit" name="button">Done</button>
                     </div>
-
-
                   </form>
                 </div>
             </div>
@@ -158,6 +156,7 @@
       })
         .done(function(data){
           console.log(data);
+          localStorage.setItem("git",$('input[name=github]').val());
           document.getElementsByClassName("id")[0].value = data.id;
           document.getElementsByClassName("dname")[0].value = data.displayName;
           document.getElementsByClassName("host")[0].value = data.host;

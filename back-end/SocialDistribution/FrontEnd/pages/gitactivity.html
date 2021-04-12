@@ -19,6 +19,7 @@
             justify-content:center;
             align-items:center;
             flex-direction:column;
+            overflow-y:hidden;
             font-family: Arial, Helvetica, sans-serif;
         }
         .nav{
@@ -47,41 +48,73 @@
             height:calc(100% - 50px);
             overflow-y:auto;
         }
+        .back_arrow{
+            height:100%;
+            width:60px;
+            float:left;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            margin-left:10px;
+            cursor:pointer;
+        }
+        .gna{
+            width:calc(100% - 10px);
+            margin-top:10px;
+            margin-left:5px;
+            height:200px;
+            display:none;
+            background-color:white;
+        }
+        .gna h3{
+            text-align:center;
+            font-weight:600;
+            color:rgba(0,0,0,0.65)
+        }
+
     </style>
 </head>
     <body>
-      <div class="">
-        <p><a href="{% url 'home' %}"><i class="material-icons" style="color:chocolate; font-size:2em;">arrow_circle_up</i></a> </p>
-      </div>
+        <div class="nav">
+            <div class="back_arrow"><i class="material-icons" style="margin:0">arrow_back_ios</i></div>
+        </div>
         <div class="git-content">
             <div class="git-head"><h3>My Github Activity Stream</h3></div>
             <div class="git-body">
                 <div id="feed"></div>
             </div>
+            <div class="gna">
+                <lottie-player src="{%  static  'git.json'  %}" background="transparent" speed="1.5" loop autoplay style="height:150px;margin:0;">
+
+                </lottie-player>
+                <h3>You currently do not have github linked to your account</h3>
+            </div>
         </div>
+
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/mustache.js/0.7.2/mustache.min.js"></script>
+        <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
         <script src="{% static '/src/github-activity.js' %}"></script>
-
         <script>
+            const host_url = '{{ host_url }}';
+            if(localStorage.getItem("git") != "" && localStorage.getItem("git") != null){
+                console.log("git present");
+                console.log(localStorage.getItem("git"))
+                GitHubActivity.feed({ username:localStorage.getItem("git"), selector: "#feed" });
+                document.getElementsByClassName('gna')[0].style.display = "none";
+                document.getElementsByClassName('git-body')[0].style.display = "block";
+            }else{
+                console.log("git NOT present");
+                console.log(localStorage.getItem("git"))
+                document.getElementsByClassName('git-body')[0].style.display = "none";
+                document.getElementsByClassName('gna')[0].style.display = "block";
+            }
+            $('.back_arrow').click(function() {
+                window.location.href = host_url+"home";
 
-        const host_url = '{{ host_url }}';
-        // GET User data
-        $.ajax({
-          type: 'GET',
-          // headers: {
-          //     'Authorization': 'Basic ' + btoa(username+':'+password),
-          // },
-          url: host_url + 'author/'+ localStorage.getItem('uuid'),
-          dataType: 'json',
-        })
-          .done(function(data){
-            console.log(data.github);
-              GitHubActivity.feed({ username: data.github, selector: "#feed" });
-          });
+            })
 
         </script>
-
     </body>
 
 
