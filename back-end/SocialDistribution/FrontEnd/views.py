@@ -27,3 +27,6 @@ def inbox(request):
 
 def gitactivity(request):
     return render(request,'gitactivity.html', {'host_url': host_url})
+
+def ty(request):
+    return render(request,'thankyou.html', {'host_url': host_url})

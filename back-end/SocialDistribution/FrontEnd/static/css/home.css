@@ -305,7 +305,7 @@ body,html{
   margin: 10px 0;
 }
 
-.p-content-title input, .p-content-desc input, .e-p-content-title input, .e-p-content-desc input{
+.p-content-title input, .p-content-desc input, .e-p-content-title input, .e-p-content-desc input, .p-categories input, .e-p-categories input{
   width: 95%;
   height: 15px;
   padding: 20px;
@@ -313,6 +313,7 @@ body,html{
   font-size: 1.2em;
       border: 1px solid #b1afaf;
 }
+
 .post-img-wrap{
     width:calc(200px);
     float:right;
@@ -369,9 +370,11 @@ body,html{
 .posted-wrap{
     width:calc(100% - 10px);
     margin-left:5px;
-    margin-bottom:30px;
+    margin-bottom:25px;
+    margin-top: 10px
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 2px;
     background-color:white;
+    border: 1px solid #00000017;
 }
 .posted-w-h{
     height:50px;
@@ -469,7 +472,7 @@ body,html{
     height:100%;
     cursor:pointer;
 }
-.share-w{
+#share-w{
     float:right;
     width:100px;
     padding-right:15px;
@@ -943,8 +946,14 @@ body,html{
 
 #post-container, #e-post-container{
   display: none;
-  border: 1px solid #dfdfdf;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
 }
+
+#post-container:hover, #e-post-container:hover{
+   box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
 
 #p-r-text-input, #e-p-r-text-input{
     font-size:16px;
@@ -955,6 +964,7 @@ body,html{
     background-color:#F4F5F9;
     box-sizing: border-box;
     width: 95%;
+    background-color: white
 }
 
 .post-main-bot{

@@ -132,10 +132,12 @@
                         <div class="p-content-title">
                             <input type="text" placeholder="title..." id="p-title">
                         </div>
-                        <div class="p-content-desc">
-                            <input type="text" placeholder="decription..." id="p-description">
-                        </div>
+
                         <textarea id="p-r-text-input" cols="30" rows="5" placeholder="Start a conversation ..."></textarea>
+
+                        <div class="p-categories" style="margin-top:10px">
+                            <input type="text" placeholder="food,school" id="p-cat" style="height: 20px !important;padding: 3px;font-size: 0.89em;">
+                        </div>
 
                         <div class="post-main-bot">
                           <div class="post-images">
@@ -218,7 +220,7 @@
 
                         <!-- =============================== Editing Post Block =============================== -->
 
-                        <div class="e-editPostPopup" style="border: 1px solid chocolate">
+                        <div class="e-editPostPopup" style="border: 1px solid #00000061">
                           <div class="e-w-popup">
 
                             <div class="e-p-f-h">
@@ -373,7 +375,7 @@
 
             // Fetch all public posts
             // 0 meaning freshly pulled from db
-            fetchPublicPost(0);
+            fetchPublicPost();
 
             // Fetch user's followers
             // with callback to fetchFriends
@@ -412,7 +414,7 @@
                 document.getElementsByClassName('inbox-wrap')[0].style.display = "none";
                 document.getElementsByClassName('tab-public')[0].classList.add("current-tab");
                 document.getElementsByClassName('tab-inbox')[0].classList.remove("current-tab");
-                fetchPublicPost(0);
+                fetchPublicPost();
                 // fetchRemotePublicPost();
 
             })
@@ -564,25 +566,27 @@
              // Creating new post
              $('.create-post').click(function() {
                 var title = document.getElementById("p-title").value;
-                var description = document.getElementById("p-description").value;
                 var text = document.getElementById("p-r-text-input").value;
                 var listed_unlisted = document.getElementById("unlisted_listed").value;
                 const whichFriend = document.getElementById("whichFriend").value;
+                var description;
+                // if categories empty, return array with "none"
+                const categories = document.getElementById("p-cat").value.split(",")[0] == "" ? ["none"] : document.getElementById("p-cat").value.split(",");
 
                 const data = {
                     'title':title,
-                    'description':description,
+                    'description':'',
                     'contentType':$('#content_type').val(),
                     'content':'',
-                    'categories':["web","tutorial"],
+                    'categories':categories,
                     'pageSize':1,
                     'visibility':$('#visibility_choice').val(),
                     'unlisted': listed_unlisted == "Unlisted"  // needs a js boolean
                 };
 
                 // just text
-                console.log(imgType);
                 if (!base64){
+                  data.description = "text"
                   data.content = text;
                   makeReq(data); // post to user
                   if (data.visibility == "FRIENDS")
@@ -591,9 +595,9 @@
 
                 // just image
                 else if (base64 && !text.length){
-                  console.log('just image');
+                  data.description =  "img"
                   data.content = base64;
-                  data.contentType = "application/base64";
+                  data.contentType = imgType + ";base64";
                   makeReq(data);
                   if (data.visibility == "FRIENDS")
                     makeReqInbox(data, whichFriend)
@@ -602,8 +606,11 @@
                 // image + text
                 // 2 posts requests
                 else if(base64  && text.length){
-                  console.log('text+image')
+                  // generate an id common to both
+                  const ra = Math.floor(Math.random() * 100);
+
                   // send text
+                  data.description = "img+text+"+ra;
                   data.content = text;
                   makeReq(data);
                   if (data.visibility == "FRIENDS")
@@ -616,6 +623,8 @@
                   if (data.visibility == "FRIENDS")
                     makeReqInbox(data, whichFriend)
                 }
+
+                console.log(data)
 
                 function makeReq(data){
                   console.log(data);
@@ -633,8 +642,7 @@
                     $("#post-input-w").show();
                     $("#post-container").hide();
 
-                    //insert post data to DOM
-                    FillDOM(data,"hideFollow","unhideDel","unhideEdit",1);
+                    location.reload();
                   });
                 }
 
@@ -707,7 +715,6 @@
                     for(i=0;i < followersRes.length; i++){
                         followerArray.push(followersRes[i].id)
                     }
-
                     // used for sending posts to 1 friend
                     ff(followerArray);
                 });
@@ -733,23 +740,43 @@
               }
             }
 
-            function fetchPublicPost(newflag){
+            function fetchPublicPost(){
                 $.ajax({
                     type: 'GET',
-                    url: host_url + 'posts/'
+                    url: host_url + 'posts/',
                 })
                 .done(function(data){
-                    // console.log('fetching public-posts');
-                    // console.log(data.items); // posts
-
-                    const allPublicPostsSorted = data.items;
-                    // allPublicPostsSorted.sort((a, b) => a.published - b.published )
-                    console.log(x= allPublicPostsSorted);
-
                     var posts = data.items;
+                    console.log('data', posts);
+
+                    // Find img+text posts
+                    // loop through posts array and remove pairs
+                    // we ASSUME that data comes sorted by published date
+                    // so img+text posts will be next to each other
+                    let t = [{"description": "", "title":"", "author":{"id":""}}]; // checking that description, title, author.id match
+                    var img_text_posts = [];
+
+                    // if a the other half is there pop and push to img_text
+                    // else replace by current
+                    for(p in posts){
+                      // console.log(posts[p].description.startsWith("img+text"), posts[p].description);
+                      if(posts[p].description.startsWith("img+text") && t[0]['description'].startsWith("img+text")){
+                        // console.log('found', posts[p].description);
+                        t.push(posts[p]) // img+text are consecutive
+                        img_text_posts.push(t); // pair of img+text
+                        t = [{"description": "", "title":"", "author":{"id":""}}]; // reset
+                      } else{
+                        // console.log('no', posts[p].title, posts[p].description)
+                        t[0] = posts[p];
+                      }
+                    }
+
+                    // console.log('s_posts', posts);
+                    // console.log('img+text', img_text_posts);
+                    // console.log(posts);
                     if(posts.length != 0){
                         for ( i = 0 ; i < posts.length; i++){
-                            var data = allPublicPostsSorted[i];
+                            var data = posts[i];
                             var followFlag;
                             var delFlag;
                             var editFlag;
@@ -771,9 +798,18 @@
                                 editFlag="hideEdit";
                             }
 
+
+                            var followstats = "nothing";
+                            var like_c = 0;
+                            // get number of likes
+                            // var like_c = persistLikes(data.author.id, data.post_id);
+
+                            // get follow status
+                            // var followstats = persistFollowStats(localStorage.getItem('uuid'), data.author.id);
+                            // console.log('here', followstats)
+
                             //insert post data to DOM
-                            console.log('filling dom');
-                            FillDOM(data,followFlag,delFlag,editFlag,newflag)
+                            FillDOM(data,followFlag,delFlag,editFlag, like_c, followstats);
                         }
                     }else{
                         //no public data exist
@@ -782,8 +818,6 @@
                 });
 
             }
-
-
 
             var arrayOfRequests = [];
             function checkFollowrequest(){
@@ -805,37 +839,155 @@
             // TODO: change names later
             function fetchInboxMessages(){
                 $('#sum-body').empty();
-                fetchPublicPost(0);
+                fetchPublicPost();
             }
 
 
-            function FillDOM(data,flag,deleteFlag,editFlag,newflag){
-                var like_c;
-                if(newflag == 1){
-                    //newly added post
-                    like_c = 0;
-                    addnewpost(data,flag,deleteFlag,editFlag,like_c)
+            // Append posts to DOM
+            function FillDOM(data,flag,deleteFlag,editFlag, like_c, followstats){
+              // we ASSUME that we are receiving posts in the correct order
+              // For description with img+text, they are consecutive
+              // Append the first one and skip the next one
+              var image = '';
+              var content = '';
 
-                // newFlag 0
-                // public posts straight from db
-                }else{
-                    persistLikes(data.author.id, data.post_id, data,flag,deleteFlag,editFlag);
-                }
+              // only text
+              // TODO: Markdown
+              if(data.contentType == "text/plain" || data.contentType == "text/markdown"){
+                content = data.content;
+              }
+
+              // one image
+              else if(data.contentType == "application/base64"){
+                image = `
+                  <div class="posted-img-wrap">
+                      <img src="${data.content}" id="proimage">
+                  </div>
+                `;
+              }
+
+              // text + image
+              else if(data.contentType == "image/png;base64" || data.contentType == "image/jpeg;base64"){
+                content = 'TODO: FIND CONTENT';
+                image = `
+                  <div class="posted-img-wrap">
+                      <img src="${data.content}" id="proimage">
+                  </div>
+                `;
+              }
+
+              // use appropirate format for markdown
+              if(data.contentType == "text/markdown"){
+                var converter = new showdown.Converter();
+                content = converter.makeHtml(data.content);
+              }
 
 
+              const postHTML =  `<div class="posted-wrap">
+                  <div class="posted-w-h" >
+                      <div class="p-w-h-details">
+
+                          <div class="p-profile-wrap">
+                              <div class="p-profile">
+                              </div>
+                          </div>
+                          <div class="p-user-wrap">
+                              <p>${data.author.displayName}</p>
+                          </div>
+                          <p class="follow-user ${data.author.id}" id="${flag}" onclick="followUser(this)">${followstats}</p>
+                      </div>
+                      <div class="del-post ${deleteFlag}"  id="${data.post_id}" onclick="deletePost(this)">
+                          <i class="material-icons" style="color:rgba(0,0,0,0.45)">delete_outline</i>
+                      </div>
+                      <div class="edit-post ${editFlag}" data-id="${data.post_id}" onclick="openEditPostPopup(this)">
+                          <i class="material-icons" style="color:rgba(0,0,0,0.45)">mode</i>
+                      </div>
+                  </div>
+                  <div class="p-title-wrap">
+                      <p>${data.title}</p>
+                  </div>
+
+                  <div class="post-text">
+                      <p>${content}</p>
+                  </div>
+
+                  <div class="posted-img-wrap">
+                    ${image}
+                  </div>
+
+                  <div class="like-count-w">
+                      <p id="like-count" class="${"like_row"+data.post_id}">${like_c + " likes"}</p><p id="${"comment-count_"+data.post_id}">${data.commentCount} comments</p">
+                  </div>
+                  <div class="social-controls">
+
+                      <div class="like-w ${"thumb_"+data.author.id}" onclick="likepost(this)" id="${"thumb_"+data.post_id}">
+                          <div class="s-c-img">
+                              <i class="material-icons">thumb_up</i>
+                          </div>
+                          <p>Like</p>
+                      </div>
+                      <div class="comment-w" onclick="toggleComments(this)" id="${data.post_id}">
+                          <div class="s-c-img">
+                              <i class="material-icons">comment</i>
+                          </div>
+                          <p>Comment</p>
+                      </div>
+
+                      <div id="share-w">
+                        <div id="share-w-w" data-pId=${data.post_id} data-authorId=${data.author.id}>
+                            <div class="s-c-img">
+                                <i class="material-icons">share</i>
+                            </div>
+                            <p>Share</p>
+                        </div>
+                        <div id="shareOptions">
+                          <div class="share-sel-w">
+                             <select  id="share-o-visibility">
+                                <option value="PUBLIC">Public</option>
+                                <option value="FRIENDS">Friends</option>
+                              </select>
+                          </div>
+                          <div class="share-sel-w">
+                            <select disabled id="share-o-whichFriend">
+                               <option value="ALL">ALL</option>
+                             </select>
+                          </div
+                          <div class="share-sel-w"><button class="share-btn">Share</button></div>
+                        </div>
+                      </div
+
+                  </div>
+                  <div class="o-comments" id="${"o-comment_"+data.post_id}">
+                      <div class="o-c-cell">
+                          <div class="oc-profile">
+
+                          </div>
+                          <div class="o-type-comment">
+                              <input type="text" placeholder="Type your comments here" id="${"comment_input"+data.post_id}">
+                          </div>
+                          <div class="send-comment" onclick="addcomment(this)" id="${data.post_id}">
+                              <i class="material-icons" style="color:white">send</i>
+                          </div>
+                      </div>
+                      <div class="o-r-cell" id="${"comment_cell"+data.post_id}">
+
+                      </div>
+                  </div>
+              </div>`;
+
+              $(".post-feed").append(postHTML);
+
+              // persistLikes(data.author.id, data.post_id, data,flag,deleteFlag,editFlag);
             }
+
             //likepost
             function likepost(element){
-                console.log(element.id)
                 var postid= (element.id).slice(6);
 
                 ////get author id
                 var arr = (element.className).split(' ');
                 var extract = arr[1];
                 fid = extract.slice(6);
-                console.log("------")
-                console.log(fid);
-                console.log(postid);
                 data = {
                     "type":"Like",
                     "author":{
@@ -846,17 +998,18 @@
                         'url':host_url+"author/"+localStorage.getItem('uuid'),
                         'github':github_cur
                     },
-                    "object_id":host_url+"author/"+fid+"/posts/"+postid
+                    "object":host_url+"author/"+fid+"/posts/"+postid
                 }
                 $.ajax({
                     type:"POST",
+                    headers: {
+                        'Authorization': 'Basic ' + btoa(username+':'+password),
+                    },
                     contentType: "application/json",
                     data:JSON.stringify(data),
                     url: host_url + 'author/'+fid+'/inbox/'
                 })
                 .done(function(data){
-                    //MANIPULATE DOM
-                    console.log(data);
                     //increment count
                     var countvaljunk = document.getElementsByClassName("like_row"+postid)[0].innerHTML += 1;
                     var countval = + countvaljunk.slice(0, -6)
@@ -866,106 +1019,6 @@
 
             }
 
-            // get number of likes of a post
-            function persistLikes(author_id,post_id,data,flag,deleteFlag,editFlag){
-                var res_like_count;
-                $.ajax({
-                    type: 'GET',
-                    url: 'author/'+author_id+'/posts/'+post_id +"/likes"
-                })
-                .done(function(d){
-                    // console.log(d.items.length);
-                    var like_c = d.items.length;
-                    persistFollowStats(localStorage.getItem('uuid'),data,flag,deleteFlag,editFlag,like_c);
-
-                });
-
-            }
-
-            function addnewpost(data,flag,deleteFlag,editFlag,like_c){
-              console.log('addnewpost')
-                const postHTML =  `<div class="posted-wrap">
-                    <div class="posted-w-h" >
-                        <div class="p-w-h-details" style="width:calc(100%-160px)">
-
-                            <div class="p-profile-wrap">
-                                <div class="p-profile">
-
-                                </div>
-
-                            </div>
-                            <div class="p-user-wrap">
-                                <p>${data.author.displayName}</p>
-                            </div>
-                            <p class="follow-user ${data.author.id}" id="${flag}" onclick="followUser(this)">Follow</p>
-                        </div>
-                        <div class="del-post ${deleteFlag}"  id="${data.post_id}" onclick="deletePost(this)">
-                            <i class="material-icons" style="color:rgba(0,0,0,0.45)">delete_outline</i>
-                        </div>
-                        <div class="edit-post ${editFlag}" data-id="${data.post_id}"onclick="openEditPostPopup(this)">
-                            <i class="material-icons" style="color:rgba(0,0,0,0.45)">mode</i>
-                        </div>
-                        <div class="outside-post">
-                            <i class="material-icons" style="color:rgba(0,0,0,0.45)">travel_explore</i>
-                        </div>
-                    </div>
-                    <div class="p-title-wrap">
-                        <p>${data.title}</p>
-                    </div>
-
-                    <div class="post-text">
-                        <p>${data.content}</p>
-                    </div>
-
-                    <!--
-                    <div class="posted-img-wrap">
-                        <img src="{%  static  'assets/preview.png'  %}" id="proimage">
-                    </div>
-                    -->
-
-                    <div class="like-count-w">
-                        <p id="like-count" class="${"like_row"+data.post_id}">${like_c + " likes"}</p><p id="${"comment-count_"+data.post_id}">${data.commentCount} comments</p">
-                    </div>
-                    <div class="social-controls">
-
-                        <div class="like-w ${"thumb_"+data.author.id}" onclick="likepost(this)" id="${"thumb_"+data.post_id}">
-                            <div class="s-c-img">
-                                <i class="material-icons">thumb_up</i>
-                            </div>
-                            <p>Like</p>
-                        </div>
-                        <div class="comment-w" onclick="toggleComments(this)" id="${data.post_id}">
-                            <div class="s-c-img">
-                                <i class="material-icons">comment</i>
-                            </div>
-                            <p>Comment</p>
-                        </div>
-                        <div class="share-w">
-                            <div class="s-c-img">
-                                <i class="material-icons">share</i>
-                            </div>
-                            <p>Share</p>
-                        </div>
-                    </div>
-                    <div class="o-comments" id="${"o-comment_"+data.post_id}">
-                        <div class="o-c-cell">
-                            <div class="oc-profile">
-
-                            </div>
-                            <div class="o-type-comment">
-                                <input type="text" placeholder="Type your comments here" id="${"comment_input"+data.post_id}">
-                            </div>
-                            <div class="send-comment" onclick="addcomment(this)" id="${data.post_id}">
-                                <i class="material-icons" style="color:white">send</i>
-                            </div>
-                        </div>
-                        <div class="o-r-cell" id="${"comment_cell"+data.post_id}">
-
-                        </div>
-                    </div>
-                </div>`;
-                $(".post-feed").append(postHTML);
-            };
 
             function followUser(curTag){
                 console.log("tapped follower tag")
@@ -1015,17 +1068,26 @@
                 });
             }
 
-            // TODO: break this into components
-            // persist follow status on each public post
-            // and appends to DOM
-            function persistFollowStats(fid,data,flag,deleteFlag,editFlag,like_c){
-              var image = '';
-              var content = '';
-              // console.log(data)
-                //to do:
+
+            // get number of likes of a post
+            function persistLikes(author_id,post_id,data,flag,deleteFlag,editFlag){
+                // get a list of likes from other authors on current author’s post_id
                 $.ajax({
                     type: 'GET',
-                    url: host_url + 'author/'+data.author.id+'/followers/'+fid
+                    url: 'author/'+author_id+'/posts/'+post_id +"/likes"
+                })
+                .done(function(d){
+                    // console.log(d.items.length);
+                    return d.items.length;
+                });
+
+            }
+
+            function persistFollowStats(authorId, fId){
+                $.ajax({
+                    type: 'GET',
+                    async: false,
+                    url: host_url + 'author/'+authorId+'/followers/'+fId
                 })
                 .done(function(dd){
                     var requestnotaccepted = dd.accepted;
@@ -1037,155 +1099,14 @@
                     }else{
                         followstats="Follow";
                     }
+                    console.log(followstats);
 
-                    // only text
-                    // TODO: Markdown
-                    if(data.contentType == "text/plain" || data.contentType == "text/markdown"){
-                      content = data.content;
-                    }
-
-                    // one image
-                    else if(data.contentType == "application/base64"){
-                      image = `
-                        <div class="posted-img-wrap">
-                            <img src="${data.content}" id="proimage">
-                        </div>
-                      `;
-                    }
-
-                    // text + image
-                    else if(data.contentType == "image/png;base64" || data.contentType == "image/jpeg;base64"){
-                      content = 'TODO: FIND CONTENT';
-                      image = `
-                        <div class="posted-img-wrap">
-                            <img src="${data.content}" id="proimage">
-                        </div>
-                      `;
-                    }
-
-                    // use appropirate format for markdown
-                    if(data.contentType == "text/markdown"){
-                      var converter = new showdown.Converter();
-                      content = converter.makeHtml(data.content);
-                    }
-
-                    const postHTML =  `<div class="posted-wrap">
-                        <div class="posted-w-h" >
-                            <div class="p-w-h-details">
-
-                                <div class="p-profile-wrap">
-                                    <div class="p-profile">
-                                    </div>
-                                </div>
-                                <div class="p-user-wrap">
-                                    <p>${data.author.displayName}</p>
-                                </div>
-                                <p class="follow-user ${data.author.id}" id="${flag}" onclick="followUser(this)">${followstats}</p>
-                            </div>
-                            <div class="del-post ${deleteFlag}"  id="${data.post_id}" onclick="deletePost(this)">
-                                <i class="material-icons" style="color:rgba(0,0,0,0.45)">delete_outline</i>
-                            </div>
-                            <div class="edit-post ${editFlag}" data-id="${data.post_id}" onclick="openEditPostPopup(this)">
-                                <i class="material-icons" style="color:rgba(0,0,0,0.45)">mode</i>
-                            </div>
-                        </div>
-                        <div class="p-title-wrap">
-                            <p>${data.title}</p>
-                        </div>
-
-                        <div class="post-text">
-                            <p>${content}</p>
-                        </div>
-
-                        <div class="posted-img-wrap">
-                          ${image}
-                        </div>
-
-                        <div class="like-count-w">
-                            <p id="like-count" class="${"like_row"+data.post_id}">${like_c + " likes"}</p><p id="${"comment-count_"+data.post_id}">${data.commentCount} comments</p">
-                        </div>
-                        <div class="social-controls">
-
-                            <div class="like-w ${"thumb_"+data.author.id}" onclick="likepost(this)" id="${"thumb_"+data.post_id}">
-                                <div class="s-c-img">
-                                    <i class="material-icons">thumb_up</i>
-                                </div>
-                                <p>Like</p>
-                            </div>
-                            <div class="comment-w" onclick="toggleComments(this)" id="${data.post_id}">
-                                <div class="s-c-img">
-                                    <i class="material-icons">comment</i>
-                                </div>
-                                <p>Comment</p>
-                            </div>
-
-                            <div class="share-w">
-                              <div  onclick="sharePost(this)" data-id=${data.post_id}>
-                                  <div class="s-c-img">
-                                      <i class="material-icons">share</i>
-                                  </div>
-                                  <p>Share</p>
-                              </div>
-                              <div id="shareOptions">
-                                <div class="share-sel-w">
-                                   <select  id="share-o-visibility">
-                                      <option value="PUBLIC">Public</option>
-                                      <option value="FRIENDS">Friends</option>
-                                    </select>
-                                </div>
-                                <div class="share-sel-w">
-                                  <select disabled id="share-o-whichFriend">
-                                     <option value="ALL">ALL</option>
-                                   </select>
-                                </div
-                                <div class="share-sel-w"><button class="share-btn">Share</button></div>
-                              </div>
-                            </div
-
-                        </div>
-                        <div class="o-comments" id="${"o-comment_"+data.post_id}">
-                            <div class="o-c-cell">
-                                <div class="oc-profile">
-
-                                </div>
-                                <div class="o-type-comment">
-                                    <input type="text" placeholder="Type your comments here" id="${"comment_input"+data.post_id}">
-                                </div>
-                                <div class="send-comment" onclick="addcomment(this)" id="${data.post_id}">
-                                    <i class="material-icons" style="color:white">send</i>
-                                </div>
-                            </div>
-                            <div class="o-r-cell" id="${"comment_cell"+data.post_id}">
-
-                            </div>
-                        </div>
-                    </div>`;
-
-                    $(".post-feed").append(postHTML);
+                    return followstats;
 
                 });
             }
 
-            function sharePost(e){
-              // showShareOptions(e)
-              console.log($(this))
 
-            }
-
-            // shows popup asking the user who to share it with
-            function showShareOptions(){
-              $("this #shareOptions").show();
-              // closing popup if click is outside
-              $(document).mouseup(function(e){
-                console.log('clicked');
-                var container = $("#shareOptions");
-                // if the target of the click isn't the container nor a descendant of the container
-                if (!container.is(e.target) && container.has(e.target).length === 0){
-                  container.hide();
-                  $(document).off('mouseup'); //remove listener
-                }
-              });
-            }
 
             function deletePost(curDel){
                 $.ajax({
@@ -1246,6 +1167,85 @@
                 // $("#e-one_friend").val(d.);
               });
             }
+
+            // open share popu
+            $(document).on('click', '#share-w-w', function() {
+
+              const options = $(this).next("#shareOptions");
+              options.show();
+
+              $(document).mouseup(function(e){
+                var container =  options;
+                // if the target of the click isn't the container nor a descendant of the container
+                if (!container.is(e.target) && container.has(e.target).length === 0){
+                  container.hide();
+                  $(document).off('mouseup'); //remove listener
+                }
+              });
+
+              const pId = $(this).attr("data-pId");
+              const authorId = $(this).attr("data-authorId");
+
+              // getting post
+              $.ajax({
+                  type:"GET",
+                  headers: {
+                      'Authorization': 'Basic ' + btoa(username+':'+password),
+                  },
+                  url: host_url + 'author/'+authorId+'/posts/'+pId+'/'
+              })
+              .done(function(d){
+                  //increment count
+                  console.log(d);
+
+                  // creating a new post
+                  const data = {
+                      'title':  d.title,
+                      'description': d.description,
+                      'contentType': d.contentType,
+                      'content': d.content,
+                      'categories': d.categories,
+                      'pageSize': d.pageSize,
+                      'visibility': d.visibility,
+                      'unlisted': d.unlisted,
+                      "origin":d.origin,
+                      // **could be different from origin if it is a share of a share
+                       // “source”: “url of place your getting it from ”(string),
+                       //else no need to include parameters for source and origin.
+                  };
+
+                  $(document).on('click', '.share-btn', function() {
+                    console.log(data);
+                    $.ajax({
+                        type:"POST",
+                        headers: {
+                            'Authorization': 'Basic ' + btoa(username+':'+password),
+                        },
+                        contentType: "application/json",
+                        data:JSON.stringify(data),
+                        url: host_url + 'author/'+authorId+'/posts/'
+                    })
+                    .done(function(data){
+                      console.log('post shared')
+                      location.reload();
+                      options.hide();
+                    });
+                  });
+
+              });
+
+            });
+
+            // Disable/Enable select in Share popup
+            $(document).on('click', '.share-sel-w', function() {
+              const c = $(this).children("#share-o-visibility");
+              if(c.val() == "FRIENDS")
+                c.parent().next().children("#share-o-whichFriend").removeAttr('disabled');
+              else{
+                c.parent().next('.share-sel-w').children('#share-o-whichFriend').attr('disabled', 'disabled');
+                c.parent().next('.share-sel-w').children('#share-o-whichFriend').val('ALL');
+              }
+            });
 
             $('.e-create-post').click(function() {
               var title = document.getElementById("e-p-title").value;
@@ -1308,8 +1308,8 @@
                 console.log(textfield)
                 data = {
                     "type":"comment",
-                    "author_id":{
-                        'id':localStorage.getItem('uuid'),
+                    "author":{
+                        'id':host_url+"author/"+localStorage.getItem('uuid'),
                         'type':'author',
                         'host':host_url,
                         'displayName':displayName_cur,
@@ -1317,10 +1317,9 @@
                         'github':github_cur
                     },
 
-                    "contentType":"text",
+                    "contentType":"text/plain",
                     "comment":textfield
                 }
-                console.log(host_url)
                 $.ajax({
                     type:"POST",
                     headers: {

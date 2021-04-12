@@ -10,4 +10,5 @@ urlpatterns = [
     path('profile',views.profile,name='profile'),
     path('inbox',views.inbox,name='inbox'),
     path('gitactivity',views.gitactivity,name='gitactivity'),
+    path('ty',views.ty, name='ty'),
 ]

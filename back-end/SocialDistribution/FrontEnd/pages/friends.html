@@ -171,10 +171,10 @@
             .done(function(data){
               const followers = []; // IDs and dname of followers
 
-              for(el in data['items']){
+              for(el of data['items']){
                 var d = {
-                  'id': data['items'][el].id,
-                  'displayName': data['items'][el].displayName,
+                  'id': el.id.split('/')[4],
+                  'displayName': el.displayName,
                 }
                   followers.push(d);
               }
@@ -200,8 +200,6 @@
             $('#friend-request-table').on('click', '.accept_btn', function(){
                 const follower_id = $(this).data("id");
                 const notif_id  = $(this).data("notif-id");
-
-                console.log(follower_id);
 
                 $.ajax({
                   type: 'PUT',
@@ -233,6 +231,7 @@
             // TODO: URL Not Found
             $('#followers-table').on('click', '.remove_btn', function(){
                 const follower_id = $(this).data("id");
+                console.log("f_id", follower_id);
 
                 $.ajax({
                   type: 'DELETE',
@@ -254,7 +253,6 @@
               // for every follower,
               // check if author also follows
               for(f of followers){
-                console.log(f, f.id);
                 $.ajax({
                   type: 'GET',
                   async: false, // because we're in a  loop
