@@ -42,8 +42,8 @@ class PostGetLikesTest(TestCase):
                                               author_id=self.test_author,
                                               liker_id=AuthorSerializer(self.test_liker).data)
 
-        print(f"NANANA = {serializers.serialize('json', [self.test_like])}")
-        print(f"NANANA = {self.test_like}")
+        # print(f"NANANA = {serializers.serialize('json', [self.test_like])}")
+        # print(f"NANANA = {self.test_like}")
             
         # for i in range(3):
         #     Like.objects.create(**get_like_fields(id=self.test_post.id),
