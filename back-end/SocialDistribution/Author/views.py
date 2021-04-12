@@ -126,7 +126,7 @@ def handle_follow(request,author_id,follow_id):
     """
     if request.method == "GET":
         response = {}
-        author = get_object_or_404(Atuhor,pk=author_id)
+        author = get_object_or_404(Author,pk=author_id)
         data = FriendShip.objects.filter(author_local=author_id,author_remote__id__icontains=follow_id)
         recipricol = FriendShip.objects.filter(author_local=follow_id,author_remote__id__icontains=author_id)
         first = False
