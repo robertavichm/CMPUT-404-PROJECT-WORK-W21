@@ -1028,8 +1028,8 @@
                     console.log(textfield)
                     data = {
                         "type":"comment",
-                        "author_id":{
-                            'id':localStorage.getItem('uuid'),
+                        "author":{
+                            'id':host_url+"author/"+localStorage.getItem('uuid'),
                             'type':'author',
                             'host':host_url,
                             'displayName':displayName_cur,
@@ -1101,10 +1101,11 @@
             async function getCommentlikes_local(data,element){
                 for(i=0;i<data.length;i++){ 
                    var clean_comment_id = data[i].comment_id;
-                   var userid_clean = data[i].author_id.id;
+                   var userid_clean = (data[i].author_id.url).split("/");
+                   userid_clean = userid_clean[userid_clean.length - 1];
+                   console.log("--------");
                    console.log(clean_comment_id);
                    console.log(userid_clean);
-
                    try{
                        await $.ajax({
                            type: 'GET',
