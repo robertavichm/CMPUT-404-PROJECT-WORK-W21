@@ -1534,13 +1534,10 @@
                     console.log((data[i].author_id.url));
                   var clean_comment_id = data[i].comment_id;
                   var userid_clean;
-                
-                  if(data[i].author_id.host == "https://socialdistributionproject.herokuapp.com/"){
-                       userid_clean = (data[i].author_id.url).split("/");
-                       userid_clean = userid_clean[userid_clean.length - 2];
+                  userid_clean = (data[i].author_id.url).split("/");
+                  if(userid_clean[userid_clean.length - 1] == ""){
+                        userid_clean = userid_clean[userid_clean.length - 2]                       
                   }else{
-                      console.log((data[i].author_id.url));
-                       userid_clean = (data[i].author_id.url).split("/");
                        userid_clean = userid_clean[userid_clean.length - 1];
                   }
 
