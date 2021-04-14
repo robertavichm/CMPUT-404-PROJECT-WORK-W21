@@ -61,6 +61,5 @@ class PostGetLikesTest(TestCase):
             f'/author/{self.test_author.id}/posts/{self.test_post.post_id}/likes/'
         )
 
-        print(response)
-
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
