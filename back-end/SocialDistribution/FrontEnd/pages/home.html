@@ -601,6 +601,7 @@
                     }
                     console.log(openedcomments)
                     document.getElementById(commentblockid).style.display = "none";
+                    $("#comment_cell"+element.id).empty();
                     console.log("comment closed")
                 }
             }
@@ -1077,7 +1078,7 @@
                           </div>
                           <p>Like</p>
                       </div>
-                      <div class="comment-w" onclick="toggleComments(this)" id="${data.post_id}">
+                      <div class="comment-w ${data.author.id}" onclick="toggleComments(this)" id="${data.post_id}">
                           <div class="s-c-img">
                               <i class="material-icons">comment</i>
                           </div>
@@ -1530,7 +1531,8 @@
             }
 
             async function getCommentlikes_local(data,element){
-               for(i=0;i<data.length;i++){
+                var post_author_id = element.className.split(" ")[1];
+                for(i=0;i<data.length;i++){
                     console.log((data[i].author_id.url));
                   var clean_comment_id = data[i].comment_id;
                   var userid_clean;
@@ -1547,7 +1549,7 @@
                   try{
                       await $.ajax({
                           type: 'GET',
-                          url:host_url+ 'author/'+userid_clean+'/posts/'+element.id+"/comments/"+clean_comment_id+"/likes/"
+                          url:host_url+ 'author/'+post_author_id+'/posts/'+element.id+"/comments/"+clean_comment_id+"/likes/"
                       })
                       .done(function(commentarray){
                            console.log("inside comment array");
