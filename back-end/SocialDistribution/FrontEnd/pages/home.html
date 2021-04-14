@@ -1634,7 +1634,10 @@
                                 data:JSON.stringify(second),
                                 url:host_url+"author/"+post_owner_id+"/posts/"+postID+"/comments/"+commentID+"/likes/"
                                 }).done(function(data){
-                                    
+                                    var countvaljunk = document.getElementById("com-like_"+commentID).innerHTML;
+                                    var countval = + countvaljunk;
+                                    countval+=1;
+                                    document.getElementById("com-like_"+commentID).innerHTML = countval;
                                      $.ajax({
                                         type:"POST",
                                         contentType: "application/json",
