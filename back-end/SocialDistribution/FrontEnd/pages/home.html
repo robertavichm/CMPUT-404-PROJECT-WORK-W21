@@ -1564,7 +1564,7 @@
                                <div class="o-r-details">
                                    <p><span>${data[i].author_id.displayName}</span> ${comment}</p>
                                    <div class="c-p-wrap">
-                                       <div class="comment-like-wrap ${post_author_id} ${clean_comment_id} ${element.id} ${userid_clean}" onclick="like_comment_local(this)"><p>Like</p></div><div class="comment-profile"><i class="material-icons" style="color:white;font-size:12px;">thumb_up</i></div><div class="comment-like-num"><p id="com-like_${clean_comment_id}">${commentlikes}</p></div><div class="comment-tzone"><p>${data[i].published.split("T")[0]}</p></div></div>
+                                       <div class="comment-like-wrap ${post_author_id} ${clean_comment_id} ${element.id} ${userid_clean} ${data[i].author_id.url}" onclick="like_comment_local(this)"><p>Like</p></div><div class="comment-profile"><i class="material-icons" style="color:white;font-size:12px;">thumb_up</i></div><div class="comment-like-num"><p id="com-like_${clean_comment_id}">${commentlikes}</p></div><div class="comment-tzone"><p>${data[i].published.split("T")[0]}</p></div></div>
                                    </div>
                                </div>`;
                                $("#comment_cell"+element.id).append(c_cell);
@@ -1583,7 +1583,8 @@
                        var post_owner_id = element.className.split(" ")[1];
                        var commentID = element.className.split(" ")[2];
                        var postID = element.className.split(" ")[3];
-                       var commenter_id = element.className.split(" ")[3];
+                       var commenter_id = element.className.split(" ")[4];
+                       var commenter_url = element.className.split(" ")[5];
                        console.log("commenter id : "+post_owner_id);
                        console.log("comment id : "+commentID);
                        console.log("post id : "+postID);
@@ -1603,14 +1604,25 @@
                            "object":host_url+"author/"+post_owner_id+"/posts/"+postID+"/comments/"+commentID 
                        }
                        try{
+                           var user,pass
+                           var auth = {}
+                           if(commenter_url == "https://socialdistributionproject.herokuapp.com/")
+                           {
+                                user = "server";
+                                pass ="connect123";
+                                auth['Authorization'] = "Basic " + btoa(user+':'+pass);
+                           }
+                           else
+                           {
+                                auth['Authorization'] = "Basic " + btoa(username+':'+password);
+                           }
+                        console.log(auth);
                         await $.ajax({
                             type:"POST",
                             contentType: "application/json",
-                            headers: {
-                                'Authorization': 'Basic ' + btoa(username+':'+password),
-                            },
+                            headers: auth,
                             data:JSON.stringify(data),
-                            url:host_url+"author/"+commenter_id+"/inbox/"
+                            url:commenter_url+"/inbox/"
                         })
                         .done(function(data){
                             //increment count
