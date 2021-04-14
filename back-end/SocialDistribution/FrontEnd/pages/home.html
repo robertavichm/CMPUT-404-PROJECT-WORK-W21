@@ -1563,7 +1563,7 @@
                                <div class="o-r-details">
                                    <p><span>${data[i].author_id.displayName}</span> ${comment}</p>
                                    <div class="c-p-wrap">
-                                       <div class="comment-like-wrap ${userid_clean} ${clean_comment_id} ${element.id}" onclick="like_comment_local(this)"><p>Like</p></div><div class="comment-profile"><i class="material-icons" style="color:white;font-size:12px;">thumb_up</i></div><div class="comment-like-num"><p id="com-like_${clean_comment_id}">${commentlikes}</p></div><div class="comment-tzone"><p>${data[i].published.split("T")[0]}</p></div></div>
+                                       <div class="comment-like-wrap ${post_author_id} ${clean_comment_id} ${element.id}" onclick="like_comment_local(this)"><p>Like</p></div><div class="comment-profile"><i class="material-icons" style="color:white;font-size:12px;">thumb_up</i></div><div class="comment-like-num"><p id="com-like_${clean_comment_id}">${commentlikes}</p></div><div class="comment-tzone"><p>${data[i].published.split("T")[0]}</p></div></div>
                                    </div>
                                </div>`;
                                $("#comment_cell"+element.id).append(c_cell);
