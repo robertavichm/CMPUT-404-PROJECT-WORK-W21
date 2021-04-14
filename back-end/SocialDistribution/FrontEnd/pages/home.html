@@ -1547,7 +1547,7 @@
                   try{
                       await $.ajax({
                           type: 'GET',
-                          url:host_url+ 'author/'+localStorage.getItem("uuid")+'/posts/'+element.id+"/comments/"+clean_comment_id+"/likes/"
+                          url:host_url+ 'author/'+userid_clean+'/posts/'+element.id+"/comments/"+clean_comment_id+"/likes/"
                       })
                       .done(function(commentarray){
                            console.log("inside comment array");
