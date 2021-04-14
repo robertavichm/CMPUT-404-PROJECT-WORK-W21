@@ -1589,7 +1589,7 @@
                        console.log("comment id : "+commentID);
                        console.log("post id : "+postID);
 
-                       data = {
+                       inbox_data = {
                            "@context":"",
                            "summary": displayName_cur + "likes your post",
                            "type":"Like",
@@ -1604,41 +1604,28 @@
                            "object":host_url+"author/"+post_owner_id+"/posts/"+postID+"/comments/"+commentID 
                        }
                        try{
-                           var user,pass
+                           var user,pass,path
                            var auth = {}
                            if(commenter_url == "https://socialdistributionproject.herokuapp.com/")
                            {
                                 user = "server";
                                 pass ="connect123";
                                 auth['Authorization'] = "Basic " + btoa(user+':'+pass);
+                                path = commenter_url+"inbox/"
                            }
                            else
                            {
+                                path = commenter_url+"/inbox/"
                                 auth['Authorization'] = "Basic " + btoa(username+':'+password);
                            }
                         console.log(auth);
-                        await $.ajax({
-                            type:"POST",
-                            contentType: "application/json",
-                            headers: auth,
-                            data:JSON.stringify(data),
-                            url:commenter_url+"/inbox/"
-                        })
-                        .done(function(data){
-                            //increment count
-                            console.log(data);
-                            var countvaljunk = document.getElementById("com-like_"+commentID).innerHTML;
-                            var countval = + countvaljunk;
-                            countval+=1;
-                            document.getElementById("com-like_"+commentID).innerHTML = countval;
                             second = {"author_id":{
-                                "id":host_url+"author/"+localStorage.getItem('uuid'),
-                                "host":host_url,
-                                "displayName":displayName_cur,
-                                "url":host_url+"author/"+localStorage.getItem('uuid'),
-                                "github":github_cur
-                            }}
-                            $.ajax({
+                                            "id":host_url+"author/"+localStorage.getItem('uuid'),
+                                            "host":host_url,
+                                            "displayName":displayName_cur,
+                                            "url":host_url+"author/"+localStorage.getItem('uuid'),
+                                            "github":github_cur}}
+                            await $.ajax({
                                 type:"POST",
                                 contentType: "application/json",
                                 headers: {
@@ -1647,7 +1634,22 @@
                                 data:JSON.stringify(second),
                                 url:host_url+"author/"+post_owner_id+"/posts/"+postID+"/comments/"+commentID+"/likes/"
                                 }).done(function(data){
-                                    console.log(data);
+                                    
+                                     $.ajax({
+                                        type:"POST",
+                                        contentType: "application/json",
+                                        headers: auth,
+                                        data:JSON.stringify(inbox_data),
+                                        url:commenter_url+"/inbox/"
+                                    })
+                                    .done(function(data){
+                                        //increment count
+                                        console.log(data);
+                                        var countvaljunk = document.getElementById("com-like_"+commentID).innerHTML;
+                                        var countval = + countvaljunk;
+                                        countval+=1;
+                                        document.getElementById("com-like_"+commentID).innerHTML = countval;
+                                        
                             }) 
                         })
                     }
