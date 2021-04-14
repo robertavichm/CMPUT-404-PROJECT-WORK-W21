@@ -1552,6 +1552,7 @@
                           url:host_url+ 'author/'+post_author_id+'/posts/'+element.id+"/comments/"+clean_comment_id+"/likes/"
                       })
                       .done(function(commentarray){
+                          
                            console.log("inside comment array");
                            console.log(commentarray);
 
@@ -1575,7 +1576,7 @@
           }
 
             //likepost
-            function like_comment_local(element){
+            async function like_comment_local(element){
 
                    if (is_auth_user() == true){
                        console.log("like_post func called")
@@ -1588,32 +1589,59 @@
                        console.log("post id : "+postID);
 
                        data = {
-                           "author_id":
+                           "@context":"",
+                           "summary": displayName_cur + "likes your post",
+                           "type":"Like",
+                           "author":
                            {
-                               "author_id":localStorage.getItem('uuid'),
+                               "id":host_url+"author/"+localStorage.getItem('uuid'),
                                "host":host_url,
                                "displayName":displayName_cur,
                                "url":host_url+"author/"+localStorage.getItem('uuid'),
                                "github":github_cur
-                           }
-                       }
-                       $.ajax({
-                           type:"POST",
-                           contentType: "application/json",
-                           headers: {
-                               'Authorization': 'Basic ' + btoa(username+':'+password),
                            },
-                           data:JSON.stringify(data),
-                           url:host_url+"author/"+post_owner_id+"/posts/"+postID+"/comments/"+commentID+"/likes/"
-                       })
-                       .done(function(data){
-                           //increment count
-                           console.log(data);
-                           var countvaljunk = document.getElementById("com-like_"+commentID).innerHTML;
-                           var countval = + countvaljunk;
-                           countval+=1;
-                           document.getElementById("com-like_"+commentID).innerHTML = countval;
-                       })
+                           "object":host_url+"author/"+post_owner_id+"/posts/"+postID+"/comments/"+commentID 
+                       }
+                       try{
+                        await $.ajax({
+                            type:"POST",
+                            contentType: "application/json",
+                            headers: {
+                                'Authorization': 'Basic ' + btoa(username+':'+password),
+                            },
+                            data:JSON.stringify(data),
+                            url:host_url+"author/"+post_owner_id+"/inbox/"
+                        })
+                        .done(function(data){
+                            //increment count
+                            console.log(data);
+                            var countvaljunk = document.getElementById("com-like_"+commentID).innerHTML;
+                            var countval = + countvaljunk;
+                            countval+=1;
+                            document.getElementById("com-like_"+commentID).innerHTML = countval;
+                            second = {"author_id":{
+                                "id":host_url+"author/"+localStorage.getItem('uuid'),
+                                "host":host_url,
+                                "displayName":displayName_cur,
+                                "url":host_url+"author/"+localStorage.getItem('uuid'),
+                                "github":github_cur
+                            }}
+                            $.ajax({
+                                type:"POST",
+                                contentType: "application/json",
+                                headers: {
+                                    'Authorization': 'Basic ' + btoa(username+':'+password),
+                                },
+                                data:JSON.stringify(second),
+                                url:host_url+"author/"+post_owner_id+"/posts/"+postID+"/comments/"+commentID+"/likes/"
+                                }).done(function(data){
+                                    console.log(data);
+                            }) 
+                        })
+                    }
+                    catch(error){
+                        console.log(error.message);
+                    }
 
                    }else{
                        //alert("sign in or sign up to like a post");
