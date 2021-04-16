@@ -30,3 +30,9 @@ def gitactivity(request):
 
 def ty(request):
     return render(request,'thankyou.html', {'host_url': host_url})
+
+def unlisted(request, loc):
+    return render(request,'unlisted.html', {'host_url': host_url, 'origin_url': loc})
+
+def search(request):
+    return render(request,'search.html', {'host_url': host_url})

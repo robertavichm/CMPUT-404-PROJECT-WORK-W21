@@ -27,5 +27,12 @@ $(document).ready(function(){
     // go back to login page
     window.location.href = host_url ;
   });
-});
 
+  // search
+  $('#search').click(function(e) {
+    console.log('searching!')
+    e.preventDefault();
+
+    window.location.href = host_url+'search/' ;
+  });
+});

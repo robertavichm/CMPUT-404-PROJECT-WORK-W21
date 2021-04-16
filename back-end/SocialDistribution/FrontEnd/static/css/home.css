@@ -26,11 +26,7 @@ body,html{
     margin:0;
     font-weight:800;
 }
-.options{
-    float:right;
-    width:160px;
-    height:100%;
-}
+
 .username {
   float: right;
   margin-right: 20px;
@@ -379,12 +375,15 @@ body,html{
 
 .post-type{
   display: inline-block;
-  margin-left: 20px;
   background-color: #2c9ef1db;
   padding: 5px;
   font-size: 0.7em;
   color: white;
   border-radius: 3px;
+}
+
+.post-type:empty{
+  padding: 0px;
 }
 .posted-w-h{
     height:50px;
@@ -420,6 +419,7 @@ body,html{
     margin-left:10px;
     font-weight:600;
     color:#353a85;
+    margin-right: 15px;
 }
 .del-post,.edit-post{
     width:50px;
@@ -819,7 +819,7 @@ body,html{
 }
 .follow-user{
     float: left;
-    margin-left:10px;
+    margin-right:10px;
     color:#353a85;
     font-weight:800;
     cursor:pointer;

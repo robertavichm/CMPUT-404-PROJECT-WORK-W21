@@ -44,8 +44,6 @@ body,html{
 
 .options{
     float:right;
-    width:160px;
-    height:100%;
 }
 .username {
   float: right;
@@ -148,75 +146,99 @@ body,html{
 }
 
 .popup-auth{
-            width:300px;
-            height:200px;
-            top:calc(30%);
-            left:calc(50% + 0px);
-            position: absolute;
-            z-index:99;
-            background-color:white;
-            box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-        }
-        .pop-up-head{
-            height:39px;
-            border-bottom:1px solid rgba(0,0,0,0.05);
-        }
-        .popup-close{
-            float:right;
-            height:100%;
-            width:40px;
-            display:flex;
-            align-items: center;
-            justify-content: center;
-            cursor:pointer;
-            background-color:rgba(0,0,0,0.05);
-        }
-        .popup-close:hover{
-            background-color:rgba(0,0,0,0.2);
-        }
-        .popup-body{
-            height:calc(100% - 90px);   
-            display:flex;
-            justify-content:center;
-            align-items:center;
-        }
-        .popup-body h3{
-            margin-top:0;
-            font-size:16px;
-            font-weight:600;
-            color:rgba(0,0,0,0.75);
-        }
-        .pop-up-action{
-            height:49px;
-            border-top:1px solid rgba(0,0,0,0.05);
-        }
-        .signin-act{
-            width:calc(50% - 1px);
-            height:40px;
-            margin-top:5px;
-            float:left;
-            border-right:1px solid rgba(0,0,0,0.20);
-            background-color:white;
-            cursor:pointer;
-            color:rgba(0,0,0,0.50);
-            line-height:40px;
-        }
-       
-        .signup-act{
-            width:50%;
-            height:40px;
-            margin-top:5px;
-            float:right;
-            cursor:pointer;
-            line-height:40px;
-            color:rgba(0,0,0,0.50);
-            background-color:white;
-        }
-        .signup-act:hover,.signin-act:hover{
-            background-color:darkcyan;
-            color:white;
-        }
-        .signin-act p,.signup-act p{
-            margin:0;
-            text-align:center;  
-        }
+    width:300px;
+    height:200px;
+    top:calc(30%);
+    left:calc(50% + 0px);
+    position: absolute;
+    z-index:99;
+    background-color:white;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+.pop-up-head{
+    height:39px;
+    border-bottom:1px solid rgba(0,0,0,0.05);
+}
+.popup-close{
+    float:right;
+    height:100%;
+    width:40px;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    cursor:pointer;
+    background-color:rgba(0,0,0,0.05);
+}
+.popup-close:hover{
+    background-color:rgba(0,0,0,0.2);
+}
+.popup-body{
+    height:calc(100% - 90px);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+.popup-body h3{
+    margin-top:0;
+    font-size:16px;
+    font-weight:600;
+    color:rgba(0,0,0,0.75);
+}
+.pop-up-action{
+    height:49px;
+    border-top:1px solid rgba(0,0,0,0.05);
+}
+.signin-act{
+    width:calc(50% - 1px);
+    height:40px;
+    margin-top:5px;
+    float:left;
+    border-right:1px solid rgba(0,0,0,0.20);
+    background-color:white;
+    cursor:pointer;
+    color:rgba(0,0,0,0.50);
+    line-height:40px;
+}
+
+.signup-act{
+    width:50%;
+    height:40px;
+    margin-top:5px;
+    float:right;
+    cursor:pointer;
+    line-height:40px;
+    color:rgba(0,0,0,0.50);
+    background-color:white;
+}
+.signup-act:hover,.signin-act:hover{
+    background-color:darkcyan;
+    color:white;
+}
+.signin-act p,.signup-act p{
+    margin:0;
+    text-align:center;
+}
+
+/*============== Search bar ==============*/
+
+.nav-bar input[type=text] {
+  padding: 6px;
+  margin-top: 8px;
+  font-size: 17px;
+  border: none;
+}
+
+.nav-bar .search-container button {
+  float: right;
+  padding: 6px 10px;
+  margin-top: 8px;
+  margin-right: 16px;
+  background: #ddd;
+  font-size: 17px;
+  border: none;
+  cursor: pointer;
+}
+
+.nav-bar .search-container button:hover {
+  background: #ccc;
+}

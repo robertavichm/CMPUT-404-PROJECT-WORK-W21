@@ -877,12 +877,15 @@
             }
 
             async function fetchMyPosts(){
+              let posts = [];
+              // fetch all public posts
               let response = await fetch(host_url + 'posts/',{
                   method: 'GET', // *GET, POST, PUT, DELETE, etc.
                   });
 
-              let posts = await response.json();
+              let posts_res = await response.json();
 
+              // fetch inbox posts
               let iposts_res = await fetch(host_url + 'author/'+ uuid +'/inbox/',{
                   method: 'GET', // *GET, POST, PUT, DELETE, etc.
                   // credentials: 'same-origin', // include, *same-origin, omit
@@ -894,8 +897,13 @@
 
               let iposts = await iposts_res.json();
 
+
               // get just the elements
-              posts = posts.items ;
+              // and making sure they are unlisted
+              for(p of posts_res.items){
+                if(!p.unlisted)
+                  posts.push(p)
+              }
 
               // concatenate
               for(p of iposts.items){
@@ -904,17 +912,15 @@
               }
 
               // sorting
-              console.log(posts)
-              for(i of posts) console.log(i.published)
-              posts = posts.sort((a, b) => a.published + b.published)
-
-              console.log("by FETCH", posts)
+              console.log(posts);
+              posts.sort((a, b) => (a.published < b.published) ? 1 : -1)
 
               for ( i = 0 ; i < posts.length; i++){
                   var data = posts[i];
                   var followFlag;
                   var delFlag;
                   var editFlag;
+                  var shared_f ="";
 
                   // if post belongs to a follower
                   if(followerArray.includes(data.author.id)){
@@ -922,6 +928,11 @@
                   }else{
                       followFlag="showFollow"
                   }
+
+                  // if has been shared
+                  // console.log(data.description);
+                  if(data.description == "shared")
+                    shared_f = "shared"
 
                   // if post belongs to logged in user
                   if(data.author.id == localStorage.getItem('uuid')){
@@ -934,17 +945,34 @@
                   }
 
 
-                  var followstats = "nothing";
+                  var followstats = "";
                   var like_c = 0;
 
-                  // getting like count
-                  let likes_res;
+                  // if PUBLIC post
                   if(data.visibility == "PUBLIC"){
-                    likes_res = await fetch('author/'+data.author_id+'/posts/'+data.post_id +"/likes",{
+                    // getting like count
+                    let likes_res = await fetch('author/'+data.author_id+'/posts/'+data.post_id +"/likes",{
                         method: 'GET', // *GET, POST, PUT, DELETE, etc.
                         });
                     like_c = await likes_res.json();
 
+                    // getting followstats
+                    let followstats_res = await fetch(host_url + 'author/'+localStorage.getItem('uuid')+'/followers/'+data.author.id,{
+                        method: 'GET', // *GET, POST, PUT, DELETE, etc.
+                        });
+
+                    followstats = await followstats_res.json();
+                    console.log(data.author.id,followstats);
+                    followstats = followstats.friends;
+                    if(followstats == true || data.author.id == localStorage.getItem('uuid')){
+                        followstats=""; // already friends or current user
+                    }else if (followstats == false){
+                        followstats="Follow";
+                    }else{
+                        followstats="Follow";
+                    }
+
+                  // FRIENDS POSTS
                   } else {
                     // likes_res = await fetch('author/'+data.author.author_id+'/posts/'+data.notif_id +"/likes",{
                     //     method: 'GET', // *GET, POST, PUT, DELETE, etc.
@@ -952,30 +980,9 @@
                     like_c = {"type": "liked", "items":[]}; // TODO: dummy
                   }
 
-                  console.log(like_c);
                   like_c = like_c.items.length;
 
-                  // getting followstats
-
-                  // console.log(data);
-                  let followstats_res = await fetch(host_url + 'author/'+localStorage.getItem('uuid')+'/followers/'+data.author.id,{
-                      method: 'GET', // *GET, POST, PUT, DELETE, etc.
-                      });
-
-                  // console.log(data.author.id == localStorage.getItem('uuid'))
-                  followstats = await followstats_res.json();
-                  followstats = followstats.accepted;
-                  if(followstats == true){
-                      followstats=""; // show nothing
-                  }else if (followstats == false){
-                      followstats="Request Sent";
-                  }else if (data.author_id == localStorage.getItem('uuid')){ // current author
-                      followstats="";
-                  }else{
-                      followstats="Follow";
-                  }
-
-                  FillDOM(data,followFlag,delFlag,editFlag, like_c, followstats);
+                  FillDOM(data,followFlag,delFlag,editFlag, like_c, followstats, shared_f);
                 }
 
             }
@@ -997,7 +1004,7 @@
             }
 
             // Append posts to DOM
-            function FillDOM(data,flag,deleteFlag,editFlag, like_c, followstats){
+            function FillDOM(data,flag,deleteFlag,editFlag, like_c, followstats, shared_f){
               // we ASSUME that we are receiving posts in the correct order
               // For description with img+text, they are consecutive
               // Append the first one and skip the next one
@@ -1046,7 +1053,9 @@
                           <div class="p-user-wrap">
                               <p>${data.author.displayName}</p>
                           </div>
-                          <p class="follow-user ${data.author.id}" id="${flag}" onclick="followUser(this)">${followstats}</p> <p class="post-type">${data.visibility}</p>
+                          <p class="follow-user ${data.author.id}" id="${flag}" onclick="followUser(this)">${followstats}</p>
+                          <p class="post-type">${data.visibility}</p>
+                          <p class="post-type">${shared_f}</p>
                       </div>
                       <div class="del-post ${deleteFlag}"  id="${data.post_id}" onclick="deletePost(this)">
                           <i class="material-icons" style="color:rgba(0,0,0,0.45)">delete_outline</i>
@@ -1132,6 +1141,8 @@
               // persistLikes(data.author.id, data.post_id, data,flag,deleteFlag,editFlag);
             }
 
+            //  hide annoying blue background next to display name
+
             //likepost
             function likepost(element){
                 var postid= (element.id).slice(6);
@@ -1140,6 +1151,7 @@
                 var arr = (element.className).split(' ');
                 var extract = arr[1];
                 fid = extract.slice(6);
+                console.log(fid)
                 data = {
                     "type":"Like",
                     "author":{
@@ -1368,6 +1380,7 @@
                        //else no need to include parameters for source and origin.
                   };
 
+                  // posting
                   $(document).on('click', '.share-btn', function() {
                     console.log(data);
                     $.ajax({
@@ -1377,7 +1390,7 @@
                         },
                         contentType: "application/json",
                         data:JSON.stringify(data),
-                        url: host_url + 'author/'+authorId+'/posts/'
+                        url: host_url + 'author/'+uuid+'/posts/'
                     })
                     .done(function(data){
                       console.log('post shared')

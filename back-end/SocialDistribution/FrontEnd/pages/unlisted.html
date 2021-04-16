@@ -1,141 +1,130 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
     <title>Unlisted post</title>
     <style>
-      * {
-        box-sizing: border-box;
-      }
-
-      .container {
-        width: 100%;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-        background-color: #ebebeb;
-      }
-
-      .wrap-login {
-        width: 550px;
-        background: white;
-        border: 10px;
-        padding:90px;
-        border-radius: 10px;
-      }
-
-      .login-form-title {
-        padding-bottom: 35px;
-        font-size: 3em;
-        color: grey;
-        text-align: left;
-        display: block;
-      }
-
-      .wrap-input {
-        width: 100%;
-        border-radius: 2px;
-        border: 1px solid #e6e6e6;
-        margin-bottom: 35px;
-      }
-
-      .login-l {
-        line-height: 1.4;
-        font-size: 1.em;
-        padding-bottom: 15px;
-        box-sizing: border-box;
-      }
-
-      input {
-        display: block;
-        padding: 0 25px;
-        width: 100%;
-        height: 55px;
-        font-size: 1.2em;
-      }
-
-      .wrap-button {
-        width: 100%;
-      }
-
-      .wrap-button button {
-        border: none;
-        font-size: 1em;
-        color: white;
-        line-height: 1.2;
-        background-color: #333333;
-        border-radius: 30px;
-        padding: 0 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 55px;
-        min-width: 150px;
-        cursor: pointer;
-      }
+    .post-feed{
+      margin: 0 auto;
+      margin-top: 0px;
+      margin-top: 50px;
+    }
 
      </style>
   </head>
   <body>
-    <div class="container">
-      <div class="wrap-login">
-        <form class="signup-form" action="index.html" method="post">
-          <span class="login-form-title">Sign Up</span>
-          <span class="login-l">Display Name</span>
-          <div class="wrap-input">
-            <input type="text" name="dname" value="">
-          </div>
-          <span class="login-l">Username</span>
-          <div class="wrap-input">
-            <input type="text" name="username" value="">
-          </div>
-          <span class="login-l">Password</span>
-          <div class="wrap-input">
-            <input type="text" name="password" value="">
-          </div>
-          <span class="login-l">Github</span>
-          <div class="wrap-input">
-            <input type="text" name="github" value="">
-          </div>
-          <div class="wrap-button">
-            <button type="submit" name="button">Sign Up</button>
-          </div>
-        </form>
+
+      <div class="post-feed">
+
+
       </div>
-    <div>
+
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
       <script type="text/javascript">
 
       const host_url = '{{ host_url }}';
+      const url = '{{ origin_url }}';
+      console.log(url);
 
-      $('.signup-form').submit(function(e) {
-        const d = {
-          'displayName': $('input[name=dname]').val(),
-          'password': $('input[name=password]').val(),
-          'github': $('input[name=github]').val(),
-          'username': $('input[name=username]').val(),
-        };
-        console.log(d);
-        $.ajax({
-          type: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          url: host_url + 'author/',
-          data: JSON.stringify(d),
-        })
-          .done(function(data){
-            console.log(data); // UUID of post
-            // localStorage.setItem("uuid", data);
-            // localStorage.setItem("username", d.username);
-            // localStorage.setItem("pwd", d.password);
-            window.location.href = host_url + 'ty';
-          });
+      // GET post
+      $.ajax({
+        type: 'GET',
+        url: host_url + 'author/'+ localStorage.getItem('uuid') +'/posts/'+url,
+        dataType: 'json',
+      })
+        .done(function(data){
+          var image = '';
+          var content = '';
+          let like_c = 0;
 
-          e.preventDefault();
-      });
+          // only text
+          // TODO: Markdown
+          if(data.contentType == "text/plain" || data.contentType == "text/markdown"){
+            content = data.content;
+          }
+
+          // one image
+          else if(data.contentType == "application/base64"){
+            image = `
+              <div class="posted-img-wrap">
+                  <img src="${data.content}" id="proimage">
+              </div>
+            `;
+          }
+
+          // text + image
+          else if(data.contentType == "image/png;base64" || data.contentType == "image/jpeg;base64"){
+            content = '';
+            image = `
+              <div class="posted-img-wrap">
+                  <img src="${data.content}" id="proimage">
+              </div>
+            `;
+          }
+
+          // use appropirate format for markdown
+          if(data.contentType == "text/markdown"){
+            var converter = new showdown.Converter();
+            content = converter.makeHtml(data.content);
+          }
+
+          console.log(data);
+          const postHTML =  `<div class="posted-wrap">
+              <div class="posted-w-h" >
+                  <div class="p-w-h-details">
+
+                      <div class="p-profile-wrap">
+                          <div class="p-profile">
+                          </div>
+                      </div>
+                      <div class="p-user-wrap">
+                          <p>${data.author.displayName}</p>
+                      </div>
+                      <p class="follow-user ${data.author.id}"</p>
+                      <p class="post-type">Unlisted</p>
+                  </div>
+              </div>
+              <div class="p-title-wrap">
+                  <p>${data.title}</p>
+              </div>
+
+              <div class="post-text">
+                  <p>${content}</p>
+              </div>
+
+              <div class="posted-img-wrap">
+                ${image}
+              </div>
+
+              <div class="like-count-w">
+                  <p id="like-count" class="${"like_row"+data.post_id}">${like_c + " likes"}</p><p id="${"comment-count_"+data.post_id}">${data.commentCount} comments</p">
+              </div>
+            
+              <div class="o-comments" id="${"o-comment_"+data.post_id}">
+                  <div class="o-c-cell">
+                      <div class="oc-profile">
+
+                      </div>
+                      <div class="o-type-comment">
+                          <input type="text" placeholder="Type your comments here" id="${"comment_input"+data.post_id}">
+                      </div>
+                      <div class="send-comment" onclick="addcomment(this)" id="${data.post_id}">
+                          <i class="material-icons" style="color:white">send</i>
+                      </div>
+                  </div>
+                  <div class="o-r-cell" id="${"comment_cell"+data.post_id}">
+
+                  </div>
+              </div>
+          </div>`;
+          $(".post-feed").append(postHTML);
+        });
+
 
       </script>
   </body>
