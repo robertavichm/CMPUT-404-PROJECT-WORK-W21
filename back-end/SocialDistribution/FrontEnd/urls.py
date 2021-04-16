@@ -11,4 +11,6 @@ urlpatterns = [
     path('inbox',views.inbox,name='inbox'),
     path('gitactivity',views.gitactivity,name='gitactivity'),
     path('ty',views.ty, name='ty'),
+    path('unlisted/<loc>/',views.unlisted, name='unlisted'),
+    path('search/',views.search, name='search'),
 ]

@@ -30,11 +30,11 @@
                         <div class="friend-r-body">
                             <table id="friend-request-table">
                                 <tbody class="f-req-body">
-                                    <tr>
+                                    <!-- <tr>
                                         <td>sample friend request</td>
                                         <td><div class="accept_btn">Accept</div></td>
-                                        <!-- <td><div class="decline_btn">Decline</div></td> -->
-                                    </tr>
+                                        <td><div class="decline_btn">Decline</div></td>
+                                    </tr> -->
                                 </tbody>
                             </table>
                         </div>
@@ -51,10 +51,7 @@
                         <div class="friends-w-body">
                                 <table id="friends-table">
                                     <tbody class="f-body">
-                                        <tr>
-                                            <td>sample friend</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
+
                                     </tbody>
                                 </table>
                         </div>
@@ -72,10 +69,27 @@
 
                                 <table id="followers-table">
                                     <tbody class="followers-body">
-                                        <tr>
-                                            <td>sample follower</td>
-                                            <td><div class="remove_btn">Remove</div></td>
-                                        </tr>
+
+                                    </tbody>
+                                </table>
+                        </div>
+                </div>
+
+
+                <!-- Unlisted posts -->
+                <div class="unlisted-wrap">
+
+                        <div class="f-head">
+                            <p>Unlisted posts</p>
+                            <div class="arrow-down  foll-w-u" id="unlisted-arrow">
+                                <i class="material-icons" style="color:rgba(0,0,0,0.50)">arrow_downward</i>
+                            </div>
+                        </div>
+                        <div class="unlisted-ww-body">
+
+                                <table id="unlisted-table">
+                                    <tbody class="unlisted-body">
+
                                     </tbody>
                                 </table>
                         </div>
@@ -122,6 +136,15 @@
             }
         });
 
+        // Opens/Closes 'Unlisted' tab
+        $('.foll-w-u').click(function() {
+            if($('.unlisted-ww-body').css("display") == "none" ){
+                document.getElementsByClassName('unlisted-ww-body')[0].style.display = "block";
+            }else{
+                document.getElementsByClassName('unlisted-ww-body')[0].style.display = "none";
+            }
+        });
+
         // GET Friend requests from inbox
         $.ajax({
           type: 'GET',
@@ -136,7 +159,7 @@
             var fr_req = []; // IDs and dname of requesters
 
             for(el of data['items']){
-              if(el.type === "Follow"){
+              if(el.type === "Follow" || el.type == "follow"){
                 var d = {
                   'id': el.actor.id.split('/')[4],
                   'displayName': el.actor.displayName,
@@ -272,6 +295,44 @@
                   // console.log('next');
               }
             }
+
+            // Get unlisted posts
+            $.ajax({
+              type: 'GET',
+              url: host_url + 'author/'+ localStorage.getItem('uuid') +'/posts/',
+              dataType: 'json',
+            })
+              .done(function(data){
+                for(el of data['items']){
+                  // if unlisted
+                  if(el.unlisted){
+                    const x = 'unlisted/'+el.post_id+'/';
+                    $('.unlisted-body').append(`
+                      <tr>
+                          <td><a href="${x}">${el.title}</a></td>
+                          <td><div data-id="${el.post_id}"class="remove_btn">Remove</div></td>
+                      </tr>
+                      `);
+                  }
+                }
+              });
+
+            // Delete unlisted post
+            $('#unlisted-table').on('click', '.remove_btn', function(){
+                const pId = $(this).data("id");
+                console.log("f_id", pId);
+
+                $.ajax({
+                  type: 'DELETE',
+                  headers: {
+                      'Authorization': 'Basic ' + btoa(username+':'+password),
+                  },
+                  url: host_url + 'author/'+ localStorage.getItem('uuid') +'/posts/'+ pId + '/',
+                })
+                  .done(function(data){
+                    location.reload();
+                  });
+            });
 
 
 
